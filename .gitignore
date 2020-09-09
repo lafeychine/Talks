@@ -1,0 +1,16 @@
+# Org-Mode
+.auctex-auto/
+*.tex
+!ressources/*.tex
+
+
+# PDF Output
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.pdf
+_minted-*/
+svg-inkspace/
