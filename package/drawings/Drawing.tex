@@ -1,0 +1,11 @@
+\usepackage{tikz}
+
+\usetikzlibrary{positioning}
+
+\NewDocumentEnvironment {ctikz} { D[]{} } {
+    \begin{center}
+        \begin{tikzpicture}[ampersand replacement=\& #1]
+}{
+        \end{tikzpicture}
+    \end{center}
+}

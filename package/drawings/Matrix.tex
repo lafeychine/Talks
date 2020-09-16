@@ -1,0 +1,10 @@
+\usetikzlibrary{matrix}
+
+\tikzset{
+    Matrix/.style={matrix of math nodes, nodes = {minimum width=.9cm, minimum height=.7cm}, left delimiter = (, right delimiter = )},
+    DMatrix/.style={matrix of math nodes, nodes = {minimum width=.9cm, minimum height=.7cm}, left delimiter = |, right delimiter = |}
+}
+
+\tikzset{
+    ColorLine/.style args={#1}{opacity=.4, line width=6mm, line cap=round, color=#1}
+}

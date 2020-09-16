@@ -1,0 +1,39 @@
+\usepackage[mathrm=sym]{unicode-math}
+\setmathfont{Latin Modern Math}
+\usepackage{systeme}
+
+
+\NewDocumentCommand \set {m} { \mathbb{#1} }
+\NewDocumentCommand \conj {m} { \overline{#1} }
+\NewDocumentCommand \ang {m} { \widehat{#1} }
+\NewDocumentCommand \norm {m} { \left\lVert #1 \right\rVert }
+\NewDocumentCommand \mat {} { \mathcal{M} }
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+
+\renewcommand{\vec}[1]{\overrightarrow{#1}}
+
+\DeclareMathOperator{\e}{e}
+\DeclareMathOperator{\com}{com}
+\DeclareMathOperator{\Adj}{Adj}
+\DeclareMathOperator{\Deg}{deg}
+
+
+\ExplSyntaxOn
+\NewDocumentCommand \colvec {m} {
+    \clist_set:Nn \l_tmpa_clist { #1 }
+    \begin{pmatrix}
+        \clist_use:Nn \l_tmpa_clist { \\ }
+    \end{pmatrix}
+}
+\ExplSyntaxOff
+
+
+\NewDocumentEnvironment {rcases} {} {
+    \left.
+    \begin{aligned}
+}{
+    \end{aligned}
+    \right\rbrace
+}

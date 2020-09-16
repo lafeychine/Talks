@@ -1,0 +1,70 @@
+\usetikzlibrary{3d, angles, shapes, shapes.misc}
+
+\tikzset{
+    Grid/.style={ultra thin, color=lightgray, opacity=0.8},
+    Vector/.style={midway, sloped, above},
+    Angle/.style={draw, angle radius=.5cm}
+}
+
+\tikzset{
+    cross/.style={cross out, thick, draw=black, fill=none, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
+    cross/.default={3pt}
+}
+
+\NewDocumentCommand \drawGrid {s D<>{1-} O{Grid} m m m m} {
+    \IfBooleanT #1 {
+        \draw<#2> [#3] (#4 + .1, #5 + .1) grid (#6 - .1, #7 - .1);
+    }
+
+    \draw<#2>[thick, ->] (#4, 0)  -- (#6, 0)  node [above] {$ x $};
+    \draw<#2>[thick, ->] (0,  #5) -- (0,  #7) node [left] {$ y $};
+}
+
+
+\NewDocumentCommand \drawGridSpace {s D<>{1-} m m m} {
+    \IfBooleanT #1 {
+        \begin{scope}[canvas is xy plane at z=0]
+            \draw<#2> [Grid] (0, 0) grid (#3 - .1, #4 - .1);
+            \draw<#2> (.3, 0, 0) |- (0, .3, 0);
+        \end{scope}
+
+        \begin{scope}[canvas is yz plane at x=0]
+            \draw<#2> [Grid] (0, 0) grid (#4 - .1, #5 - .1);
+            \draw<#2> (.3, 0, 0) |- (0, .3, 0);
+        \end{scope}
+
+        \begin{scope}[canvas is xz plane at y=0]
+            \draw<#2> [Grid] (0, 0) grid (#3 - .1, #5 - .1);
+            \draw<#2> (.3, 0, 0) |- (0, .3, 0);
+        \end{scope}
+    }
+
+    \draw<#2>[thick, ->] (0, 0, 0) -- (#3, 0, 0) node [right] {$ x $};
+    \draw<#2>[thick, ->] (0, 0, 0) -- (0, #4, 0) node [above] {$ y $};
+    \draw<#2>[thick, ->] (0, 0, 0) -- (0, 0, #5) node [below left] {$ z $};
+}
+
+
+\NewDocumentCommand \drawPoint {s D<>{1-} O{above right} r() m m D(){#4}} {
+      \coordinate (#4) at (#5, #6);
+
+      \IfBooleanT #1 {
+          \draw<#2>[dashed] (#5, 0) -- (#5, #6);
+          \draw<#2>[dashed] (0, #6) -- (#5, #6);
+      }
+
+      \draw<#2> (#4) node[cross] {} node[#3] {$ #7 $};
+}
+
+
+\NewDocumentCommand \drawPointSpace {s D<>{1-} O{above right} r() m m m D(){#4}} {
+      \coordinate (#4) at (#5, #6, #7);
+
+      \IfBooleanT #1 {
+          \draw<#2>[dashed] (#5, 0, 0)  -- (#5, 0,  #7);
+          \draw<#2>[dashed] (0,  0, #7) -- (#5, 0,  #7);
+          \draw<#2>[dashed] (#5, 0, #7) -- (#5, #6, #7);
+      }
+
+      \draw<#2> (#4) node[cross] {} node[#3] {$ #8 $};
+}
