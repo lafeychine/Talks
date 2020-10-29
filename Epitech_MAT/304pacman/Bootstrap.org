@@ -1,0 +1,297 @@
+#+TITLE: 304pacman - Pathfinding and Ectoplasms
+#+SUBTITLE: Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Algorithms.tex }
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Graphs.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Parcours de graphes 
+
+** Algorithme de parcours en largeur
+
+*** Algorithme de parcours en largeur
+   
+\begin{columns}<0->
+    \begin{column}<0->{0.42\columnwidth}
+
+        \begin{algorithm}[H]
+            \KwData{Graphe $G$, sommet $v$}
+            \KwResult{Sommets atteignables}
+        
+            \( \) \\
+            \( L \gets \{\} \) \;
+            \ForEach{\( v \in V(G) \)}{
+                \( \mbox{couleur}(v) \gets \mbox{BLANC} \) \;
+            }
+            \( F \gets \{ v \} \) \;
+            \( \mbox{couleur}(v) \gets \mbox{NOIR} \) \;
+        \end{algorithm}
+
+    \end{column}
+    \begin{column}<0->{0.42\columnwidth}
+
+        \begin{algorithm}[H]
+            \While{\( F \neq \emptyset \)}{
+                \( v \gets \mbox{Defiler(F)} \) \;
+                \( L \gets L \cup \{ v \} \) \;
+                \ForEach{\( w \in \Adj{v} \)}{
+                    \If{\( \mbox{couleur}(w) = \mbox{BLANC} \)}{
+                       \( \mbox{Enfiler(F, w)} \) \;        
+                       \( \mbox{couleur}(w) \gets \mbox{NOIR} \) \;
+                    }
+                }
+            }
+        \end{algorithm}
+
+    \end{column}
+\end{columns}
+
+
+** Rappel du 303make: Application de l'algorithme de parcours en largeur
+
+*** Application de l'algorithme de parcours en profondeur
+
+\begin{columns}<0->
+    \begin{column}<0->{0.65\columnwidth}
+
+        \begin{center}
+            \begin{tikzpicture}
+                \coordinate (A) at (0, 0);
+                \coordinate (B) at (2, 0);
+                \coordinate (C) at (4, 0);
+                \coordinate (D) at (1, 2);
+                \coordinate (E) at (3, 2);
+                \coordinate (F) at (2, 4);
+
+                \node [WhiteNode] (A) at (A) {$ A $};
+                \node [WhiteNode] (B) at (B) {$ B $};
+                \node [WhiteNode] (C) at (C) {$ C $};
+                \node [WhiteNode] (D) at (D) {$ D $};
+                \node [WhiteNode] (E) at (E) {$ E $};
+                \node [WhiteNode] (F) at (F) {$ F $};
+
+                \node<1->  [GrayNode] (B) at (B) {$ B $};
+                \node<2-3> [GrayNode, Surligned] (B) at (B) {$ B $};
+                \node<3->  [GrayNode] (D) at (D) {$ D $};
+                \node<3->  [GrayNode] (E) at (E) {$ E $};
+                \node<4-5> [GrayNode, Surligned] (D) at (D) {$ D $};
+                \node<5->  [GrayNode] (F) at (F) {$ F $};
+                \node<6-7> [GrayNode, Surligned] (E) at (E) {$ E $};
+                \node<8-9> [GrayNode, Surligned] (F) at (F) {$ F $};
+
+                \path [->] (A) edge (D);
+                \path [->] (B) edge (D);
+                \path [->] (B) edge (E);
+                \path [->] (C) edge (E);
+                \path [->] (D) edge (F);
+                \path [->] (E) edge (F);
+            \end{tikzpicture}
+        \end{center}
+
+    \end{column}
+    \begin{column}<0->{0.35\columnwidth}
+
+        \only<1>{\( F = \{ B \} \)}
+        \only<2>{\( F = \{ \} \)}
+        \only<3>{\( F = \{ D, E \} \)}
+        \only<4>{\( F = \{ E \} \)}
+        \only<5>{\( F = \{ E, F \} \)}
+        \only<6-7>{\( F = \{ F \} \)}
+        \only<8->{\( F = \{ \} \)}
+
+        \only<1>{\( L = \{ \} \)}
+        \only<2-3>{\( L = \{ B \} \)}
+        \only<4-5>{\( L = \{ B, D \} \)}
+        \only<6-7>{\( L = \{ B, D, E \} \)}
+        \only<8->{\( L = \{ B, D, E, F \} \)}
+
+    \end{column}
+\end{columns}
+
+
+
+* Améliorons nos arbres
+
+** Graphe valué
+
+- Un *graphe valué* est un graphe où chaque arête est munie d'une valeur positive, nommé le *poids* de l'arc.
+
+- L'objectif devient de trouver le chemin entre deux sommets dont la somme des poids soit minimale.
+
+
+** Exemple de graphe valué
+
+*** Exemple
+
+\begin{center}
+    \begin{tikzpicture}
+        \coordinate (A) at (2, 0);
+        \coordinate (B) at (0, 2);
+        \coordinate (C) at (2, 2);
+        \coordinate (D) at (4, 1);
+        \coordinate (E) at (4, 3);
+        \coordinate (F) at (2, 4);
+
+        \node [WhiteNode] (A) at (A) {$ A $};
+        \node [WhiteNode] (B) at (B) {$ B $};
+        \node [WhiteNode] (C) at (C) {$ C $};
+        \node [WhiteNode] (D) at (D) {$ D $};
+        \node [WhiteNode] (E) at (E) {$ E $};
+        \node [WhiteNode] (F) at (F) {$ F $};
+
+        \path [->] (A) edge node [EdgeNode] {$ 14 $} (B);
+        \path [->] (A) edge node [EdgeNode] {$ 9 $} (C);
+        \path [->] (A) edge node [EdgeNode] {$ 7 $} (D);
+        \path [->] (B) edge node [EdgeNode] {$ 9 $} (F);
+        \path [->] (C) edge node [EdgeNode] {$ 2 $} (B);
+        \path [->] (C) edge node [EdgeNode] {$ 11 $} (E);
+        \path [->] (D) edge node [EdgeNode] {$ 15 $} (E);
+        \path [->] (E) edge node [EdgeNode] {$ 6 $} (F);
+    \end{tikzpicture}
+\end{center}
+
+
+** Amélioration du parcours en profondeur
+
+- Il faut modifier l'algorithme du parcours en profondeur.
+  + Poids sur chaque sommet: Somme des poids du chemin jusqu'au sommet.
+  + La file d'éléments doit être triée par les sommets de moins grande valeur.
+
+- On obtient l'*algorithme de Dijkstra*!
+
+
+* Algorithme de Djikstra
+
+** Algorithme de Djikstra
+
+*** Algorithme de Djikstra
+   
+\begin{columns}<0->
+    \begin{column}<0->{0.42\columnwidth}
+
+        \begin{algorithm}[H]
+            \KwData{Graphe $G$, sommet $v$}
+            \KwResult{$G$ valué aux sommets}
+        
+            \( \) \\
+            \ForEach{\( v \in V(G) \)}{
+                \( \mbox{d}(v) \gets \infty \) \;
+                \( \mbox{c}(v) \gets \mbox{BLANC} \) \;
+            }
+            \( \mbox{d}(s) \gets 0 \) \;
+            \( \mbox{c}(v) \gets \mbox{NOIR} \) \;
+        \end{algorithm}
+
+    \end{column}
+    \begin{column}<0->{0.48\columnwidth}
+
+        \begin{algorithm}[H]
+            \While{\( F \neq \emptyset \)}{
+                \( v \gets \mbox{ExtraireMinDistance}(F) \) \;
+                \ForEach{\( w \in \Adj{v} \)}{
+                    \If{\( \mbox{c}(w) = \mbox{BLANC} \)}{
+                        \If{\( \mbox{d}(w) = \infty \)}{
+                            \( \mbox{Inserer}(F, w) \) \;
+                        }
+                        \( \min(\mbox{d}(w), \mbox{d}(v) + \mbox{d}(e_{vw})) \) \;
+                    }
+                }
+                \( \mbox{c}(v) \gets \mbox{NOIR} \) \;
+            }
+        \end{algorithm}
+
+    \end{column}
+\end{columns}
+
+
+** Application de l'algorithme de Djikstra
+
+*** Application de l'algorithme de Djikstra
+
+\begin{columns}<0->
+    \begin{column}<0->{0.65\columnwidth}
+
+        \begin{center}
+            \begin{tikzpicture}
+                \coordinate (A) at (2, 0);
+                \coordinate (B) at (0, 2);
+                \coordinate (C) at (2, 2);
+                \coordinate (D) at (4, 1);
+                \coordinate (E) at (4, 3);
+                \coordinate (F) at (2, 4);
+
+                \node [WhiteNode] (A) at (A) {$ A $};
+                \node [WhiteNode] (B) at (B) {$ B $};
+                \node [WhiteNode] (C) at (C) {$ C $};
+                \node [WhiteNode] (D) at (D) {$ D $};
+                \node [WhiteNode] (E) at (E) {$ E $};
+                \node [WhiteNode] (F) at (F) {$ F $};
+
+                \node<1->    [GrayNode] (A) at (A) {$ A $};
+                \node<2-3>   [GrayNode, Surligned] (A) at (A) {$ A $};
+                \node<3->    [GrayNode] (B) at (B) {$ B $};
+                \node<3->    [GrayNode] (C) at (C) {$ C $};
+                \node<3->    [GrayNode] (D) at (D) {$ D $};
+                \node<4-5>   [GrayNode, Surligned] (B) at (B) {$ B $};
+                \node<5->    [GrayNode] (F) at (F) {$ F $};
+                \node<6-7>   [GrayNode, Surligned] (C) at (C) {$ C $};
+                \node<7->    [GrayNode] (E) at (E) {$ E $};
+                \node<8-9>   [GrayNode, Surligned] (D) at (D) {$ D $};
+                \node<10-11> [GrayNode, Surligned] (F) at (F) {$ F $};
+                \node<12-13> [GrayNode, Surligned] (E) at (E) {$ E $};
+
+                \path [->] (A) edge node [EdgeNode] {$ 14 $} (B);
+                \path [->] (A) edge node [EdgeNode] {$ 9 $} (C);
+                \path [->] (A) edge node [EdgeNode] {$ 7 $} (D);
+                \path [->] (B) edge node [EdgeNode] {$ 9 $} (F);
+                \path [->] (C) edge node [EdgeNode] {$ 2 $} (B);
+                \path [->] (C) edge node [EdgeNode] {$ 11 $} (E);
+                \path [->] (D) edge node [EdgeNode] {$ 15 $} (E);
+                \path [->] (E) edge node [EdgeNode] {$ 6 $} (F);
+            \end{tikzpicture}
+        \end{center}
+
+    \end{column}
+    \begin{column}<0->{0.35\columnwidth}
+
+        \only<1>{\( F = \{ A \} \)}
+        \only<2>{\( F = \{ \} \)}
+        \only<3>{\( F = \{ B, C, D \} \)}
+        \only<4>{\( F = \{ C, D \} \)}
+        \only<5>{\( F = \{ C, D, F \} \)}
+        \only<6>{\( F = \{ D, F \} \)}
+        \only<7>{\( F = \{ D, F, E \} \)}
+        \only<8-9>{\( F = \{ F, E \} \)}
+        \only<10-11>{\( F = \{ E \} \)}
+        \only<12->{\( F = \{ \} \)}
+
+        \only<1>{\( L = \{ \} \)}
+        \only<2-3>{\( L = \{ A \} \)}
+        \only<4-5>{\( L = \{ A, B \} \)}
+        \only<6-7>{\( L = \{ A, B, C \} \)}
+        \only<8-9>{\( L = \{ A, B, C, D \} \)}
+        \only<10-11>{\( L = \{ A, B, C, D, F \} \)}
+        \only<12->{\( L = \{ A, B, C, D, F, E \} \)}
+
+    \end{column}
+\end{columns}
+
+
+
+* Voyons d'autres algorithmes!
+
+** Quelques exemples
+
+- Algorithme de Ford (Bellman-Ford):
+  - Fonctionne avec des circuits, avec des poids négatifs
+  - Il peut même détecter les circuits négatifs
+
+- Refaisons le ~302separation~ avec l'algorithme de Floyd-Warshall
