@@ -1,0 +1,830 @@
+#+TITLE: 101pong - Vectors and Video Games
+#+SUBTITLE: Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Rappels en Géométrie: Fondamentaux
+
+** Définition: Point
+
+- Un *point* est le plus petit *élément* en géométrie:
+  - Il n'a aucun volume, aucune épaisseur...
+
+\vfill
+
+- _Exemple:_ Deux points $A$ et $B$.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (3, 0);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+\end{ctikz}
+
+
+** Définition: Droite
+
+- Par deux points *distincts* passe qu'une seule *droite*.
+  - Une *droite* est un ensemble *illimité* de points *alignés*.
+
+- Deux droites sont *sécantes* si elles ont au moins un point en commun.
+  - Ce point est appelé l'*intersection*.
+
+\vfill
+
+- _Exemple:_
+  - Par les deux points $A$ et $C$ passe une seule droite, noté $(AC)$.
+  - Les droites $(AC)$ et $(BC)$ ont le point $C$ en commun: Elles sont sécantes.
+
+
+\begin{ctikz}
+    \coordinate (A) at (1, 1);
+    \coordinate (B) at (1, 0.25);
+    \coordinate (C) at (4, 1);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+    \draw (C) node[cross] {} node[above] {$ C $};
+
+    \draw (0, 1) -- (8, 1) node[above left] {$ (AC) $};
+    \draw (0, 0) -- (8, 2) node[left] {$ (BC) $};
+\end{ctikz}
+
+
+** Définition: Segment
+
+- Un *segment de droite* est une portion de droite délimitée par deux points.
+
+\vfill
+
+- _Exemple:_ Le segment de la droite $(AB)$ délimitée par deux points $A$ et $B$, noté $[AB]$.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (3, 0);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+
+    \draw [thick] (0, 0) -- (3, 0) node[midway, above] {$ [AB] $};
+
+    \draw (-2, 0) -- (5, 0) node[above left] {$ (AB) $};
+\end{ctikz}
+
+
+** Définition: Demi-Droite
+
+- Une *demi-droite* est une portion de droite limitée d'un seul côté par un point.
+   - Ce point est appelé l'*origine* de la demi-droite.
+
+\vfill
+
+- _Exemple:_ La demi-droite $[AB)$.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (3, 0);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+
+    \draw (0, 0) -- (5, 0) node[above left] {$ [AB) $};
+\end{ctikz}
+
+
+** Définition: Parallélisme
+
+- Deux droites ne sont pas sécantes si elles n'ont aucun point en commun.
+  - Sur un plan, deux droites qui ne sont pas sécantes sont *parallèles*.
+
+\vfill
+
+- _Exemple:_
+  - Les droites $(AB)$ et $(CD)$ n'ont aucun point en commun: Elles sont parallèles.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 1);
+    \coordinate (B) at (3, 1);
+
+    \coordinate (C) at (1, 0);
+    \coordinate (D) at (2, 0);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+    \draw (C) node[cross] {} node[above] {$ C $};
+    \draw (D) node[cross] {} node[above] {$ D $};
+
+    \draw (-2, 1) -- (5, 1) node[above left] {$ (AB) $};
+    \draw (-2, 0) -- (5, 0) node[above left] {$ (CD) $};
+\end{ctikz}
+
+
+** Définition: Angles
+
+- Un angle est formé de *deux demi-droites* de *même origine*.
+  - Cette origine est appelé le sommet de l'angle.
+  - Les demi-droites sont appelés les côtés de l'angle.
+
+- Un angle représente l'*amplitude de l'ouverture* formée de ces deux demi-droites.
+  - Cette angle se mesure en *degré* ou en *radian*.
+
+\vfill
+
+- _Exemple:_ Les deux demi-droites $[AB)$ et $[AC)$ forment l'angle $\ang{BAC}$ ($\ang{A}$).
+
+\begin{ctikz}
+    \coordinate (A) at (2, 0);
+    \coordinate (B) at (0, 0);
+    \coordinate (C) at (4, .75);
+
+    \draw pic[Angle] {angle=C--A--B};
+
+    \draw (A) node[cross] {} node[below right] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+    \draw (C) node[cross] {} node[above] {$ C $};
+
+    \draw (2, 0) -- (-2, 0) node[above right] {$ [AB) $};
+    \draw (2, 0) -- (6, 1.5) node[left] {$ [AC) $};
+\end{ctikz}
+
+
+** Définition: Perpendicularité
+
+- Deux droites sont *perpendiculaires* si l'intersection forme 4 angles, d'amplitude *égales*.
+  - On nomme ces angles, des *angles droits*.
+
+\vfill
+
+- _Exemple:_ Les 4 angles sont tous égaux.
+  - Les droites $(AB)$ et $(CD)$ sont perpendiculaires.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 1);
+    \coordinate (B) at (2, 0);
+    \coordinate (O) at (0, 0);
+
+    \draw (.3, 0) |- (0, .3);
+    \draw (-.3, 0) |- (0, -.3);
+
+    \draw (O) node[cross] {} node[above left] {$ O $};
+
+    \draw (-3, 0) -- (3, 0) node [above right] {$ (AB) $};
+    \draw (0, -.7) -- (0, 1.5) node[right] {$ (CD) $};
+\end{ctikz}
+
+
+** Définition: Triangle
+
+- Un *triangle* est une figure formée par trois points non confondus, appelés *sommets*, et reliés par trois segments, appelés *côtés*.
+
+\vfill
+
+- _Exemple:_ Un triangle $ABC$ formé par les points $A$, $B$ et $C$.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 1);
+    \coordinate (B) at (1, 2);
+    \coordinate (C) at (3, 0);
+
+    \draw (A) node[cross] {} node[above left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+    \draw (C) node[cross] {} node[above right] {$ C $};
+
+    \draw (A) -- (B) -- (C) -- (A);
+\end{ctikz}
+
+
+** Définition: Triangle rectangle
+
+- Un *triangle rectangle* est un triangle dont l'un des angle est un angle droit.
+  - On appelle *hypothénuse*, le *côté opposé* à l'angle droit.
+
+\vfill
+
+- _Exemple:_ Un triangle $ABC$ formé par les points $A$, $B$ et $C$, et l'angle $\ang{A}$ est un angle droit.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (0, 1);
+    \coordinate (C) at (3, 0);
+
+    \draw (A) node[cross] {} node[above left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+    \draw (C) node[cross] {} node[above right] {$ C $};
+
+    \draw (.3, 0) |- (0, .3);
+    \draw (A) -- (B) -- (C) -- (A);
+\end{ctikz}
+
+
+** Définition: Cosinus et Sinus
+
+- Dans un triangle rectangle, on défini deux *rapports de longueurs* des côtés du triangle.
+  - Le *cosinus*: \( \frac{\mbox{côté adjacent à l'angle}}{\mbox{hypothénuse}} \) \qquad et le *sinus*: \( \frac{\mbox{côté opposé à l'angle}}{\mbox{hypothénuse}} \)
+
+\vfill
+
+- _Exemple:_ Un triangle $ABC$ formé par les points $A$, $B$ et $C$, et l'angle $\ang{A}$ est un angle droit.
+  - \( \cos(\ang{C}) = \dfrac{AC}{BC} \qquad \sin(\ang{C}) = \dfrac{AB}{BC} \)
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (0, 1);
+    \coordinate (C) at (3, 0);
+
+    \draw pic[Angle] {angle=B--C--A};
+    \draw (A) node[cross] {} node[above left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+    \draw (C) node[cross] {} node[above right] {$ C $};
+
+    \draw (.3, 0) |- (0, .3);
+    \draw (A) -- (B) -- (C) -- (A);
+\end{ctikz}
+
+
+* Rappels en Géométrie: Lycée
+
+** Définition: Vecteur
+
+- Un *vecteur* $\vec{u}$ est caractérisé par:
+  - Une direction.
+  - Un sens.
+  - Une longueur, noté \( \norm{\vec{u}} \), appelé *la norme*.
+
+\vfill
+
+- _Exemple:_ Deux vecteurs $\vec{u}$ et $\vec{v}$.
+
+\begin{ctikz}
+    \draw [->, thick] (0, 0) -- (2, 1) node[Vector] {$ \vec{u} $};
+    \draw [->, thick] (4, .5) -- (6, .5) node[Vector] {$ \vec{v} $};
+\end{ctikz}
+
+
+** Exemple: Vecteur
+
+- Un *vecteur* entre le point $A$ et $B$, noté $\vec{AB}$, est caractérisé par:
+  - Une direction: Droite $(AB)$. $\vec{AB}$ est un *vecteur directeur* de $(AB)$.
+  - Un sens: Du point $A$ vers le point $B$.
+  - Une longueur: La longueur du segment $[AB]$.
+
+- On définit le *vecteur nul*, noté $\vec{0}$, un vecteur d'une longueur 0, n'ayant ni sens, ni direction.
+
+\vfill
+
+- _Exemple:_
+  - Entre les points $A$ et $B$, on définit le vecteur $\vec{AB}$.
+  - Le point $D$ est obtenu par application du vecteur $\vec{AB}$ sur le point $C$.
+
+\begin{ctikz}
+    \coordinate (A) at (0, 0);
+    \coordinate (B) at (3, 0);
+
+    \coordinate (C) at (5, 0);
+    \coordinate (D) at (8, 0);
+
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+    \draw (C) node[cross] {} node[above] {$ C $};
+    \draw (D) node[cross] {} node[above] {$ D $};
+
+    \draw (-2, 0) -- (10, 0);
+
+    \draw [->, thick] (0, 0) -- (3, 0) node[Vector] {$ \vec{AB} $};
+    \draw [->, thick] (5, 0) -- (8, 0) node[Vector] {$ \vec{AB} $};
+\end{ctikz}
+
+
+** Définition: Égalité de vecteurs
+
+- Deux vecteurs sont égaux s'ils ont la *même direction*, le *même sens* ainsi que la *même longueur*.
+  - Deux vecteurs ont la même direction si et seulement si leurs droites sont *parallèles*.
+
+\vfill
+
+- _Exemples:_
+  - Les vecteurs $\vec{u}$ et $\vec{v}$ sont égaux.
+  - Les vecteurs $\vec{u}$ et $\vec{w}$ ne sont pas égaux: Ils n'ont pas la même direction.
+  - Les vecteurs $\vec{u}$ et $\vec{x}$ ne sont pas égaux: Ils n'ont pas le même sens.
+  - Les vecteurs $\vec{u}$ et $\vec{y}$ ne sont pas égaux: Ils n'ont pas la même longueur.
+
+\begin{ctikz}
+    \draw [->, thick] (0, .5) -- (2, .5) node[Vector] {$ \vec{u} $};
+    \draw [->, thick] (7, 1) -- (9, 1) node[Vector] {$ \vec{v} $};
+    \draw [->, thick] (3, -.5) -- (3, 1.5) node[Vector] {$ \vec{w} $};
+    \draw [->, thick] (6, 1) -- (4, 1) node[Vector] {$ \vec{x} $};
+    \draw [->, thick] (4, 0) -- (9, 0) node[Vector] {$ \vec{y} $};
+\end{ctikz}
+
+
+** Définition: Somme de vecteurs
+
+- Une *somme de vecteurs* \( \vec{u} + \vec{v} \) est l'enchaînement d'une translation du vecteur $\vec{u}$ puis d'une translation du vecteur $\vec{v}$.
+
+\vfill
+
+- _Exemple:_
+
+\begin{ctikz}
+    \draw [->, thick] (0, 0) -- (2, 2) node[Vector] {$ \vec{u} $};
+    \draw [->, thick] (3.5, 1) -- (6.5, 1) node[Vector] {$ \vec{v} $};
+
+    \draw [gray, dashed, ->, thick] (8, 0) -- (10, 2) node[Vector] {$ \vec{u} $};
+    \draw [gray, dashed, ->, thick] (10, 2) -- (13, 2) node[Vector] {$ \vec{v} $};
+    \draw [->, thick] (8, 0) -- (13, 2) node[Vector] {$ \vec{u} + \vec{v} $};
+\end{ctikz}
+
+\vfill
+
+- _Remarque:_ Inégalité triangulaire
+  \[ \norm{\vec{u} + \vec{v}} \leq \norm{\vec{u}} + \norm{\vec{v}} \]
+
+
+
+** Définition: Multiplication d'un vecteur par un scalaire
+
+- Le *produit du vecteur* $\vec{u}$ par le *scalaire* $k$, noté \( k \cdot \vec{u} \), tel que:
+  - Si \( \vec{u} = 0 \mbox{ ou } k = 0 \), alors \( k \cdot \vec{u} = \vec{0} \).
+
+  - Si \( \vec{u} \neq 0 \mbox{ et } k > 0 \), alors $\vec{u}$ et \( k \cdot \vec{u} \) ont la *même direction* et le *même sens*, et
+    - \( \norm{k \cdot \vec{u}} = k \cdot \norm{\vec{u}} \)
+
+  - Si \( \vec{u} \neq 0 \mbox{ et } k < 0 \), alors $\vec{u}$ et \( k \cdot \vec{u} \) ont la *même direction* et des *sens opposés*, et
+    - \( \norm{k \cdot \vec{u}} = - k \cdot \norm{\vec{u}} \)
+
+\vfill
+
+- _Exemple:_ Un vecteur $\vec{u}$ multiplié par les scalaires $-1$ et $3$.
+
+\begin{ctikz}
+    \draw [->, thick] (4, 1) -- (6, 1) node[Vector] {$ \vec{u} $};
+    \draw [->, thick] (0, 0) -- (7, 0) node[Vector] {$ 3 \cdot \vec{u} $};
+    \draw [->, thick] (3, 1) -- (1, 1) node[Vector] {$ -1 \cdot \vec{u} $};
+\end{ctikz}
+
+
+** Définition: Colinéarité
+
+- Deux vecteurs sont *colinéaires* s'il existe un scalaire $k$ tel que \( \vec{v} = k \cdot \vec{u} \).
+  - _Remarque:_ Deux vecteurs sont *colinéaires* s'ils ont la même direction.
+
+\vfill
+
+- _Exemple:_
+  - Le vecteur $\vec{u}$ est colinéaire au vecteur $\vec{v}$.
+  - Le vecteur $\vec{u}$ n'est pas colinéaire au vecteur $\vec{w}$.
+
+\begin{ctikz}
+    \draw [->, thick] (2, 1) -- (4, 1) node[Vector] {$ \vec{u} $};
+    \draw [->, thick] (6, 0) -- (0, 0) node[Vector] {$ \vec{v} $};
+    \draw [->, thick] (6, 1) -- (8, 0) node[Vector] {$ \vec{w} $};
+\end{ctikz}
+
+
+** Définition: Plan
+
+- Un *plan* est défini par *un point et deux vecteurs non colinéaires*.
+
+\vfill
+
+- _Exemple_: Définissons un plan avec:
+  - Un point $O$, appelé l'*origine*.
+  - Un vecteur $\vec{i}$ et un vecteur $\vec{j}$, non colinéaires.
+
+
+\begin{ctikz}
+    \clip (-1, -.7) rectangle + (5.2, 3.2);
+
+    \draw [Grid] (-2, -1) grid[ystep=0, xstep=2] (5, 5);
+    \draw [Grid, rotate=20] (-2, -1) grid[xstep=0] (5, 5);
+
+    \coordinate (O) at (0, 0);
+
+    \draw (O) node[cross] {};
+    \draw (O) node[below left] {$ O $};
+
+    \draw [->, thick] (0, 0) -- (2, .7) node[midway, above] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+\end{ctikz}
+
+
+** Définition: Repère
+
+- Un *repère cartésien* est constitué d'un point et de vecteurs et permet d'identifier par un *couple de coordonnées* chaque point.
+
+\vfill
+
+- _Exemple_: Définissons un plan avec:
+  - Un point $O$ et deux vecteurs non colinéaires $\vec{i}$ et $\vec{j}$.
+  - Muni d'un repère cartésien "logique": \( (O; \vec{i}, \vec{j}) \).
+
+\begin{ctikz}
+    \clip (-1, -.7) rectangle + (5.2, 3.2);
+
+    \draw [Grid] (-2, -1) grid[ystep=0, xstep=2] (5, 5);
+    \draw [Grid, rotate=20] (-2, -1) grid[xstep=0] (5, 5);
+
+    \coordinate (O) at (0, 0);
+
+    \draw (O) node[cross] {};
+    \draw (O) node[below left] {$ O $};
+
+    \draw [->, thick] (0, 0) -- (2, .7) node[midway, above] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+\end{ctikz}
+
+
+** Définition: Coordonnées d'un point
+
+- Dans un repère cartésien, pour tout point, il *existe* un *unique* couple de coordonnées cartésiennes permettant de l'identifier.
+
+\vfill
+
+- _Exemple:_ Dans le repère \( (O; \vec{i}, \vec{j}) \), le couple de coordonnées (1, 1) permet d'identifier le point $A$: \( \vec{OA} = 1 \cdot \vec{i} + 1 \cdot \vec{j} \)
+
+\begin{ctikz}
+    \clip (-1, -.7) rectangle + (5.2, 3.2);
+
+    \draw [Grid] (-2, -1) grid[ystep=0, xstep=2] (5, 5);
+    \draw [Grid, rotate=20] (-2, -1) grid[xstep=0] (5, 5);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1.8);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[above] {$ A(1; 1) $};
+
+    \draw [->, thick] (0, 0) -- (2, .7) node[midway, above] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+\end{ctikz}
+
+
+** Exemple: Coordonnées de points
+
+ - \( \vec{OA} = 1 \cdot \vec{i} + 1 \cdot \vec{j} \qquad \vec{OB} = 2 \cdot \vec{i} - 1 \cdot \vec{j} \qquad \vec{OC} = \dfrac{3}{2} \cdot \vec{i} + 0 \cdot \vec{j} \)
+ - \( A = (1; 1) \qquad B = (2; -1) \qquad C = (\dfrac{3}{2}; 0) \)
+
+\vfill
+
+\begin{ctikz}
+    \clip (-1, -.7) rectangle + (5.2, 3.2);
+
+    \draw [Grid] (-2, -1) grid[ystep=0, xstep=2] (5, 5);
+    \draw [Grid, rotate=20] (-2, -1) grid[xstep=0] (5, 5);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1.8);
+    \coordinate (B) at (4, 0.4);
+    \coordinate (C) at (3, 1.1);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[above] {$ A $};
+    \draw (B) node[cross] {} node[above] {$ B $};
+    \draw (C) node[cross] {} node[above] {$ C $};
+
+    \draw [->, thick] (0, 0) -- (2, .7) node[midway, above] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+\end{ctikz}
+
+
+** Définition: Orthogonalité
+
+- Deux vecteurs sont *orthogonaux* si les droites formées par ces vecteurs sont perpendiculaires.
+
+- Un repère est *orthogonal* lorsqu'il est constitué qu'avec des vecteurs orthogonaux.
+
+\vfill
+
+- _Exemple:_ Un repère cartésien orthogonal.
+
+\begin{ctikz}
+    \draw [Grid] (-1, -.7) grid[ystep=1, xstep=2] (5.2, 2.2);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[above] {$ A(1; 1) $};
+
+    \draw (.3, 0) |- (0, .3);
+
+    \draw [->, thick] (0, 0) -- (2, 0) node[midway, below] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+\end{ctikz}
+
+
+** Définition: Orthonormalité
+
+- Deux vecteurs orthogonaux sont *orthonormaux* si les vecteurs ont une longueur de 1 (norme de 1).
+
+- Un repère est *orthonormal* lorsqu'il est constitué qu'avec des vecteurs orthogonormaux.
+
+\vfill
+
+- _Exemple:_ Un repère cartésien orthonormal.
+
+\begin{ctikz}
+    \draw [Grid] (-.9, -.9) grid (3.9, 1.9);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (1, 1);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[above] {$ A(1; 1) $};
+
+    \draw [->, thick] (0, 0) -- (1, 0) node[midway, below] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+    \draw (.3, 0) |- (0, .3);
+\end{ctikz}
+
+
+** Définition: Coordonnées d'un vecteur
+
+- Les *coordonnées d'un vecteur* $\vec{AB}$ correspondent à \( \colvec{x_{B} - x_{A},y_{B} - y_{A}} \).
+
+\vfill
+
+- _Exemple:_ Prenons $A(2; 1)$ et $B(4; 2)$. Alors, \( \vec{AB} = \colvec{2, 1} \).
+
+\begin{ctikz}
+    \draw [Grid] (-1.3, -.7) grid (4.2, 2.8);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1);
+    \coordinate (B) at (4, 2);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[below left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+
+    \draw [->, thick] (2, 1) -- (4, 2) node[Vector] {$ \vec{AB} $};
+
+    \draw [dashed] (2, 1) -- (2, 0) node[below] {$ x_{A} $};
+    \draw [dashed] (4, 2) -- (4, 0) node[below] {$ x_{B} $};
+    \draw [dashed] (2, 1) -- (0, 1) node[left]  {$ y_{A} $};
+    \draw [dashed] (4, 2) -- (0, 2) node[left]  {$ y_{B} $};
+
+    \draw (.3, 0) |- (0, .3);
+    \draw [->, thick] (0, 0) -- (1, 0) node[midway, below] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+    \draw (-1.3, 0) -- (5.2, 0) node[below] {$ x $};
+    \draw (0, -.7) -- (0, 2.8) node[left] {$ y $};
+\end{ctikz}
+
+
+** Définition: Norme d'un vecteur
+
+- La *norme d'un vecteur* $\vec{AB}$ vaut \( \sqrt{(x_{B} - x_{A})^{2} + (y_{B} - y_{A})^{2}} \).
+
+\vfill
+
+- _Exemple:_ Prenons $A(2; 1)$ et $B(4; 2)$.
+  - Alors, \( \norm{\vec{AB}} = AB = \sqrt{(4 - 2)^{2} + (2 - 1)^{2}} = \sqrt{2^{2} + 1^{2}} = \sqrt{4 + 1} = \sqrt{5} \).
+  - De plus, comme \( \vec{AB} = \colvec{2, 1} \), alors \( \norm{\vec{AB}} = \sqrt{2^{2} + 1^{2}} = \sqrt{5} \).
+
+\begin{ctikz}
+    \draw [Grid] (-1.3, -.7) grid (5.2, 2.8);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1);
+    \coordinate (B) at (4, 2);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[below left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+
+    \draw [->, thick] (2, 1) -- (4, 2) node[Vector] {$ \vec{AB} $};
+
+    \draw [dashed] (2, 1) -- (2, 0) node[below] {$ x_{A} $};
+    \draw [dashed] (4, 2) -- (4, 0) node[below] {$ x_{B} $};
+    \draw [dashed] (2, 1) -- (0, 1) node[left]  {$ y_{A} $};
+    \draw [dashed] (4, 2) -- (0, 2) node[left]  {$ y_{B} $};
+
+    \draw (.3, 0) |- (0, .3);
+    \draw [->, thick] (0, 0) -- (1, 0) node[midway, below] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+    \draw (-1.3, 0) -- (5.2, 0) node[below] {$ x $};
+    \draw (0, -.7) -- (0, 2.8) node[left] {$ y $};
+\end{ctikz}
+
+
+** Explication: Norme d'un vecteur
+
+- _Théorème de Pythagore:_ Le carré de l'*hypothénuse* est égal au carré des deux autres côtes.
+  - \( AB^{2} = AC^{2} + BC^{2} \).
+  - \( \iff AB = \sqrt{AC^{2} + BC^{2}} \iff AB = \sqrt{(x_{B} - x_{A})^{2} + (y_{B} - y_{A})^{2}} \).
+
+\vfill
+
+\begin{ctikz}
+    \draw [Grid] (-1.3, -.7) grid (5.2, 2.8);
+
+    \coordinate (O) at (0, 0);
+    \coordinate (A) at (2, 1);
+    \coordinate (B) at (4, 2);
+    \coordinate (C) at (4, 1);
+
+    \draw (O) node[cross] {} node[below left] {$ O $};
+    \draw (A) node[cross] {} node[below left] {$ A $};
+    \draw (B) node[cross] {} node[above right] {$ B $};
+
+    \draw [->, thick] (2, 1) -- (4, 2) node[Vector] {$ \vec{AB} $};
+
+    \draw [dashed] (2, 1) -- (2, 0) node[below] {$ x_{A} $};
+    \draw [dashed] (4, 2) -- (4, 0) node[below] {$ x_{B} $};
+    \draw [dashed] (2, 1) -- (0, 1) node[left]  {$ y_{A} $};
+    \draw [dashed] (4, 2) -- (0, 2) node[left]  {$ y_{B} $};
+
+    \draw (.3, 0) |- (0, .3);
+    \draw [->, thick] (0, 0) -- (1, 0) node[midway, below] {$ \vec{i} $};
+    \draw [->, thick] (0, 0) -- (0, 1) node[midway, left] {$ \vec{j} $};
+    \draw (-1.3, 0) -- (5.2, 0) node[below] {$ x $};
+    \draw (0, -.7) -- (0, 2.8) node[left] {$ y $};
+
+    \draw [red, thick] (0, 1) -- (0, 2);
+    \draw [red, thick] (4, 1) -- (4, 2);
+    \draw [blue, thick] (2, 0) -- (4, 0);
+    \draw [blue, thick] (2, 1) -- (4, 1);
+
+    \draw (3.7, 1) |- (4, 1.3);
+    \draw (C) node[cross] {} node[below right] {$ C $};
+\end{ctikz}
+
+
+** Reformulation: Coordonnées d'un point
+
+- Reformulons mathématiquement: Dans un repère, pour tout point, il *existe* un *unique* couple de coordonnées permettant de l'identifier.
+
+\vfill
+
+- Sur une droite muni du repère \( (O; \vec{i}) \)
+  \[ \forall A \in \set{R}, \exists ! x : \vec{OA} = \vec{i} \cdot x \]
+
+\vfill
+
+- Sur un plan muni du repère \( (O; \vec{i}, \vec{j}) \)
+  \[ \forall A \in \set{R}^{2}, \exists ! (x, y) : \vec{OA} = \vec{i} \cdot x + \vec{j} \cdot y \]
+
+
+* Soyons des grands: Passons à la 3ème dimension
+
+** Définition: Espace à 3 dimensions
+
+- Un *espace à 3 dimensions* est défini par un point et *trois vecteurs* non colinéaires.
+
+\vfill
+
+- _Exemple_: Définissons un espace 3 dimensions \( (O; \vec{x}, \vec{y}, \vec{z}) \).
+
+\begin{ctikz}
+    \drawGridSpace* 4 2 2;
+
+    \drawPointSpace* (A) 2 1 1 (A(2; 1; 1));
+\end{ctikz}
+
+
+** Reformulation: Coordonnées d'un point
+
+- Reformulons mathématiquement: Dans un repère, pour tout point, il *existe* un *unique* couple de coordonnées permettant de l'identifier.
+
+\vfill
+
+- Sur un espace 3-dimensions muni du repère \( (O; \vec{x}, \vec{y}, \vec{z}) \)
+  \[ \forall A \in \set{R}^{3}, \exists ! (x, y, z) : \vec{OA} = \vec{x} \cdot x + \vec{y} \cdot y + \vec{z} \cdot z \]
+
+\vfill
+
+- Sur un espace n-dimensions muni du repère \( (O; \vec{i_{1}}, \vec{i_{2}}, ..., \vec{i_{n}}) \)
+  \begin{align*}
+      \forall A \in \set{R}^{n}, \exists ! (x_{1}, x_{2}, ..., x_{n}) : \vec{OA} &= \vec{i_{1}} \cdot x_{1} + \vec{i_{2}} \cdot x_{2} + ... + \vec{i_{n}} \cdot x_{n} \\
+                                                                                 &= \sum_{k = 1}^{n}{\vec{i_{k}} \cdot x_{k}}
+  \end{align*}
+
+
+* Passons au projet: 101pong
+
+** Illustration
+
+- Prenons \( p_{0} = (2; 1; 3) \) et \( p_{1} = (3; 1; 2) \).
+  - \( \vec{v} = \colvec{1, 0, 1} \) et \( \norm{\vec{v}} = \sqrt{1^{2} + 1^{2}} = \sqrt{2} \)
+
+\vfill
+
+\begin{ctikz}
+    \draw [opacity=0.1, fill=blue] (0, 0, 0) -- (6, 0, 0) -- (6, 2, 0) -- (0, 2, 0);
+
+    \drawGridSpace* 6 2 4;
+
+    \drawPointSpace* [below left] (p0) 2 1 3;
+    \drawPointSpace* (p1) 3 1 2;
+
+    \draw [ultra thick, ->] (p0) -- (p1) node[Vector] {$ \vec{v} $};
+
+    \draw          (p1) -- (5, 1, 0);
+    \draw [dashed] (5, 1, 0) -- (6, 1, -1);
+    \draw [dashed] (5, 1, 0) -- (6, 1, -1);
+
+    \drawPointSpace (I) 5 1 0;
+\end{ctikz}
+
+
+** Angle d'incidence: Revenons sur un plan
+
+- La *droite normale* à une surface en un point est la droite perpendiculaire en ce point.
+  - Tout vecteur directeur de cette droite est appelé *vecteur normal*.
+
+- L'*angle d'incidence* est l'angle formée du *rayon incident* et de la normale.
+
+\vfill
+
+- _Exemple:_ Le rayon incident $\vec{v}$ avec un vecteur normal $\vec{n}$.
+
+\begin{ctikz}
+    \draw [Grid] (-1.9, -.7) grid[xstep=2, ystep=2] (2.9, 2.9);
+    \draw [opacity=0.1, fill=blue] (-1.9, -.7) -- (-1.9, 0) -- (3.9, 0) -- (3.9, -.7);
+    \draw (-1.9, 0) -- (3.9, 0);
+
+    \coordinate (I) at (0, 0);
+    \coordinate (J) at (2, 2);
+    \coordinate (K) at (0, 2);
+    \draw (I) node[cross] {} node[below left] {$ I $};
+
+    \draw [->, thick] (I) -- (K) node[below left] {$ \vec{n} $};
+    \draw (-.3, 0) |- (0, .3);
+
+    \draw [->, thick] (J) -- (I) node[Vector] {$ \vec{v} $};
+    \draw pic[Angle] {angle=J--I--K};
+\end{ctikz}
+
+
+** Angle d'incidence: Trouvons l'angle
+
+- Formons un triangle rectangle $IJK$, d'angle $\ang{K}$ droit.
+  - \( \cos(\ang{I}) = \dfrac{IK}{IJ} \iff \cos(\ang{I}) = \dfrac{\norm{\vec{n}}}{\norm{\vec{v}}}\iff \cos^{-1}(\cos(\ang{I})) = \cos^{-1}(\dfrac{\norm{\vec{n}}}{\norm{\vec{v}}}) \)
+  - \( \iff \ang{I} = \arccos(\dfrac{\norm{\vec{n}}}{\norm{\vec{v}}}) \)
+
+\vfill
+
+\begin{ctikz}
+    \draw [Grid] (-1.9, -.7) grid[xstep=2, ystep=2] (3.9, 2.9);
+    \draw [opacity=0.1, fill=blue] (-1.9, -.7) -- (-1.9, 0) -- (3.9, 0) -- (3.9, -.7);
+    \draw (-1.9, 0) -- (3.9, 0);
+
+    \coordinate (I) at (0, 0);
+    \coordinate (J) at (2, 2);
+    \coordinate (K) at (0, 2);
+    \draw (I) node[cross] {} node[below left] {$ I $};
+    \draw (J) node[cross] {} node[above right] {$ J $};
+    \draw (K) node[cross] {} node[above left] {$ K $};
+    \draw (I) -- (J) -- (K) -- (I);
+    \draw (0, 1.7) -| (.3, 2);
+
+    \draw [->, thick] (I) -- (K) node[below left] {$ \vec{n} $};
+    \draw (-.3, 0) |- (0, .3);
+
+    \draw [->, thick] (J) -- (I) node[Vector] {$ \vec{v} $};
+    \draw pic[Angle] {angle=J--I--K};
+\end{ctikz}
+
+
+** Illustration
+
+- Prenons \( p_{0} = (2; 1; 3) \) et \( p_{1} = (3; 1; 2) \).
+  - \( \ang{I} = \arccos\left( \dfrac{\norm{\vec{n}}}{\norm{\vec{v}}} \right) = \arccos\left( \dfrac{\sqrt{0^{2}A + 1^{2} + 0^{2}}}{\sqrt{1^{2} + 0^{2} + 1^{2}}} \right) = \arccos\left( \dfrac{1}{\sqrt{2}} \right) = \dfrac{\pi}{4} \)
+
+\vfill
+
+\begin{ctikz}
+    \draw [opacity=0.1, fill=blue] (0, 0, 0) -- (6, 0, 0) -- (6, 2, 0) -- (0, 2, 0);
+
+    \drawGridSpace* 6 2 4;
+
+    \drawPointSpace* [below left] (p0) 2 1 3;
+    \drawPointSpace* (p1) 3 1 2;
+
+    \draw [ultra thick, ->] (p0) -- (p1) node[Vector] {$ \vec{v} $};
+
+    \draw (p1) -- (5, 1, 0);
+    \draw [dashed] (5, 1, 0) -- (6, 1, -1);
+    \draw [dashed] (5, 1, 0) -- (6, 1, -1);
+
+    \drawPoint (I) 5 1 0;
+
+    \drawPointSpace* [below left] (K) 5 1 1;
+    \draw [ultra thick, ->] (I) -- (K) node[below, midway, sloped] {$ \vec{n} $};
+    \draw pic[Angle] {angle=p0--I--K};
+\end{ctikz}
+
+
+* Faisons un peu de Python!
