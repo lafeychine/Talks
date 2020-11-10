@@ -1,0 +1,152 @@
+#+TITLE: 101pong - Vectors and Video Games - Follow-Up
+#+SUBTITLE: Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Faisons les exemples du sujet
+
+** ~./101pong 1 3 5 7 9 -2 4~
+
+- \( t_{-1} = \colvec{1, 3, 5} \) et \( t_{0} = \colvec{7, 9, -2} \).
+
+- Vecteur vitesse: \( \colvec{7 - 1, 9 - 3, -2 - 5} = \colvec{6, 6, -7} \).
+
+- Au temps \( t + 4 \): \( \colvec{7 + 4 \cdot 6, 9 + 4 \cdot 6, -2 + 4 \cdot -7} = \colvec{31, 33, -30} \).
+
+
+** ~./101pong 1 3 5 7 9 -2 4~: Angle d'incidence
+
+\begin{ctikz}[scale=0.3]
+    \draw [Grid, thin] (-3.9, -8.9) grid[xstep=5, ystep=5] (14.9, 5.9);
+    \draw [Grid, ultra thin] (-3.9, -8.9) grid (14.9, 5.9);
+    \draw (0, 0) node[cross] {} node[below left] {$ O $};
+
+    \draw [opacity=0.1, fill=blue] (-4, -.7) -- (-4, 0) -- (15, 0) -- (15, -.7);
+    \draw (-4, 0) -- (15, 0);
+
+    \coordinate (p0) at (1, 5);
+    \coordinate (p1) at (7, -2);
+    \coordinate (p2) at (13, -7);
+
+    \draw (p0) node[cross] {} node[below left] {$ t_{-1} $};
+    \draw (p1) node[cross] {} node[below left] {$ t_{0} $};
+
+    \draw [->, thick] (p1) -- (p2) node[Vector] {$ \vec{v} $};
+\end{ctikz}
+
+- La balle ne va pas toucher le mur.
+
+
+** ~./101pong 1.1 3 5 -7 9 2 4~
+
+- \( t_{-1} = \colvec{1.1, 3, 5} \) et \( t_{0} = \colvec{-7, 9, 2} \).
+
+- Vecteur vitesse: \( \colvec{-7 - 1.1, 9 - 3, 2 - 5} = \colvec{-8.1, 6, -3} \).
+
+- Au temps \( t + 4 \): \( \colvec{-7 + 4 \cdot -8.1, 9 + 4 \cdot 6, 2 + 4 \cdot -3} = \colvec{-39.4, 33, -10} \)
+
+
+** ~./101pong 1.1 3 5 -7 9 2 4~: Angle d'incidence
+
+\begin{ctikz}[scale=0.3]
+    \draw [Grid, thin] (-17.9, -2.9) grid[xstep=5, ystep=5] (4.9, 7.9);
+    \draw [Grid, ultra thin] (-17.9, -2.9) grid (4.9, 7.9);
+    \draw (0, 0) node[cross] {} node[below left] {$ O $};
+
+    \draw [opacity=0.1, fill=blue] (-18, -.7) -- (-18, 0) -- (5, 0) -- (5, -.7);
+    \draw (-18, 0) -- (5, 0);
+
+    \coordinate (p0) at (1.1, 5);
+    \coordinate (p1) at (-7, 2);
+    \coordinate (p2) at (-15.1, -1);
+
+    \draw (p0) node[cross] {} node[above left] {$ t_{-1} $};
+    \draw (p1) node[cross] {} node[above left] {$ t_{0} $};
+
+    \draw [->, thick] (p1) -- (p2) node[Vector] {$ \vec{v} $};
+
+    \draw (-12.5, 0) node[cross] {} node[above left] {$ I $};
+\end{ctikz}
+
+\vfill
+
+- La balle va toucher le mur.
+
+
+** ~./101pong 1.1 3 5 -7 9 2 4~: Angle d'incidence
+
+\begin{ctikz}[scale=0.5]
+    \draw [Grid, thin] (-1.9, -.9) grid (9.9, 4.9);
+
+    \coordinate (V) at (8.1, 3);
+    \coordinate (I) at (0, 0);
+    \coordinate (N) at (0, 3);
+    \coordinate (O) at (1, 0);
+
+    \draw (I) node[cross] {} node[below left] {$ I $};
+
+    \draw [opacity=0.1, fill=blue] (-2, -.7) -- (-2, 0) -- (10, 0) -- (10, -.7);
+    \draw (-2, 0) -- (10, 0);
+
+    \draw [->, thick] (V) -- (I) node[Vector] {$ \vec{v} $};
+
+    \draw [->, thick] (I) -- (N) node[left, midway] {$ \vec{n} $};
+
+    \draw (N) -- (V);
+    \draw (0, 2.4) -| (.6, 3);
+
+    \draw<1-1> pic[Angle] {angle=V--I--N};
+    \draw<2-2> pic[Angle] {angle=O--I--V};
+\end{ctikz}
+
+\vfill
+
+- Angle d'incidence: \( \arccos{\ang{I}} = \dfrac{\norm{\vec{n}}}{\norm{\vec{v}}} = \dfrac{\sqrt{0^{2} + 0^{2} + 3^{2}}}{\sqrt{-8.1^{2} + 6^{2} + -3^{2}}} \approx 1.28 \mbox{ rad} \).
+- Transformation en degré: \( 1.28 \cdot \dfrac{360}{2 \pi} = 1.28 \cdot \dfrac{180}{\pi} \approx 73.42^{\circ} \).
+- <2-2> Résultat attendu: \( | 90^{\circ} - 73.42^{\circ} | \approx 16.57^{\circ} \)
+  
+
+* Python
+
+** Affichage en Python
+
+#+BEGIN_SRC python :exports both :results output
+pos_x = -39.4
+pos_y = 33
+pos_z = -10
+
+print(f"({pos_x:.2f}, {pos_y:.2f}, {pos_z:.2f})")
+#+END_SRC
+
+#+RESULTS:
+: (-39.40, 33.00, -10.00)
+
+
+** Utilisation de la librairie Mathématiques
+
+#+BEGIN_SRC python :exports both :results output
+from math import acos, sqrt, pi
+
+vect_x = -8.1
+vect_y = 6
+vect_z = -3
+
+n = sqrt(pow(vect_x, 2) + pow(vect_y, 2) + pow(vect_z, 2))
+incidence_angle_rad = acos(vect_z / n)
+incidence_angle = incidence_angle_rad * (180 / pi)
+angle = abs(90 - incidence_angle)
+print(f"{angle:.2f}")
+#+END_SRC
+
+#+RESULTS:
+: 16.57
