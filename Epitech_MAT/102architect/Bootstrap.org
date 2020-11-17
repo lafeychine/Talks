@@ -1,0 +1,894 @@
+#+TITLE: 102architect - Home planning and homogeneous coordinates
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Matrix.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+
+* Transformation géométrique: La théorie
+
+** Transformation géométrique
+
+- Une *transformation géométrique* est un *automorphisme* d'une partie d'un ensemble géométrique.
+  
+\vfill
+
+- _Reformulons:_
+  + Une transformation géométrique est une *application linéaire* modifiant un *élément initial* d'un ensemble géométrique.
+  + Cette application permet d'obtenir un *élément image* dans ce *même* ensemble géométrique.
+  + Toute transformation géométrique d'un élément image permet d'*obtenir* un *unique* élément image.
+
+ 
+* Transformation géométrique: La pratique via un système d'équation
+
+** Image et plan cartésien
+
+- Réprésentons les images dans un plan orthonormal muni d'un repère.
+  + Chaque pixel de l'image représente un point.
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<1->
+
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<1->
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<1->
+
+    \end{column}
+\end{columns}
+
+
+** Application d'une transformation
+
+Appliquons une transformation:
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+
+            \drawPoint* <3-4> (A) 1 1;
+            \drawPoint* <5-6> (A) 1 {-1};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = x, y' = -y } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node <7-> (0, 0) [yscale=-1] { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+
+            \drawPoint* <3-4> (A) 1 1;
+            \drawPoint* <4-4> [above left] (B) 1 {-1};
+
+            \drawPoint* <5-6> [above left] (A) 1 {-1};
+            \drawPoint* <6-6> (B) 1 1;
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Compositions de transformations
+
+Appliquons deux transformations:
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = -x, y' = y } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<2->
+
+        \begin{ctikz}[scale=.5]
+            \node <3-> (0, 0) [xscale=-1] { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<4->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = x, y' = 2y } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<4->
+
+        \begin{ctikz}[scale=.5]
+            \node <5-> (0, 0) [xscale=-1] { \includesvg[distort, width=2cm, height=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+
+\end{columns}
+
+
+** Combinaisons de transformations
+
+Appliquons une transformation: Une composé de transformations
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.6\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 1) -- (3, 1) node [midway, above] { \systeme*{ x' = -x, y' = y } };
+            \draw [->, very thick] (4, 1) -- (7, 1) node [midway, above] { \systeme*{ x' = x, y' = 2y } };
+
+            \draw <2-> [->, very thick] (0, 0) -- (7, 0) node [midway, below] { \systeme*{ x' = -x, y' = 2y } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) [xscale=-1] { \includesvg[distort, width=2cm, height=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+
+\end{columns}
+
+
+* Matrices
+
+** Définition: Matrices
+
+- Une *matrice* à $m$ lignes et $n$ colonnes est un tableau rectangle de \( m \times n \) nombres.
+  - Ces nombres sont appelés les *coefficients* de la matrice.
+
+\vfill
+
+- _Exemple:_ Une matrice $A$ de taille \( (m, n) \). \( A = \mathcal{M}_{m, n} \).
+
+\begin{center}
+    \( A =
+        \begin{pmatrix}
+            a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+            a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+            \vdots  & \vdots  & \ddots & \vdots  \\
+            a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+        \end{pmatrix}
+    \)
+\end{center}
+
+
+** Définition: Produit matriciel
+
+- Le *produit matriciel* désigne l'opération de multiplication de matrices.
+
+- Soit $A$ et $B$, deux matrices. Le produit matriciel \( A \cdot B \) n'est possible que lorsque le nombre de colonnes de $A$ est égale au nombre de lignes de $B$.
+
+  \vfill
+
+- Soit \( A = (A_{ij}) \in \mathcal{M}_{m, n} \) et \( B = B_{ij} \in \mathcal{M}_{n, p} \), \\
+  Le produit matriciel \( A \cdot B = C = (c_{ij}) \in \mathcal{M}_{m, p} \): \pause
+  \begin{align*}
+      \forall i, j : c_{ij} &= \sum_{k = 1}^{n} a_{ik}b_{kj} \\
+                            &= a_{i1}b_{1j} + a_{i2}b_{2j} + ... + a_{in}b_{nj}
+  \end{align*}
+  
+
+** Exemple: Produit matriciel
+
+\( A \cdot B = C \iff \forall i, j : c_{ij} = \displaystyle\sum_{k = 1}^{n} a_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + ... + a_{in}b_{nj} \)
+
+\vfill
+
+_Exemple:_ Multiplication de deux matrices \( \mathcal{M}_{3,2} \times \mathcal{M}_{2,4} \) donnant une matrice \( \mathcal{M}_{3,4} \). 
+
+\begin{columns}
+    \begin{column}{0.7\textwidth}<0->
+
+        \begin{ctikz}[ampersand replacement=\&]
+            \matrix <1-2> (A) [Matrix] at (0, 0) {
+                a_{1,1} \& a_{1,2} \\
+                a_{2,1} \& a_{2,2} \\
+                a_{3,1} \& a_{3,2} \\
+            };
+
+            \matrix <1-2> (B) [Matrix] at (4, 2) {
+                b_{1,1} \& b_{1,2} \& b_{1,3} \& b_{1,4} \\
+                b_{2,1} \& b_{2,2} \& b_{2,3} \& b_{2,4} \\
+            };
+
+            \matrix <3-> (AN) [Matrix] at (0, 0) {
+                1 \& 2 \\
+                3 \& 4 \\
+                5 \& 6 \\
+            };
+
+            \matrix <3-> (BN) [Matrix] at (4, 2) {
+                2 \& 3 \& 4 \& 5 \\
+                4 \& 5 \& 6 \& 7 \\
+            };
+
+            \matrix (C) [Matrix] at (4, 0) {
+                \only<1-4>{c_{1,1}} \& \only<1-7>{c_{1,2}} \& \only<1-10>{c_{1,3}} \& \only<1-13>{c_{1,4}} \\
+                \only<1-16>{c_{2,3}} \& \only<1-19>{c_{2,2}} \& \only<1-22>{c_{2,3}} \& \only<1-25>{c_{2,4}} \\
+                \only<1-28>{c_{3,1}} \& \only<1-31>{c_{3,2}} \& \only<1-34>{c_{3,3}} \& \only<1-37>{c_{3,4}} \\
+            };
+
+            \matrix (CN) [matrix of math nodes, nodes = {minimum width=.9cm, minimum height=.7cm}] at (4, 0) {
+                \only<5->{10} \& \only<8->{13} \& \only<11->{16} \& \only<14->{19} \\
+                \only<17->{22} \& \only<20->{29} \& \only<23->{36} \& \only<26->{43} \\
+                \only<29->{34} \& \only<32->{45} \& \only<35->{56} \& \only<38->{67} \\
+            };
+
+            \draw <2-14> [ColorLine=blue] (A-1-1.base west) to (C-1-4.base east);
+            \draw <15-26> [ColorLine=blue] (A-2-1.base west) to (C-2-4.base east);
+            \draw <27-38> [ColorLine=blue] (A-3-1.base west) to (C-3-4.base east);
+
+            \draw <2-5,15-17,27-29>   [ColorLine=red]  (B-1-1.mid) to (C-3-1.base);
+            \draw <6-8,18-20,30-32>   [ColorLine=red]  (B-1-2.mid) to (C-3-2.base);
+            \draw <9-11,21-23,33-35>  [ColorLine=red]  (B-1-3.mid) to (C-3-3.base);
+            \draw <12-14,24-26,36-38> [ColorLine=red]  (B-1-4.mid) to (C-3-4.base);
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.3\textwidth}<0->
+
+        \begin{align*}
+            \only<2-5>{
+                c_{1, 1} &= \sum_{k=1}^{n} a_{1k}b_{k1} \\
+                         &= a_{1,1}b_{1,1} + a_{1,2}b_{2,1} \\
+                \onslide<4-> {
+                         &= 1 \cdot 2 + 2 \cdot 4 = 10 \\
+                }
+            }
+            \only<6-8>{
+                c_{1, 2} &= \sum_{k=1}^{n} a_{1k}b_{k2} \\
+                         &= a_{1,1}b_{1,2} + a_{1,2}b_{2,2} \\
+                \onslide<7-> {
+                         &= 1 \cdot 3 + 2 \cdot 5 = 13 \\
+                }
+            }
+            \only<9-11>{
+                c_{1, 3} &= \sum_{k=1}^{n} a_{1k}b_{k3} \\
+                         &= a_{1,1}b_{1,3} + a_{1,2}b_{2,3} \\
+                \onslide<10-> {
+                         &= 1 \cdot 4 + 2 \cdot 6 = 16 \\
+                }
+            }
+            \only<12-14>{
+                c_{1, 4} &= \sum_{k=1}^{n} a_{1k}b_{k2} \\
+                         &= a_{1,1}b_{1,4} + a_{1,2}b_{2,4} \\
+                \onslide<13-> {
+                         &= 1 \cdot 5 + 2 \cdot 7 = 19 \\
+                }
+            }
+            \only<15-17>{
+                c_{2, 1} &= \sum_{k=1}^{n} a_{2k}b_{k1} \\
+                         &= a_{2,1}b_{1,1} + a_{2,2}b_{2,1} \\
+                \onslide<16-> {
+                         &= 3 \cdot 2 + 4 \cdot 4 = 22 \\
+                }
+            }
+            \only<18-20>{
+                c_{2, 2} &= \sum_{k=1}^{n} a_{2k}b_{k2} \\
+                         &= a_{2,1}b_{1,2} + a_{2,2}b_{2,2} \\
+                \onslide<19-> {
+                         &= 3 \cdot 3 + 4 \cdot 5 = 29 \\
+                }
+            }
+            \only<21-23>{
+                c_{2, 3} &= \sum_{k=1}^{n} a_{2k}b_{k3} \\
+                         &= a_{2,1}b_{1,3} + a_{2,2}b_{2,3} \\
+                \onslide<22-> {
+                         &= 3 \cdot 4 + 4 \cdot 6 = 36 \\
+                }
+            }
+            \only<24-26>{
+                c_{2, 4} &= \sum_{k=1}^{n} a_{2k}b_{k2} \\
+                         &= a_{2,1}b_{1,4} + a_{2,2}b_{2,4} \\
+                \onslide<25-> {
+                         &= 3 \cdot 5 + 4 \cdot 7 = 43 \\
+                }
+            }
+            \only<27-29>{
+                c_{3, 1} &= \sum_{k=1}^{n} a_{3k}b_{k1} \\
+                         &= a_{3,1}b_{1,1} + a_{3,2}b_{2,1} \\
+                \onslide<16-> {
+                         &= 5 \cdot 2 + 6 \cdot 4 = 34 \\
+                }
+            }
+            \only<30-32>{
+                c_{3, 2} &= \sum_{k=1}^{n} a_{3k}b_{k2} \\
+                         &= a_{3,1}b_{1,2} + a_{3,2}b_{2,2} \\
+                \onslide<19-> {
+                         &= 5 \cdot 3 + 6 \cdot 5 = 45 \\
+                }
+            }
+            \only<33-35>{
+                c_{3, 3} &= \sum_{k=1}^{n} a_{3k}b_{k3} \\
+                         &= a_{3,1}b_{1,3} + a_{3,2}b_{2,3} \\
+                \onslide<22-> {
+                         &= 5 \cdot 4 + 6 \cdot 6 = 56 \\
+                }
+            }
+            \only<36-38>{
+                c_{3, 4} &= \sum_{k=1}^{n} a_{3k}b_{k2} \\
+                         &= a_{3,1}b_{1,4} + a_{3,2}b_{2,4} \\
+                \onslide<25-> {
+                         &= 5 \cdot 5 + 6 \cdot 7 = 67 \\
+                }
+            }
+        \end{align*}
+
+    \end{column}
+\end{columns}
+
+
+* Transformation géométrique: La pratique via des matrices
+
+** Exemple: Représentation forme matrices
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.6\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (7, 0) node [midway, above] { \systeme*{ x' = -x, y' = 2y } };
+            \draw <2-> [->, very thick] (0, 0) -- (7, 0) node [midway, below] { \(
+                \begin{pmatrix}x' \\ y'\end{pmatrix}
+                    =
+                \underbrace{\begin{pmatrix}-1 & 0 \\ 0 & 2\end{pmatrix}}_{ A }
+                \begin{pmatrix}x \\ y\end{pmatrix}
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) [xscale=-1] { \includesvg[distort, width=2cm, height=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+\vfill
+
+- La matrice $A$ est la matrice de transformation: \( X' = AX \).
+
+
+** Produit de matrices: Compositions de transformations
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw      [->, very thick] (0, 0) -- (3, 0) node [midway, above] { f = \systeme*{ x' = -x, y' = y } };
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}-1 & 0 \\ 0 & 1\end{pmatrix}}_{ A }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) [xscale=-1] { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (3, 0) node [midway, above] { g = \systeme*{ x' = x, y' = 2y } };
+            \draw <3-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}1 & 0 \\ 0 & 2\end{pmatrix}}_{ B }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node (0, 0) [xscale=-1] { \includesvg[distort, width=2cm, height=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+
+\end{columns}
+
+\vfill
+
+- Lorsque $A$ et $B$ représentent respectivement les applications linéaires $f$ et $g$:
+  + Alors \( A \cdot B \) représente la composition des applications \( f \circ g \).
+
+
+
+* Transformation: Scaling
+
+** Agrandissement
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \(
+                \only<1-2>{ \begin{pmatrix}1 & 0 \\ 0 & 1\end{pmatrix} }
+                \only<3-4>{ \begin{pmatrix}2 & 0 \\ 0 & 1\end{pmatrix} }
+                \only<5-6>{ \begin{pmatrix}1 & 0 \\ 0 & 2\end{pmatrix} }
+                \only<7-8>{ \begin{pmatrix}2 & 0 \\ 0 & 2\end{pmatrix} }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node <2> (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+            \node <4> [xscale=2] (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+            \node <6> [yscale=2] (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+            \node <8> [xscale=2, yscale=2] (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-3} {2.5} {3};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Rétrécissement
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \(
+                \only<1-2>{ \begin{pmatrix}1 & 0 \\ 0 & 1\end{pmatrix} }
+                \only<3-4>{ \begin{pmatrix}0.5 & 0 \\ 0 & 1\end{pmatrix} }
+                \only<5-6>{ \begin{pmatrix}1 & 0 \\ 0 & 0.5\end{pmatrix} }
+                \only<7-8>{ \begin{pmatrix}0.5 & 0 \\ 0 & 0.5\end{pmatrix} }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node <2> (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+            \node <4> [xscale=.5] (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+            \node <6> [yscale=.5] (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+            \node <8> [xscale=.5, yscale=.5] (0, 0) { \includesvg[width=4cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-3} {2.5} {3};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+* Transformation: Rotation
+
+** Exemple: Matrice de rotation
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = ?, y' = ? } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm, angle=45]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Cercle trigonométrique
+
+- Le *cercle trigonométrique* est un cercle dont le *rayon est égal à 1* et qui est centré sur l'origine du repère.
+
+\begin{columns}
+    \begin{column}{0.6\textwidth}<0->
+
+        \begin{ctikz}[scale=2]
+            \drawGrid* {-1.3} {-1.3} {1.5} {1.3}
+            \draw (0, 0) circle (1cm);
+
+            \draw <2-2> [<->, thick] (0, 0) -- (-0.5, -0.8660256) node [midway, sloped, above] {$ 1 $};
+
+            \drawPoint <3-> [below left] (O) {0} {0};
+            \drawPoint <3-> (A) {1} {0};
+            \drawPoint <3-> (B) {0} {1};
+
+
+            \drawPoint <4-> (A2) {.8660256} {.5} (A');
+            \node <5-> at (O) [above right=-1mm and 2mm] {$ \alpha $};
+            \draw <5-> pic[Angle, scale=1.3] {angle=A--O--A2};
+            \draw <5-> (O) -- (A2);
+
+            \drawPoint <6-14> [below] (M) {.8660256} {0};
+            \draw <6-> (A2) -- (M);
+            \draw <6-> (0.8660256, .1) -| (0.76, 0);
+
+            \draw <9-> [blue, very thick] (O) -- (M) node [midway, below] {$ \cos( \alpha ) $};
+            \draw <13-> [red, very thick] (M) -- (A2) node [midway, right] {$ \sin( \alpha ) $};
+
+
+            \drawPoint <15-> (B2) {-.5} {.8660256} (B');
+            \node <15-> at (O) [above left=2mm and -1.5mm] {$ \alpha $};
+            \draw <15-> pic[Angle, scale=1.3] {angle=B--O--B2};
+            \draw <15-> (O) -- (B2);
+
+            \drawPoint <16-> [right] (M2) {0} {.8660256} (M');
+            \draw <16-> (B2) -- (M2);
+            \draw <16-> (-.1, 0.8660256) |- (0, 0.76);
+
+            \draw <17-> [blue, very thick] (O) -- (M2);
+            \draw <17-> [red, very thick] (B2) -- (M2);
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \only<7-13>{
+            \begin{align*}
+                \only<7-9>{
+                    \cos( \alpha ) &= \dfrac{OM}{OA'} \\
+                    \onslide<8->{
+                                   &= OM \mbox{, car \( OA' = 1 \)}
+                    }
+                }
+                \only<11-13>{
+                    \sin( \alpha ) &= \dfrac{MA'}{OA'} \\
+                    \onslide<12->{
+                                   &= MA' \mbox{, car \( OA' = 1 \)}
+                    }
+                }
+            \end{align*}
+        }
+
+        \only<18->{ \(
+            R_{\alpha} =
+            \begin{pmatrix}
+                \cos( \alpha ) & - \sin( \alpha ) \\
+                \sin( \alpha ) & \cos( \alpha ) \\
+            \end{pmatrix}
+        \) }
+
+    \end{column}
+\end{columns}
+
+
+** Exemple: Matrice de rotation
+
+\begin{columns}
+    \begin{column}{0.3\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (4, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}\cos(45) & - \sin(45) \\ \sin(45) & \cos(45)\end{pmatrix}}_{ R_{45^{\circ}} }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.3\textwidth}<0->
+
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm, angle=45]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+* Transformation: Réflexion
+
+** Exemple: Matrice de réflexion
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = -x, y' = y } } node [midway, below] { \(
+                \begin{pmatrix}-1 & 0 \\ 0 & 1\end{pmatrix}
+            \) };
+
+            \draw <4> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = x, y' = -y } } node [midway, below] { \(
+                \begin{pmatrix}1 & 0 \\ 0 & -1\end{pmatrix}
+            \) };
+
+            \draw <6> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = y, y' = x } } node [midway, below] { \(
+                \begin{pmatrix}0 & 1 \\ 1 & 0\end{pmatrix}
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node <1-2> [xscale=-1] (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+            \node <3-4> [yscale=-1] (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+            \node <5-6> [yscale=-1] (0, 0) { \includesvg[width=3cm, angle=-90]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+
+            \draw <1-2> [red, very thick] (0, -2.2) -- (0, 2.2);
+            \draw <3-4> [red, very thick] (-2.2, 0) -- (2.2, 0);
+            \draw <5-6> [red, very thick] (-2.2, -2.2) -- (2.2, 2.2);
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Généralisons
+
+\begin{columns}
+    \begin{column}{0.3\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (4, 0) node [midway, below] { \(
+                \begin{pmatrix}\cos(2 \cdot \alpha) & \sin(2 \cdot \alpha) \\ \sin(2 \cdot \alpha) & - \cos(2 \cdot \alpha)\end{pmatrix}
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.3\textwidth}<0->
+
+        \begin{ctikz}
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+
+            \coordinate (A) at (2, 1.5);
+            \coordinate (B) at (2, 0);
+            \coordinate (O) at (0, 0);
+
+            \draw [red, very thick] (-2, -1.5) -- (2, 1.5);
+
+            \node at (O) [above right=-1mm and 2mm] {$ \alpha $};
+            \draw pic[Angle, scale=1.3] {angle=B--O--A};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+
+* Transformation: Translation
+
+** Exemple: Translation
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { \systeme*{ x' = x, y' = y + 1 } };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \node [anchor=base] (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Coordonnées homogènes
+
+- Utilisons un nouveau *degré de liberté* afin de représenter la translation.
+  
+\begin{columns}
+    \begin{column}{0.3\textwidth}<0->
+    
+        \begin{ctikz}
+            \node (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<0->
+
+        \begin{ctikz}
+            \draw [->, very thick] (0, 0) -- (5, 0) node [midway, above] { \systeme*{ x' = x, y' = y + 1 } } node [midway, below] { \(
+                 \onslide<3->{
+                    \begin{pmatrix}x' \\ y' \\ w'\end{pmatrix}
+                        =
+                    \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1\end{pmatrix}
+                    \begin{pmatrix}x \\ y \\ 1\end{pmatrix}
+                }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.3\textwidth}<0->
+
+        \begin{ctikz}
+            \node [anchor=base] (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2} {-2.5} {2} {2.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+* Reformulons le sujet
+
+** Reformulons
+
+- Il vous est demandé:
+  + De lister l'ensemble des transformations.
+  + Calculer (via le calcul matriciel) la transformation:
+    - Afficher la matrice \( 3 \times 3 \).
+    - À partir d'un point donné: Afficher le point obtenu.
+
+
+* Passons au Python
+
+** Passons au Python
+
+- Annotations de types:
+  + Installation: ~pip install --user mypy~
+  + Utilisation: ~mypy fichier.py~
+
+- Formattage (~black~):
+  + Installation: ~pip install --user black~
+  + Utilisation: ~black fichier.py~
+ 
