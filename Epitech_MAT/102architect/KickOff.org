@@ -1,0 +1,94 @@
+#+TITLE: 102architect - Home planning and homogeneous coordinates
+#+SUBTITLE: [Kick-Off] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:1 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Objectifs du sujet
+
+- Implémentation de transformations géométriques
+  + Translation (Déplacement)
+  + Agrandissement / Rétrécissement
+  + Rotation
+  + Réflexion
+
+- Implémentation de ces transformations via des matrices
+
+
+* Exemple
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}<1->
+
+        \begin{ctikz}[scale=.8]
+            \node <1-> (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* <1-> {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<1->
+
+        \begin{ctikz}
+            \draw <2-2> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Identité };
+            \draw <3-3> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Déplacement };
+            \draw <4-4> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Agrandissement };
+            \draw <5-5> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Rétrécissement };
+            \draw <6-6> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Rotation };
+            \draw <7-7> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { Réflexion } node [midway, below] { Symétrie axiale };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}<1->
+
+        \begin{ctikz}[scale=.8]
+            \node <2-2> at (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+            \node <3-3> [anchor=south west] at (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+            \node <4-4> at (0, 0) { \includesvg[width=3cm]{../Epitech_Logo.svg} };
+            \node <5-5> at (0, 0) { \includesvg[width=1.5cm]{../Epitech_Logo.svg} };
+            \node <6-6> at (0, 0) { \includesvg[width=2cm, angle=45]{../Epitech_Logo.svg} };
+            \node <7-7> [xscale=-1] at (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* <2-> {-2.5} {-2.5} {2.5} {2.5};
+        \end{ctikz}
+    \end{column}
+
+\end{columns}
+
+
+* Compétences Mathématiques
+
+- Considéré acquis:
+  + Géométrie fondamentale
+  + Vecteur: Coordonnées et normes
+
+\vfill
+
+- Nouvelles notions:
+  + Matrices
+  + Cercle trigonométrique
+  + Coordonnées homogènes
+
+
+* Compétences Python
+
+- Considéré acquis: (*Obligatoire*)
+  + Shebang (~#!/usr/bin/env python3~ en première ligne)
+  + Affichage via f-strings
+  + Code uniquement dans des fonctions
+  + Vérification des opérations mathématiques (Division par 0)
+  + Gestion des importations (~from _ import _, _, _~)
+
+\vfill
+
+- À acquérir avec le ~102architect~:
+  + Utilisation d'un formatteur (~Black~)
+  + Annotations de types primitifs en Python (~mypy~)
