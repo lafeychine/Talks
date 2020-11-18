@@ -1,0 +1,94 @@
+#+TITLE: 305construction - Backhoes and Scheduling
+#+SUBTITLE: Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Gestion de projet: Un peu d'Histoire
+
+* Gestion de projet: Un peu de vocabulaire
+
+** Vocubalaire
+
+- _MPM:_ Méthode des Potentiels Metra
+  + Algorithme d'ordonnancement
+  + Théorie des Graphes
+
+\vfill
+
+- _Diagramme de Gantt:_
+  + Représentation graphique de l'ordonnancement
+
+
+** Vocabulaire de l'Ordonnancement
+
+- _Projet:_ Ensemble de *tâches* réalisant le projet.
+
+\vfill
+
+- _Tâche:_ Unité de travail, comportant:
+  + Une durée afin d'effectuer la tâche.
+  + Une liste de *dépendances*
+
+- _Tâche dépendante:_ Par rapport à une tâche, une tâche qui doit être complétée avant de continuer.
+
+\vfill
+
+- _Chemin critique:_ Le *plus long chemin* entre la tâche initial et la tâche final.
+  + Le temps total du projet est défini par ce chemin critique.
+  + Un problème de délai sur le chemin critique provoque un ralentissement sur le temps de livraison.
+
+\vfill
+
+- _Date de début au plus tôt:_ Instant où la tâche peut être commencé au plus tôt.
+- _Date de début au plus tard:_ Instant où la tâche peut être commencé au plus tard.
+
+
+* Méthode des Potentiels Metra
+
+** Application: Modification du graphe
+
+- Le graphe est un *graphe orienté acyclique* composé:
+
+  + D'un *sommet* est composé:
+    - Le nom de la tâche
+    - La date de début au plus tôt
+    - La date de début au plus tard
+
+  + Un *arc* est composé de la durée de la tâche
+
+
+** Algorithme MPM
+
+- Tri topologique (cf. ~303make~)
+
+\vfill
+
+- Calcul des dates de début au plus tôt:
+  + Sommets pris par ordre topologique inversé
+    - Descendre les arcs
+  + En cas de conflit: Prendre le + grand
+
+\vfill
+
+- Calcul des dates de début au plus tard:
+  + Sommets pris par ordre topologique
+    - Remonter les arcs
+  + En cas de conflit: Prendre le + petit
+
+
+** Calcul du chemin critique
+
+- Chemin dont l'ensemble des sommets ont une date de début au plus tôt égal au date de début au plus tard. 
+
+
+* Diagramme de Gantt
+
+** Exemple
+
+- cf. Sujet ~305construction~
