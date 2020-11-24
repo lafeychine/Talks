@@ -1,0 +1,152 @@
+#+TITLE: 102architect - Home planning and homogeneous coordinates
+#+SUBTITLE: [Follow-Up] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Précision: Compositions de transformations
+
+** Commutativité de la composition de transformations
+
+- Prenons deux transformations $f$ et $g$ (de matrices respectives $F$ et $G$):
+  + <1-> Appliquons $f$, puis $g$.
+  + <8-> On a: \( X' = FX \) et \( X'' = GX' \).
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node at (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { f = \systeme*{ x' = x, y' = -y } };
+            \draw <6-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}}_{ F }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node <3-> at (0, 0) [yscale=-1] { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <4-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { g = \systeme*{ x'' = x', y'' = y' + 2 } };
+            \draw <7-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 2 \\ 0 & 0 & 1\end{pmatrix}}_{ G }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node <5-> at (0, 2) [yscale=-1] { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Commutativité de la composition de transformations
+
+- Prenons deux transformations $f$ et $g$ (de matrices respectives $F$ et $G$):
+  + <1-> Appliquons $g$, puis $f$.
+  + <6-> On a: \( X' = GX \) et \( X'' = FX' \).
+
+\vfill
+
+\begin{columns}
+    \begin{column}{0.2\textwidth}<0->
+    
+        \begin{ctikz}[scale=.5]
+            \node at (0, 0) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { g = \systeme*{ x' = x, y' = y + 2 } };
+            \draw <2-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 2 \\ 0 & 0 & 1\end{pmatrix}}_{ G }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node <3-> at (0, 2) { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}
+            \draw <4-> [->, very thick] (0, 0) -- (3, 0) node [midway, above] { f = \systeme*{ x'' = x', y'' = -y' } };
+            \draw <4-> [->, very thick] (0, 0) -- (3, 0) node [midway, below] { \(
+                \underbrace{\begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}}_{ F }
+            \) };
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.2\textwidth}<0->
+
+        \begin{ctikz}[scale=.5]
+            \node <5-> at (0, -2) [yscale=-1] { \includesvg[width=2cm]{../Epitech_Logo.svg} };
+
+            \drawGrid* {-2.5} {-4.5} {2.5} {4.5};
+        \end{ctikz}
+
+    \end{column}
+\end{columns}
+
+
+** Exemple: Représentation forme matrices
+
+- Lorsque $F$ et $G$ représentent respectivement les applications linéaires $f$ et $g$:
+  + Alors \( F \cdot G \) représente la composition des applications \( f \circ g \).
+
+\vfill
+
+- Prenons deux transformations $f$ et $g$ (de matrices respectives $F$ et $G$):
+  + Dans le cas où on applique $f$ puis $g$: \( g(f(x)) = (g \circ f)(x) \).
+    - On a: \( X' = F \cdot X \) et \( X'' = G \cdot X' \).
+    - Soit: \( X'' = G \cdot (F \cdot X) \)
+
+  + Dans le cas où on applique $g$ puis $f$: \( f(g(x)) = (f \circ g)(x) \).
+    - On a: \( X' = G \cdot X \) et \( X'' = F \cdot X' \).
+    - Soit: \( X'' = F \cdot (G \cdot X) \)
+
+
+* Passons au Python
