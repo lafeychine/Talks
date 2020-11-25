@@ -1,0 +1,320 @@
+#+TITLE: 306radiator - Plumbing and the Gauss Curve
+#+SUBTITLE: [Bootstrap] Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Analyse du sujet
+
+** Objectifs du sujet
+
+- Résolution de systèmes d'équations
+
+- Résolution via l'utilisation de Matrices
+  + Élimination de Gauss-Jordan (méthode du pivot de Gauss)
+
+
+** Comprendre le sujet
+
+- Un radiateur est placé dans un pièce carrée. Calculons la température obtenue dans cette pièce.
+
+\vfill
+
+- Posons $f$, la puissance émise par ce radiateur.
+  + Tout appel à la fonction $f$ donne $0$ sauf à la position du radiateur.
+  + À cette position, $f$ renvoie $-300$.
+
+
+** Comprendre le sujet: Dérivée partielles
+
+- Posons l'égalité de la chaleur:
+  + \( f(x, y) = \dfrac{\partial^{2} T}{\partial x^{2}}(x, y) + \dfrac{\partial^{2} T}{\partial y^{2}}(x, y) \)
+
+\vfill
+
+- Ainsi, on obtient:
+  + \( \dfrac{\partial^{2} T}{\partial x^{2}}(x_{i}, y_{j}) = \dfrac{ T(x_{i - 1}, y_{j}) - 2T(x_{i}, y_{j}) + T(x_{i + 1}, y_{j}) }{ h^{2} } \)
+  + \( \dfrac{\partial^{2} T}{\partial y^{2}}(x_{i}, y_{j}) = \dfrac{ T(x_{i}, y_{j - 1}) - 2T(x_{i}, y_{j}) + T(x_{i}, y_{j + 1}) }{ h^{2} } \)
+
+\vfill
+
+- La précision de la dérivée partielle $h$ est fixée à $0.5$.
+
+
+** Comprendre le sujet: Dérivée partielles
+
+- On obtient:
+  + \( \dfrac{\partial^{2} T}{\partial x^{2}}(x, y) + \dfrac{\partial^{2} T}{\partial y^{2}}(x, y) \)
+  + \( = \dfrac{ T(x_{i}, y_{j - 1}) + T(x_{i - 1}, y_{j}) - 4T(x_{i}, y_{i}) + T(x_{i + 1}, y_{j}) + T(x_{i}, y_{j + 1}) }{h^{2}} \)
+
+\vfill
+
+- Problème de dérivabilité!
+  + \( \forall i, j, \ 0 \ge i, j \ge N - 1: \)
+    - \( T(x_{0}, y_{j}) = T(x_{N - 1}, y_{j}) = 0 \)
+    - \( T(x_{i}, y_{0}) = T(x_{i}, y_{N - 1}) = 0 \)
+
+
+** Comprendre le système d'équation
+
+\tiny
+\fontsize{8}{8}
+
+\begin{equation*}
+    \begin{rcases}
+        \only<1>{
+            T(x_{0}, y_{0}) &= f(x_{0}, y_{0}) \\
+            T(x_{1}, y_{0}) &= f(x_{1}, y_{0}) \\
+            T(x_{2}, y_{0}) &= f(x_{2}, y_{0}) \\
+            T(x_{3}, y_{0}) &= f(x_{3}, y_{0}) \\
+            T(x_{0}, y_{1}) &= f(x_{0}, y_{1}) \\
+            (T(x_{1}, y_{0}) + T(x_{0}, y_{1}) - 4T(x_{1}, y_{1}) + T(x_{2}, y_{1}) + T(x_{1}, y_{2})) / h^{2} &= f(x_{1}, y_{1}) \\
+            (T(x_{2}, y_{0}) + T(x_{1}, y_{1}) - 4T(x_{2}, y_{1}) + T(x_{3}, y_{1}) + T(x_{2}, y_{2})) / h^{2} &= f(x_{2}, y_{1}) \\
+            T(x_{3}, y_{1}) &= f(x_{3}, y_{1}) \\
+            T(x_{0}, y_{2}) &= f(x_{0}, y_{2}) \\
+            (T(x_{1}, y_{1}) + T(x_{0}, y_{2}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) + T(x_{1}, y_{3})) / h^{2} &= f(x_{1}, y_{2}) \\
+            (T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) + T(x_{3}, y_{2}) + T(x_{2}, y_{3})) / h^{2} &= f(x_{2}, y_{2}) \\
+            T(x_{3}, y_{2}) &= f(x_{3}, y_{2}) \\
+            T(x_{0}, y_{3}) &= f(x_{0}, y_{3}) \\
+            T(x_{1}, y_{3}) &= f(x_{1}, y_{3}) \\
+            T(x_{2}, y_{3}) &= f(x_{2}, y_{3}) \\
+            T(x_{3}, y_{3}) &= f(x_{3}, y_{3})
+        }
+        \only<2>{
+            0 &= f(x_{0}, y_{0}) \\
+            0 &= f(x_{1}, y_{0}) \\
+            0 &= f(x_{2}, y_{0}) \\
+            0 &= f(x_{3}, y_{0}) \\
+            0 &= f(x_{0}, y_{1}) \\
+            -16T(x_{1}, y_{1}) + 4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) &= f(x_{1}, y_{1}) \\
+            4T(x_{1}, y_{1}) - 16T(x_{2}, y_{1}) + 4T(x_{2}, y_{2}) &= f(x_{2}, y_{1}) \\
+            0 &= f(x_{3}, y_{1}) \\
+            0 &= f(x_{0}, y_{2}) \\
+            4T(x_{1}, y_{1}) - 16T(x_{1}, y_{2}) + 4T(x_{2}, y_{2}) &= f(x_{1}, y_{2}) \\
+            4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) - 16T(x_{2}, y_{2}) &= f(x_{2}, y_{2}) \\
+            0 &= f(x_{3}, y_{2}) \\
+            0 &= f(x_{0}, y_{3}) \\
+            0 &= f(x_{1}, y_{3}) \\
+            0 &= f(x_{2}, y_{3}) \\
+            0 &= f(x_{3}, y_{3})
+        }
+        \only<3>{
+            -16T(x_{1}, y_{1}) + 4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) &= f(x_{1}, y_{1}) \\
+            4T(x_{1}, y_{1}) - 16T(x_{2}, y_{1}) + 4T(x_{2}, y_{2}) &= f(x_{2}, y_{1}) \\
+            4T(x_{1}, y_{1}) - 16T(x_{1}, y_{2}) + 4T(x_{2}, y_{2}) &= f(x_{1}, y_{2}) \\
+            4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) - 16T(x_{2}, y_{2}) &= f(x_{2}, y_{2})
+        }
+        \only<4>{
+            -16T(x_{1}, y_{1}) + 4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) &= -300 \\
+            4T(x_{1}, y_{1}) - 16T(x_{2}, y_{1}) + 4T(x_{2}, y_{2}) &= 0 \\
+            4T(x_{1}, y_{1}) - 16T(x_{1}, y_{2}) + 4T(x_{2}, y_{2}) &= 0 \\
+            4T(x_{2}, y_{1}) + 4T(x_{1}, y_{2}) - 16T(x_{2}, y_{2}) &= 0
+        }
+        \only<5>{
+            -4T(x_{1}, y_{1}) + T(x_{2}, y_{1}) + T(x_{1}, y_{2}) &= -75 \\
+            T(x_{1}, y_{1}) - 4T(x_{2}, y_{1}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<6>{
+            4T(x_{1}, y_{1}) &= T(x_{2}, y_{1}) + T(x_{1}, y_{2}) + 75 \\
+            T(x_{1}, y_{1}) - 4T(x_{2}, y_{1}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<7>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{1}, y_{1}) - 4T(x_{2}, y_{1}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<8>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            \left( \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \right) - 4T(x_{2}, y_{1}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<9>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            - \dfrac{15}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<10>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            \dfrac{15}{4}T(x_{2}, y_{1}) &= \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 + T(x_{2}, y_{2}) \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<11>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{1}) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<12>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            \left( \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \right) - 4T(x_{1}, y_{2}) + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<13>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            \dfrac{1}{4}T(x_{2}, y_{1}) - \dfrac{15}{4}T(x_{1}, y_{2}) + 18.75 + T(x_{2}, y_{2}) &= 0 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<14>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            \dfrac{15}{4}T(x_{1}, y_{2}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + 18.75 + T(x_{2}, y_{2}) \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<15>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{1}) + T(x_{1}, y_{2}) - 4T(x_{2}, y_{2}) &= 0
+        }
+        \only<16>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            4T(x_{2}, y_{2}) &= T(x_{2}, y_{1}) + T(x_{1}, y_{2})
+        }
+        \only<17>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{2}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2})
+        }
+        \only<18>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{2}) &= \dfrac{1}{4} \left( \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \right) + \dfrac{1}{4} \left( \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5) \right)
+        }
+        \only<19>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{2}) &= \left( \dfrac{1}{60}T(x_{1}, y_{2}) + \dfrac{4}{60}T(x_{2}, y_{2}) + 1.25 \right) + \left( \dfrac{1}{60}T(x_{2}, y_{1}) + \dfrac{4}{60}T(x_{2}, y_{2}) + 1.25) \right)
+        }
+        \only<20>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{2}) &= \dfrac{1}{60}T(x_{1}, y_{2}) + \dfrac{1}{60}T(x_{2}, y_{1}) + \dfrac{8}{60}T(x_{2}, y_{2}) + 2.5
+        }
+        \only<21>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            \dfrac{54}{60}T(x_{2}, y_{2}) &= \dfrac{1}{60}T(x_{1}, y_{2}) + \dfrac{1}{60}T(x_{2}, y_{1}) + 2.5
+        }
+        \only<22>{
+            T(x_{1}, y_{1}) &= \dfrac{1}{4}T(x_{2}, y_{1}) + \dfrac{1}{4}T(x_{1}, y_{2}) + 18.75 \\
+            T(x_{2}, y_{1}) &= \dfrac{1}{15}T(x_{1}, y_{2}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{1}, y_{2}) &= \dfrac{1}{15}T(x_{2}, y_{1}) + \dfrac{4}{15}T(x_{2}, y_{2}) + 5 \\
+            T(x_{2}, y_{2}) &= \dfrac{1}{54}T(x_{1}, y_{2}) + \dfrac{1}{54}T(x_{2}, y_{1}) + 2.77
+        }
+        \only<23>{
+            \dots &= \dots \ \\
+            \dots &= \dots \ \\
+            \dots &= \dots \ \\
+            \dots &= \dots \
+        }
+        \only<24>{
+            T(x_{1}, y_{1}) &= 21.9 \\
+            T(x_{2}, y_{1}) &= 6.3 \\
+            T(x_{1}, y_{2}) &= 6.3 \\
+            T(x_{2}, y_{2}) &= 3.1
+        }
+    \end{rcases}
+\end{equation*}
+
+\normalsize
+
+
+* Équation \( AX = B \)
+
+** Transformation du système d'équation
+
+- Pour avoir une équation de la forme \( AX = Y \), il faut définir deux vecteurs \( X \) et \( Y \).
+
+\vfill
+
+- Définissons:
+  + \( X = (T(x_{0}, y_{0}), T(x_{0}, y_{1}), T(x_{0}, y_{2}), T(x_{0}, y_{3}), T(x_{1}, y_{0}), \dots, T(x_{N - 1}, y_{N - 1})) \)
+  + \( Y = (f(x_{0}, y_{0}), f(x_{0}, y_{1}), f(x_{0}, y_{2}), f(x_{0}, y_{3}), f(x_{1}, y_{0}), \dots, f(x_{N - 1}, y_{N - 1})) \)
+
+
+** Comprendre le système d'équation
+
+\tiny
+\fontsize{8}{8}
+\begin{equation*}
+    \begin{rcases}
+        X_{0} &= Y_{0} \\
+        X_{1} &= Y_{1} \\
+        X_{2} &= Y_{2} \\
+        X_{3} &= Y_{3} \\
+        X_{4} &= Y_{4} \\
+        (X_{1} + X_{4} - 4X_{5} + X_{6} + X_{9}) / h^{2} &= Y_{5} \\
+        (X_{2} + X_{5} - 4X_{6} + X_{7} + X_{10}) / h^{2} &= Y_{6} \\
+        X_{7} &= Y_{7} \\
+        X_{8} &= Y_{8} \\
+        (X_{5} + X_{8} - 4X_{9} + X_{10} + X_{13}) / h^{2} &= Y_{9} \\
+        (X_{6} + X_{9} - 4X_{10} + X_{11} + X_{14}) / h^{2} &= Y_{10} \\
+        X_{11} &= Y_{11} \\
+        X_{12} &= Y_{12} \\
+        X_{13} &= Y_{13} \\
+        X_{14} &= Y_{14} \\
+        X_{15} &= Y_{15} \\
+    \end{rcases}
+\end{equation*}
+\normalsize
+
+
+** Comprendre le système d'équation
+
+\tiny
+\fontsize{8}{8}
+\begin{equation*}
+    \begin{rcases}
+        X_{0} &= 0 \\
+        X_{1} &= 0 \\
+        X_{2} &= 0 \\
+        X_{3} &= 0 \\
+        X_{4} &= 0 \\
+        4X_{1} + 4X_{4} - 16X_{5} + 4X_{6} + 4X_{9} &= Y_{5} \\
+        4X_{2} + 4X_{5} - 16X_{6} + 4X_{7} + 4X_{10} &= Y_{6} \\
+        X_{7} &= 0 \\
+        X_{8} &= 0 \\
+        4X_{5} + 4X_{8} - 16X_{9} + 4X_{10} + 4X_{13} &= Y_{9} \\
+        4X_{6} + 4X_{9} - 16X_{10} + 4X_{11} + 4X_{14} &= Y_{10} \\
+        X_{11} &= 0 \\
+        X_{12} &= 0 \\
+        X_{13} &= 0 \\
+        X_{14} &= 0 \\
+        X_{15} &= 0 \\
+    \end{rcases}
+\end{equation*}
+\normalsize
+
+
+** Transformation de l'équation en matrice
+
+- Dans l'équation \( AX = Y \):
+  + $A$ représente "l'influence" de $X$ dans l'équation.
+  + $X$ représente les inconnues de l'équation. (La température en chaque point de la pièce)
+  + $Y$ représente les valeurs connues de l'équation. (La chaleur émise par le radiateur)
+
+
+* Algorithme: Élimination de Gauss-Jordan
