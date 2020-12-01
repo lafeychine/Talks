@@ -1,0 +1,552 @@
+#+TITLE: 103cipher - Mathematical Message Masking Multiplying Matrices
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Matrix.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Rappel ~102architect~: La théorie
+
+** Rappel: Transformation géométrique
+
+- Une *transformation géométrique* est un *automorphisme* d'une partie d'un ensemble géométrique.
+
+
+** Définition: Espace vectoriel
+
+- Un *espace vectoriel* sur $\set{K}$ est un ensemble d'éléments $E$, appelés *vecteurs*, muni de deux opérations:
+  + Une *loi de composition interne* $+$: \( ( E \times E \to E ) \).
+    - _Exemple:_ Somme de vecteurs
+  + Une *loi de composition externe* à gauche $\cdot$: \( ( \set{K} \times E \to E ) \).
+    - _Exemple:_ Multiplication par un scalaire
+
+\vfill
+
+- $\set{K}$ est un *corps commutatif*: $\set{Q}$, $\set{R}$ ou $\set{C}$ par exemple.
+  + Les éléments de cet ensemble sont appelés des *scalaires*.
+
+\vfill
+
+- _Exemple:_ Projet ~101pong~ et ~102architect~
+  + Utilisation d'un \( \set{K} \mbox{-espace vectoriel} \) \( ( E, +_{E}, \cdot_{E} ) \).
+
+
+** Définition: Transformation géométrique
+
+- Une *transformation géométrique* est un *automorphisme* d'une partie d'un ensemble géométrique.
+
+\vfill
+
+\begin{ctikz}
+    \node [draw] (M) at (0, 2) { Morphisme };
+    \node [draw] (I) at (0, 0) { Isomorphisme };
+    \node [draw] (E) at (5, 2) { Endomorphisme };
+    \node [draw] (A) at (5, 0) { Automorphisme };
+
+    \draw [->, thick] (M) -- (I);
+    \draw [->, thick] (M) -- (E);
+    \draw [->, thick] (I) -- (A);
+    \draw [->, thick] (E) -- (A);
+\end{ctikz}
+
+
+** Définition: Morphisme d'espace vectoriel
+
+- Dans un espace vectoriel, un *morphisme* est une *application linéaire* $f$ entre deux \( \set{K} \)-espaces vectoriels \( ( E, +_{E}, \cdot_{E} ) \) et \( ( F, +_{F}, \cdot_{F} ) \).
+
+\vfill
+
+- Si \( f: ( E, +_{E}, \cdot_{E} ) \to ( F, +_{F}, \cdot_{F} ) \) est une application linéaire, alors:
+
+  + $f$ est un *morphisme de groupes* de \( ( E, +_{E} ) \) dans \( ( F, +_{F} ) \).
+    - \( \forall (e, e') \in E^{2}, \ f(e) \ +_{F} \ f(e') = f(e \ +_{E} \ e') \).
+
+  + \( \forall x \in E, \ \forall \lambda \in \set{K}, \ f( \lambda \ \cdot_{E} \ x ) = \lambda \ \cdot_{F} \ f(x) \).
+
+
+** Exemple: Morphisme de groupes
+
+- Soit $f$ un *morphisme de groupes* de \( ( E, +_{E} ) \) dans \( ( F, +_{F} ) \).
+ + \( \forall (e, e') \in E^{2}, \ f(e) \ +_{F} \ f(e') = f(e \ +_{E} \ e') \).
+
+\vfill
+
+\begin{ctikz}
+    \pgfmathsetseed{\year};
+    \draw (0, 0) ellipse (1 and 3);
+    \draw (4, 0) ellipse (2 and 3);
+
+    \begin{scope}
+        \clip (0, 0) ellipse (1 and 3);
+
+        \foreach \p in {1, ..., 100} {
+            \draw (1 * rand, 3 * rand) circle (0.03);
+        }
+    \end{scope}
+
+    \begin{scope}
+        \clip (4, 0) ellipse (2 and 3);
+
+        \foreach \p in {1, ..., 1500} {
+            \draw (4 + 2 * rand, 3 * rand) circle (0.03);
+        }
+    \end{scope}
+
+    \coordinate (E1) at (0, -2);
+    \coordinate (E2) at (.2, 1.5);
+    \coordinate (E3) at (-.2, 0);
+    \coordinate (F1) at (4.5, -2.5);
+    \coordinate (F2) at (4, 2);
+    \coordinate (F3) at (3.4, .3);
+
+    \draw (E1) circle (0.03);
+    \draw (E2) circle (0.03);
+    \draw (E3) circle (0.03);
+    \draw (F1) circle (0.03);
+    \draw (F2) circle (0.03);
+    \draw (F3) circle (0.03);
+
+    \fill <2-> [red] (E1) circle (0.03) node[draw, fill=bg, above=.1] {$ e $};
+    \fill <2-> [red] (E2) circle (0.03) node[draw, fill=bg, above=.1] {$ e' $};
+
+    \draw <3-> [->] (E1) -- (F1);
+    \fill <3-> [red] (F1) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) $};
+
+    \draw <4-> [->] (E2) -- (F2);
+    \fill <4-> [red] (F2) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e') $};
+
+    \fill <5-7> [red] (F3) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) +_{F} f(e') $};
+
+    \fill <6-> [red] (E3) circle (0.03) node[draw, fill=bg, above=.1] {$ e +_{E} e' $};
+
+    \draw <7-> [->] (E3) -- (F3);
+
+    \fill <8-> [red] (F3) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) +_{F} f(e') = f(e +_{E} e') $};
+\end{ctikz}
+
+
+** Définition: Endomorphisme linéaire
+
+- Dans un espace vectoriel, un *endomorphisme* est une application linéaire d'un espace vectoriel dans lui-même.
+  - Un tel endomorphisme est appelée un *endomorphisme linéaire*.
+
+\vfill
+
+- Si \( f: ( E, +, \cdot ) \to ( E, +, \cdot ) \) est un endomorphisme linéaire, alors:
+
+  + $f$ est un *endomorphisme de groupes* de \( ( E, + ) \) dans \( ( E, + ) \).
+    - \( \forall (e, e') \in E^{2}, \ f(e) + f(e') = f(e + e') \).
+
+  + \( \forall x \in E, \ \forall \lambda \in \set{K}, \ f( \lambda \cdot x ) = \lambda \cdot f(x) \).
+
+\vfill
+
+\begin{ctikz}
+    \node [draw] (M) at (0, 2) { Morphisme };
+    \node [draw] (E) at (5, 2) { Endomorphisme };
+
+    \draw [->, thick] (M) -- (E) node [above, midway] {$ E = F $};
+\end{ctikz}
+
+
+** Exemple: Endomorphisme de groupes
+
+- Soit $f$ un *endomorphisme de groupes* de \( ( E, + ) \) dans \( ( E, + ) \).
+  + \( \forall (e, e') \in E^{2}, \ f(e) + f(e') = f(e + e') \).
+
+\vfill
+
+\begin{ctikz}
+    \pgfmathsetseed{\year};
+    \draw (0, 0) ellipse (7 and 2);
+
+    \begin{scope}
+        \clip (0, 0) ellipse (7 and 2);
+
+        \foreach \p in {1, ..., 2000} {
+            \draw (7 * rand, 2 * rand) circle (0.03);
+        }
+    \end{scope}
+
+    \coordinate (E1) at (-5, 0);
+    \coordinate (E2) at (5, -1);
+    \coordinate (E3) at (-1.5, -1);
+    \coordinate (F1) at (-2, 1);
+    \coordinate (F2) at (2, -.5);
+    \coordinate (F3) at (3, 1);
+
+    \draw (E1) circle (0.03);
+    \draw (E2) circle (0.03);
+    \draw (E3) circle (0.03);
+    \draw (F1) circle (0.03);
+    \draw (F2) circle (0.03);
+    \draw (F3) circle (0.03);
+
+    \fill <2-> [red] (E1) circle (0.03) node[draw, fill=bg, above=.1] {$ e $};
+    \fill <2-> [red] (E2) circle (0.03) node[draw, fill=bg, above=.1] {$ e' $};
+
+    \draw <3-> [->] (E1) -- (F1);
+    \fill <3-> [red] (F1) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) $};
+
+    \draw <4-> [->] (E2) -- (F2);
+    \fill <4-> [red] (F2) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e') $};
+
+    \fill <5-7> [red] (F3) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) + f(e') $};
+
+    \fill <6-> [red] (E3) circle (0.03) node[draw, fill=bg, above=.1] {$ e + e' $};
+
+    \draw <7-> [->] (E3) -- (F3);
+
+    \fill <8-> [red] (F3) circle (0.03) node[draw, fill=bg, above=.1] {$ f(e) + f(e') = f(e + e') $};
+\end{ctikz}
+
+
+** Définition: Isomorphisme
+
+- Dans un espace vectoriel, un *isomorphisme* est une application linéaire bijectif entre deux \( \set{K} \)-espaces vectoriels \( (E, +_{E}, \cdot_{E} ) \) et \( ( F, +_{F}, \cdot_{F} ) \).
+
+\vfill
+
+- Si \( f: ( E, +_{E}, \cdot_{E} ) \to ( F, +_{F}, \cdot_{F} ) \) est un application linéaire bijective, alors:
+
+  + $f$ est un *isomorphisme de groupes* de \( ( E, +_{E} ) \) dans \( ( F, +_{F} ) \).
+    - \( \forall (e, e') \in E^{2}, \ f(e) +_{F} f(e') = f(e +_{E} e') \).
+    - \( \forall y \in F, \ \exists ! \ x \in E, \ f(x) = y \).
+
+  + \( \forall x \in E, \ \forall \lambda \in \set{K}, \ f( \lambda \cdot_{E} x ) = \lambda \cdot_{F} f(x) \).
+
+\vfill
+
+\begin{ctikz}
+    \node [draw] (M) at (0, 2) { Morphisme };
+    \node [draw] (I) at (5, 2) { Isomorphisme };
+
+    \draw [->, thick] (M) -- (I) node [above, midway] { bijectif };
+\end{ctikz}
+
+
+** Exemple: Isomorphisme de groupes
+
+- Soit $f$ un *isomorphisme de groupes* de \( ( E, +_{E} ) \) dans \( ( F, +_{F} ) \).
+  + \( \forall (e, e') \in E^{2}, \ f(e) + f(e') = f(e + e') \).
+  + \( \forall y \in F, \ \exists ! \ x \in E, \ f(x) = y \).
+
+\vfill
+
+\begin{ctikz}
+    \pgfmathsetseed{\year};
+    \draw (0, 0) ellipse (1 and 2);
+    \draw (4, 0) ellipse (1 and 2);
+
+    \begin{scope}
+        \clip (0, 0) ellipse (1 and 2);
+
+        \foreach \p in {1, ..., 100} {
+            \draw (1 * rand, 2 * rand) circle (0.03);
+        }
+    \end{scope}
+
+    \begin{scope}
+        \clip (4, 0) ellipse (1 and 2);
+
+        \foreach \p in {1, ..., 100} {
+            \draw (4 + 1 * rand, 2 * rand) circle (0.03);
+        }
+    \end{scope}
+
+    \coordinate (E) at (0, -1);
+    \coordinate (F) at (4, -1);
+
+    \draw (E) circle (0.03);
+    \draw (F) circle (0.03);
+
+    \fill <2-> [red] (F) circle (0.03) node[draw, fill=bg, above=.1] {$ y $};
+
+    \draw <3-> [->] (E) -- (F) node[above, midway] { Unique };
+    \fill <3-> [red] (E) circle (0.03) node[draw, fill=bg, above=.1] {$ x $};
+\end{ctikz}
+
+
+** Défintion: Automorphisme
+
+- Dans un espace vectoriel, un *automorphisme* est une application linéaire qui est *à la fois* un endomorphisme et un isomorphisme.
+
+\vfill
+
+- Si \( f: ( E, +, \cdot ) \to ( E, +, \cdot ) \) est un application linéaire bijective, alors:
+
+  + $f$ est un *automorphisme de groupes* de \( ( E, + ) \) dans \( ( E, + ) \).
+    - \( \forall (e, e') \in E^{2}, \ f(e) + f(e') = f(e + e') \).
+    - \( \forall y \in E, \ \exists ! \ x \in E, \ f(x) = y \).
+
+  + \( \forall x \in E, \ \forall \lambda \in \set{K}, \ f( \lambda \cdot x ) = \lambda \cdot f(x) \).
+
+\vfill
+
+\begin{ctikz}
+    \node [draw] (M) at (0, 2) { Morphisme };
+    \node [draw] (I) at (0, 0) { Isomorphisme };
+    \node [draw] (E) at (5, 2) { Endomorphisme };
+    \node [draw] (A) at (5, 0) { Automorphisme };
+
+    \draw [->, thick] (M) -- (I) node[midway, left] { bijectif };
+    \draw [->, thick] (M) -- (E) node[midway, above] {\( E = F \)};
+    \draw [->, thick] (I) -- (A) node[midway, above] {\( E = F \)};
+    \draw [->, thick] (E) -- (A) node[midway, right] { bijectif };
+\end{ctikz}
+
+
+** Transformation géométrique
+
+- Une *transformation géométrique* est un *automorphisme* d'une partie d'un ensemble géométrique.
+
+\vfill
+
+- _Reformulons:_
+  + Une transformation géométrique est une *application linéaire* modifiant un *élément initial* d'un ensemble géométrique.
+  + Cette application permet d'obtenir un *élément image* dans ce *même* ensemble géométrique.
+  + Toute transformation géométrique d'un élément image permet d'*obtenir* un *unique* élément image.
+
+
+* Chiffrement
+
+** Décrivons notre application
+
+- Prenons 3 éléments:
+  + \( C \in \mat_{(n, n)}(\set{K}) \), représentant la clé de chiffrement.
+  + \( M \in \mat_{(m, n)}(\set{K}) \), représentant le message initial.
+  + \( M^{C} \in \mat_{(m, n)}(\set{K}) \), représentant le message chiffré.
+
+\vfill
+
+- L'application de chiffrement fait un calcul matriciel avec la matrice \( C \).
+  + Notons cette application \( f_{C} \).
+
+\vfill
+
+\begin{align*}
+    f_{C} : \mat_{(m, n)} &\to     \mat_{(m, n)} \\
+                       M  &\mapsto  M \cdot C
+\end{align*}
+
+
+** Application de chiffrement
+
+- Est-ce une application où chaque image doit avoir qu'un antécédant?
+  + *Oui*, sinon, il y a des conflits.
+  + Notre application n'est pas une *application de hashage*.
+
+\vfill
+
+- Est-ce le même ensemble?
+  + *Oui*, les matrices sont de même dimension.
+  + _Attention:_ Ce n'est pas généralisable.
+
+\vfill
+
+- Notre application est un *automorphisme*.
+
+
+** Exemple de chiffrement
+
+- Chiffrement du message: "Cryptography" / Clé: "103cipher"
+
+\vfill
+
+\begin{ctikz}
+    \matrix <1-1> (A) [Matrix] at (0, 0) {
+        C \& r \& y \\
+        p \& t \& o \\
+        g \& r \& a \\
+        p \& h \& y \\
+    };
+
+    \matrix <1-1> (B) [Matrix] at (5, 3) {
+        1 \& 0 \& 3 \\
+        c \& i \& p \\
+        h \& e \& r \\
+    };
+
+    \matrix <2-> (A) [Matrix] at (0, 0) {
+        67  \& 114 \& 121 \\
+        112 \& 116 \& 111 \\
+        103 \& 114 \& 97  \\
+        112 \& 104 \& 121 \\
+    };
+
+    \matrix <2-> (B) [Matrix] at (5, 3) {
+        49  \& 48  \& 51  \\
+        99  \& 105 \& 112 \\
+        104 \& 101 \& 114 \\
+    };
+
+    \matrix <3-> (C) [Matrix] at (5, 0) {
+        27153 \& 27407 \& 29979 \\
+        28516 \& 28767 \& 31358 \\
+        26421 \& 26711 \& 29079 \\
+        28368 \& 28517 \& 31154 \\
+    };
+\end{ctikz}
+
+
+* Déchiffrement
+
+** Application de déchiffrement
+
+- L'*application* de chiffrement \( f \) est un *isomorphisme*.
+  + Il existe une *application réciproque* \( f^{-1} \) permettant de récupérer l'élément d'origine.
+
+\vfill
+
+- _Exemple:_ Une transformation géométrique \( T \) (~102architect~).
+
+\vfill
+
+- \( M^{C} = f_{C}(M) \)
+  + \( \iff M^{C} = M \cdot C \)
+  + \( \iff M^{C} \cdot C^{-1} = M \cdot C \cdot C^{-1} \)
+  + \( \iff M^{C} \cdot C^{-1} = M \)
+  + \( \iff M = f^{-1}_{C}(M^{C}) \)
+
+
+** Méthodes d'inversion de matrices
+
+- _Méthodes:_
+  + Élimination de Gauss-Jordan (Pivot de Gauss)
+    - ~306radiator~
+  + Polynôme annulateur
+  + Factorisation LU
+  + Méthode des cofacteurs
+
+
+** Méthode des cofacteurs
+
+- Soit \( A \in \mat_{n}(\set{R}) \)
+
+- Formule des cofacteurs: \( A^{-1} = \dfrac{1}{\det A} \ {}^{t}\com A \)
+  + \( \det A \): Déterminant de la matrice \( A \)
+  + \( {}^{t} \): Transposée
+  + \( \com \): Comatrice
+
+\vfill
+
+- Nous allons voir la méthode des cofacteurs uniquement en dimension 2 et 3.
+  + La généralisation sera faite durant le Follow-Up
+
+
+** Définition: Déterminant
+
+- Pour les matrices, le déterminant est une application qui à une matrice carrée associe un scalaire.
+  + \( \det \ : \mat_{n}(\set{K}) \to \set{K} \)
+
+\vfill
+
+- _En dimension 2:_
+  + Soit \( A \in \mat_{2}(\set{R}) \),
+    - \( \det(A) = a_{1, 1} \cdot a_{2, 2} - a_{2, 1} \cdot a_{1, 2} \)
+
+\vfill
+
+- _En dimension 3:_ (Règle de Sarrus)
+  + Soit \( A \in \mat_{3}(\set{R}) \),
+    - \( \det(A) = a_{1, 1} \cdot a_{2, 2} \cdot a_{3, 3} + a_{1, 2} \cdot a_{2, 3} \cdot a_{3, 1} + a_{1, 3} \cdot a_{2, 1} \cdot a_{3, 2} - a_{3, 1} \cdot a_{2, 2} \cdot a_{1, 3} - a_{3, 2} \cdot a_{2, 3} \cdot a_{1, 1} - a_{3, 3} \cdot a_{2, 1} \cdot a_{1, 2} \)
+
+
+** Définition: Transposée
+
+- Soit \( A \in \mat_{(n, p)}(E) \).
+
+- La *matrice transposée* de \( A \) est la matrice \( {}^{t}A \in \mat_{(p, n)} \).
+
+\vfill
+
+\begin{ctikz}
+    \matrix (A) [Matrix] at (0, 0) {
+        a_{1, 1} \& a_{1, 2} \& \dots  \& a_{1, p}  \\
+        a_{2, 1} \& a_{2, 2} \& \dots  \& a_{2, p}  \\
+         \vdots  \&  \vdots  \& \ddots \&  \vdots   \\
+        a_{n, 1} \& a_{n, 2} \& \dots  \& a_{n, p}  \\
+    };
+    \node [left=10pt of A] {$ A = $};
+
+    \matrix (A) [Matrix] at (7, 0) {
+        a_{1, 1} \& a_{2, 1} \& \dots  \& a_{1, n}  \\
+        a_{1, 2} \& a_{2, 2} \& \dots  \& a_{2, n}  \\
+         \vdots  \&  \vdots  \& \ddots \&  \vdots   \\
+        a_{1, n} \& a_{n, 2} \& \dots  \& a_{p, n}  \\
+    };
+    \node [left=10pt of A] {$ {}^{t}A = $};
+\end{ctikz}
+
+
+** Définition: Comatrice
+
+- La comatrice d'une matrice carrée est une matrice carrée de même taille.
+  + Les coefficients de cette matrice sont appelés des *cofacteurs*.
+  + La comatrice de \( A \) est la matrice de ses cofacteurs.
+
+\vfill
+
+- Le cofacteur d'indice \( i, j \) de \( A \), noté \( (\com A)_{i, j} \):
+  + \( (\com A)_{i, j} = (-1)^{i + j} \det A'_{i, j} \).
+  + \( A'_{i, j} \) est la *sous-matrice* carrée de taille \( n - 1 \) de \( A \) où la \( i \)-ème ligne et la \( j \)-ème colonne ont été supprimées.
+
+
+** Toutes les matrices sont-elles inversibles?
+
+- Réponse: *NON*.
+  + _Exemple:_ ~102architect~ avec une matrice nulle.
+
+\vfill
+
+- Il existe plusieurs caractéristiques pour savoir si une matrice est inversible.
+  + _Exemple:_ Une matrice est inversible si son déterminant n'est pas nul.
+
+
+* Reformulons le sujet
+
+** Reformulons
+
+- Il vous est demandé (Chiffrement):
+  - Générer les matrices du message initial et de la clé.
+  - Faire le produit matriciel du message initial et de la clé.
+  - Afficher le message chiffré.
+
+\vfill
+
+- Il vous est demandé (Déchiffrement):
+  - Générer les matrices du message chiffré et de la clé.
+  - Inverser, *si possible*, la matrice de la clé.
+  - Faire le produit matriciel du message chiffré et de la clé.
+  - Afficher le message initial.
+
+
+* Exemple: Dans la réalité?
+
+* Passons au Python
+
+** Rappel du ~102architect~
+
+- Annotations de types:
+  + Installation: ~pip install --user mypy~
+  + Utilisation: ~mypy fichier.py~
+
+\vfill
+
+- Formattage (~black~):
+  + Installation: ~pip install --user black~
+  + Utilisation: ~black fichier.py~
+
+
+** ~103cipher~
+
+- Gestion des arguments
+  + Librairie ~argparse~
