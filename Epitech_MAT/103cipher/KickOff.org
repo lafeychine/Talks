@@ -1,0 +1,86 @@
+#+TITLE: 103cipher - Mathematical Message Masking Multiplying Matrices
+#+SUBTITLE: [Kick-Off] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:1 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Principe de fonctionnement
+
+- On veut *transmettre* un message en *toute sécurité* à un *destinataire*.
+  + On veut que le destinataire soit *le seul* à être capable de *comprendre* le message.
+
+\vfill
+
+- Par une application *bien choisie*.
+  + On veut être capable de *chiffrer* et *déchiffrer* le message.
+  + Cette application doit prendre une *clé* étant le seul moyen de comprendre le message.
+    - Sans la clé, il doit être *impossible* de trouver le message original.
+
+
+* Exemple: Chiffrement du message
+
+- Chiffrement du message: "Cryptography" / Clé: "103cipher"
+
+\vfill
+
+\begin{ctikz}
+    \node (C) at (0, 0) {"Cryptography"};
+    \node[draw] (f) at (4, 0) {$ f $};
+    \node (M) at (8, 0) {27153 27407...};
+    \node (K) at (4, 2) {103cipher};
+
+    \draw[->, thick] (C) -- (f) -- (M);
+    \draw[dashed] (K) -- (f);
+\end{ctikz}
+
+
+* Exemple: Déchiffrement du message
+
+- Déchiffrement du message: 27153 27407... / Clé: "103cipher"
+
+\vfill
+
+\begin{ctikz}
+    \node (M) at (0, 0) {27153 27407...};
+    \node[draw] (f) at (4, 0) {$ f^{-1} $};
+    \node (C) at (8, 0) {"Cryptography"};
+    \node (K) at (4, 2) {103cipher};
+
+    \draw[->, thick] (M) -- (f) -- (C);
+    \draw[dashed] (K) -- (f);
+\end{ctikz}
+
+
+* Compétences Mathématiques
+
+- Considéré acquis:
+  + Matrices
+  + Calcul matriciel
+
+\vfill
+
+- Nouvelles notions:
+  + Application linéaire
+  + Inversion de matrice:
+    - Méthode des cofacteurs
+
+
+* Compétences Python
+
+- Considéré acquis: (*Obligatoire*)
+  + L'ensemble des acquis du ~102architect~
+  + Utilisation d'un formatteur (~Black~)
+
+\vfill
+
+- À acquérir avec le ~103cipher~:
+  + Annotations de types primitifs en Python (~mypy~)
+  + Utilisation d'un gestionnaire d'arguments (~argparse~)
