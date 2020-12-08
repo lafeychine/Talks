@@ -1,0 +1,134 @@
+#+TITLE: 103cipher - Mathematical Message Masking Multiplying Matrices
+#+SUBTITLE: [Follow-Up] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Généralisons à la dimension \( n \)
+
+** 103cipher
+
+- Chiffrement:
+  + Produit matriciel: OK
+
+\vfill
+
+- Déchiffrement:
+  + Transposée: OK
+  + Comatrice: OK
+    - Se repose sur le déterminant
+  + Déterminant: *KO*
+
+
+** Déterminant: Dimension 2
+
+- _Rappel:_ Dimension 2
+
+\vfill
+
+\begin{center}
+    \begin{equation*}
+        \begin{vmatrix}
+            & a & b & \\
+            & c & d & \\
+        \end{vmatrix} = ad - bc
+    \end{equation*}
+\end{center}
+
+
+** Déterminant: Dimension 3 - Règle de Sarrus
+
+- _Rappel:_ Dimension 3
+
+\vfill
+
+\begin{center}
+    \begin{equation*}
+        \begin{vmatrix}
+            & a & b & c & \\
+            & d & e & f & \\
+            & g & h & i & \\
+        \end{vmatrix} = aei + bfg + cdh - gec - hfa - idb
+    \end{equation*}
+\end{center}
+
+
+** Déterminant: Formule
+
+- On peut aussi calculer le déterminant d'une matrice de taille \( n \) à l'aide de \( n \) déterminants de sous-matrices de taille \( n - 1 \).
+
+\vfill
+
+- Soit \( A \in \mat_{n}(\set{K}) \), développons suivant une ligne:
+  + \( \det(A) = \displaystyle\sum_{j = 1}^{n} a_{i, j} \cdot (-1)^{i + j} \cdot \det(A_{i, j}) \)
+
+\vfill
+
+- Il est possible de développer suivant une colonne plutôt qu'une colonne.
+  + \( \det(A) = \det({}^{t}A) \).
+
+
+** Déterminant: Dimension 3
+
+- Soit \( A \in \mat_{n}(\set{K}) \), développons suivant une ligne:
+  + \( \det(A) = \displaystyle\sum_{j = 1}^{n} a_{i, j} \cdot (-1)^{i + j} \cdot \det(A_{i, j}) \)
+
+\vfill
+
+\begin{center}
+    \begin{equation*}
+        \begin{vmatrix}
+            & a & b & c & \\
+            & d & e & f & \\
+            & g & h & i & \\
+        \end{vmatrix}
+        = \ a \ \cdot
+        \begin{vmatrix}
+            & e & f & \\
+            & h & i & \\
+        \end{vmatrix}
+        + \ b \ \cdot
+        \begin{vmatrix}
+            & d & f & \\
+            & g & i & \\
+        \end{vmatrix}
+        + \ c \ \cdot
+        \begin{vmatrix}
+            & d & e & \\
+            & g & h & \\
+        \end{vmatrix}
+    \end{equation*}
+\end{center}
+
+
+** Déterminant: Dimension n
+
+- Il est maintenant possible de trouver le déterminant en *dimension \( n \)*
+  + Vous pouvez donc chiffrer et déchiffrer suivant n'importe quelle taille de clé.
+
+
+* Passons au Python: Voyons ~argparse~
+
+** Gestion des arguments
+
+#+BEGIN_SRC python
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+
+
+def main() -> int:
+    parse = ArgumentParser()
+    parse.add_argument("n", type=int, help="Help message")
+
+    try:
+        args = parse.parse_args()
+    except SystemExit:
+        return 84
+#+END_SRC
