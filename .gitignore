@@ -12,6 +12,7 @@
 *.out
 *.snm
 *.toc
+*.vrb
 *.pdf
 _minted-*/
 svg-inkscape/
