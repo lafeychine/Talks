@@ -1,5 +1,8 @@
+\usepackage{amsmath}
 \usepackage[mathrm=sym]{unicode-math}
 \setmathfont{Latin Modern Math}
+\everymath{\displaystyle}
+
 \usepackage{systeme}
 
 
@@ -29,6 +32,14 @@
 }
 \ExplSyntaxOff
 
+
+\NewDocumentEnvironment {lcases} {} {
+    \left\lbrace
+    \begin{aligned}
+}{
+    \end{aligned}
+    \right.
+}
 
 \NewDocumentEnvironment {rcases} {} {
     \left.

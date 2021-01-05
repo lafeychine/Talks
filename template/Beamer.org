@@ -13,4 +13,4 @@
 
 
 #+LATEX_HEADER: \usepackage{mdframed}
-#+LATEX_HEADER: \surroundwithmdframed{minted}
+#+LATEX_HEADER: \surroundwithmdframed[font=\small]{minted}
