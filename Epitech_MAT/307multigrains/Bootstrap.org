@@ -1,0 +1,193 @@
+#+TITLE: 307multigrains - Multigrains and Dantzig's Simplex Method
+#+SUBTITLE: [Bootstrap] Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Algorithms.tex }
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Présentation des problèmes d'optimisation linéaire
+
+** Rappel: Fonction linéaire
+
+- Une *fonction linéaire* est une fonction qui, à tout nombre \( x \), associe \( a \cdot x \).
+  + \( a \) étant un nombre quelconque donné.
+
+- _Remarque:_ Toute fonction linéaire *est de degré 1*.
+
+\vfill
+
+- _Exemples:_
+  + Fonction linéaire: \( f(x) = 12 \cdot x \)
+  + Fonction non-linéaire: \( f(x) = x^{2} \) ou \( f(x) = \sqrt{x} \)
+
+
+** Définition: Optimisation linéaire
+
+- L'*optimisation linéaire* consiste à optimiser une *fonction linéaire* ayant des *contraintes*.
+  + Ces contraintes sont des *inéquations linéaires*.
+
+\vfill
+
+- Optimiser une fonction linéaire, c'est trouver le couple d'éléments permettant d'obtenir le meilleur résultat.
+
+
+** Exemple: Cas du ~307multigrains~
+
+- La fonction linéaire \( f \) que l'on souhaite optimiser est la *somme des unités produites* par l'exploitation.
+
+\vfill
+
+- Dans le sujet, la somme des unités produites est définie par:
+  + \( f(x_{1}, x_{2}, x_{3}, x_{4}, x_{5}) = p_{1} \cdot x_{1} + p_{2} \cdot x_{2} + p_{3} \cdot x_{3} + p_{4} \cdot x_{4} + p_{5} \cdot x_{5} \)
+  + Avec \( (x_{1}, ..., x_{5}) \), strictement positifs, le nombre d'unité de chacune des graines à produire durant l'année.
+  + Avec \( (p_{1}, ..., p_{5}) \), le prix à unité de chaucune des graines produites.
+
+
+** Exemple: Cas du ~307multigrains~
+
+- Réécrivons cette fonction: \( f(x) = \sum_{i = 1}^{n} p_{i} \cdot x_{i} \), avec \( n \) le nombre de variables.
+  + Dans le sujet, \( n \) correspond au nombre fixé de graines (5).
+
+\vfill
+
+- _Objectif:_ Nous recherchons le couple d'éléments \( x = (x_{1}, ..., x_{5}) \) permettant d'avoir la plus grande valeur possible.
+  + Dans le sujet, rechercher le nombre d'unité à produire afin d'avoir le meilleur rendement.
+
+
+** Exemple: Cas du ~307multigrains~
+
+- Dans le sujet, les contraintes sont imposés par les fertiliseurs \( F_{1}, F_{2}, F_{3}, F_{4} \):
+  + Les quantités de fertiliseurs disponibles.
+    * \( n_{1}, n_{2}, n_{3}, n_{4} \) pour chacun des fertiliseurs.
+  + Les quantités de fertiliseurs nécessaires pour produire chaque unité: Tableau.
+
+\vfill
+
+- Représentons les contraintes des fertiliseurs dans un système d'équation:
+
+\begin{center}
+    \sysalign{c,c}
+    \systeme{  x_{1}           +   x_{3}         + 2 x_{5} \leq n_{1} @ \mbox{ Fertilisateur \( F_{1} \) },
+               x_{1} + 2 x_{2}           + x_{4}           \leq n_{2} @ \mbox{ Fertilisateur \( F_{2} \) },
+             2 x_{1} +   x_{2}           + x_{4}           \leq n_{3} @ \mbox{ Fertilisateur \( F_{3} \) },
+                                 3 x_{3} + x_{4} + 2 x_{5} \leq n_{4} @ \mbox{ Fertilisateur \( F_{4} \) }}
+\end{center}
+
+
+
+** Définition: Forme standard
+
+- Il est possible d'exprimer tout problème linéaire dans un format appelé la *forme standard*.
+
+\vfill
+
+- La forme standard exprime, suivant des variables non-nulles:
+  + La *fonction objectif*, qui est la fonction à maximiser.
+  + Les contraintes, dont les inéquations doivent être plus petite ou égale aux contraintes.
+
+
+** Forme standard: Cas du ~307multigrains~
+
+- Soit \( x_{1}, x_{2}, x_{3}, x_{4}, x_{5} \geq 0 \),
+  + Fonction objectif: \( f = \sum_{i = 1}^{n} p_{i} \cdot x_{i} \)
+  + Contraintes:
+
+\begin{center}
+    \systeme{  x_{1}           +   x_{3}         + 2 x_{5} \leq n_{1} @ \mbox{ Fertilisateur \( F_{1} \) },
+               x_{1} + 2 x_{2}           + x_{4}           \leq n_{2} @ \mbox{ Fertilisateur \( F_{2} \) },
+             2 x_{1} +   x_{2}           + x_{4}           \leq n_{3} @ \mbox{ Fertilisateur \( F_{3} \) },
+                                 3 x_{3} + x_{4} + 2 x_{5} \leq n_{4} @ \mbox{ Fertilisateur \( F_{4} \) }}
+\end{center}
+
+
+* Algorithme du simplexe
+
+** Définition: Forme souple
+
+- Afin de pouvoir utiliser l'algorithme du simplexe, il ne faut plus d'inéquations.
+  + La *forme souple* (*Slack form*) est une réécriture permettant d'enlever les inéquations.
+
+\vfill
+
+- La forme souple introduit une nouvelle variable pour chacunes des contraintes, appelée *variable d'écart*.
+  + Les variables d'écart ont aussi une contrainte non-négative.
+
+
+** Forme souple: Cas du ~307multigrains~
+
+- Soit \( x_{1}, x_{2}, x_{3}, x_{4}, x_{5}, y_{1}, y_{2}, y_{3}, y_{4} \geq 0 \)
+
+\begin{center}
+    \syssubstitute{{P1}{p_{1}}{P2}{p_{2}}{P3}{p_{3}}{P4}{p_{4}}{P5}{p_{5}}}
+    \systeme{- P1 x_{1} - P2 x_{2} - P3 x_{3} - P4 x_{4} - P5 x_{5} + f     = 0     @ \mbox{ Fonction objectif },
+                  x_{1}            +    x_{3}            +  2 x_{5} + y_{1} = n_{1} @ \mbox{ Fertilisateur \( F_{1} \) },
+                  x_{1} +  2 x_{2}            +    x_{4}            + y_{2} = n_{2} @ \mbox{ Fertilisateur \( F_{2} \) },
+                2 x_{1} +    x_{2}            +    x_{4}            + y_{3} = n_{3} @ \mbox{ Fertilisateur \( F_{3} \) },
+                                      3 x_{3} +    x_{4} +  2 x_{5} + y_{4} = n_{4} @ \mbox{ Fertilisateur \( F_{4} \) }}
+\end{center}
+
+
+** Définition: Tableau du simplexe
+
+- Le *tableau du simplexe* représente les données d'un programme linéaire.
+
+\vfill
+
+- Le tableau comporte:
+  + Les coefficients des variables \( x_{1}, ..., x_{n} \), \( n \) étant le nombre d'inconnues.
+  + Les coefficients des variables d'écart \( y_{1}, ..., y_{m} \), \( m \) étant le nombre de contraintes.
+  + Les coefficients de la colonne des contraintes.
+  + La fonction objectif \( f \).
+
+\vfill
+
+- L'algorithme du simplexe s'effectue sur ce tableau afin d'obtenir la solution.
+  + _Note:_ Il est possible de faire une représentation matricielle.
+
+
+** Tableau du simplexe: Cas du ~307multigrains~
+
+|   \( x_{1} \) |   \( x_{2} \) |   \( x_{3} \) |   \( x_{4} \) |   \( x_{5} \) |   | \( y_{1} \) | \( y_{2} \) | \( y_{3} \) | \( y_{4} \) |   | \( n \)     |   | \( f \) |
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|             1 |             0 |             1 |             0 |             2 |   |           1 |           0 |           0 |           0 |   | \( n_{1} \) |   |       0 |
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|             1 |             2 |             0 |             1 |             0 |   |           0 |           1 |           0 |           0 |   | \( n_{2} \) |   |       0 |
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|             2 |             1 |             0 |             1 |             0 |   |           0 |           0 |           1 |           0 |   | \( n_{3} \) |   |       0 |
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|             0 |             0 |             3 |             1 |             2 |   |           0 |           0 |           0 |           1 |   | \( n_{4} \) |   |       0 |
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+|---------------+---------------+---------------+---------------+---------------+---+-------------+-------------+-------------+-------------+---+-------------+---+---------|
+| \( - p_{1} \) | \( - p_{2} \) | \( - p_{3} \) | \( - p_{4} \) | \( - p_{5} \) |   |           0 |           0 |           0 |           0 |   | 0           |   |       1 |
+
+\vfill
+
+- L'algorithme du simplexe a pour objectif de remplacer les indicateurs.
+  + _Note:_ La colonne \( f \) est immutable.
+
+
+** Algorithme de simplexe
+
+- L'algorithme du simplexe effectue des pivots sur le tableau.
+
+\vfill
+
+\begin{algorithm}[H]
+    \KwData{Tableau du simplexe \( T \)}
+    \KwResult{Colonne \( n \)}
+
+    \( \) \\
+    \( N \gets \) ColonneContrainte() \;
+    \While{ExisteIndicateurNegatif(\( T \))}{
+        \( X \gets \) Colonne(PlusPetitIndicateurNegatif(\( T \))) \;
+        pivot \( \gets \) MinRatio(\( N, X \)) \;
+        AppliquerPivot(\( T \), pivot) \;
+    }
+\end{algorithm}
