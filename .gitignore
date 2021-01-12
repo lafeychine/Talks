@@ -7,8 +7,10 @@
 
 # PDF Output
 *.aux
+*.gnuplot
 *.log
 *.nav
+*.table
 *.out
 *.snm
 *.toc

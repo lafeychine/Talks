@@ -1,0 +1,362 @@
+#+TITLE: 105torus - Mathematics of the donut
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Rappel ~104intersection~: Équation du second degré
+
+** Définition: Polynôme
+
+- Un *polynôme* est une expression formée de sommes et de produits de constantes et d'*inconnues*.
+  + Ces constantes sont appelés des *coefficients*.
+  + _Exemple:_ \( 2X^{2} + 3YZ + 12 \) a 3 inconnues \( X \), \( Y \) et \( Z \).
+
+\vfill
+
+- Un polynôme peut être exprimé en somme de *monômes*.
+  + Un monôme est une expression ne comportant qu'un seul terme.
+
+
+** Précision: Pour ce cours...
+
+- Nous n'allons étudier que:
+  + Les polynômes à *une seule inconnue*, appelée \( X \).
+  + Les polynômes à *coefficients réels*.
+
+\vfill
+
+- Ainsi, nous allons étudier uniquement que les polynômes dans \( \set{R}[X] \).
+
+
+** Caractérisation: Polynôme à une inconnue
+
+- Un polynôme à une inconnue \( X \) est une expression de la forme:
+  \[ a_{0} + a_{1}X^{1} + a_{2}X^{2} + ... + a_{n}X^{n} \]
+  + Avec \( a_{0}, a_{1}, ..., a_{n} \) des coefficients réels.
+  + Avec \( a_{n} \neq 0 \).
+
+\vfill
+
+- Réécrivons cette expression: \( \sum_{i = 0}^{n} a_{i}X^{i} \), avec \( a_{n} \neq 0 \).
+
+
+** Définition: Fonction polynomiale
+
+- Une *fonction polynomiale* est une fonction obtenue en évaluant un polynôme en l'inconnue \( X \).
+
+\vfill
+
+- _Exemple_: Considérons le polynôme \( P(X) =  \sum_{i = 0}^{n} a_{i}X^{i} \), avec \( a_{n} \neq 0 \).
+  + La fonction polynomiale \( f \) associée est alors définie par:
+    \[ f(x) = \sum_{i = 0}^{n} a_{i}x^{i} \]
+
+\vfill
+
+- Par abus de langage, on appelle parfois une fonction polynomiale un polynôme.
+
+
+** Exemples: Fonctions polynomiales courantes
+
+- Quelques fonctions polynomiales courantes:
+  + <only@1-3> Les *fonctions constantes*: \( n = 0 \)
+  + <only@4-7> Les *fonctions affines*: \( n = 1 \)
+  + <only@8->  Les *fonctions quadratiques*: \( n = 2 \) (*fonctions polynomiales de degré 2*)
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw<1-3> [blue, thick] plot[smooth] function {1};
+    \node<1-3> at (3, -1.5) [black, above] {\( f(x) = 1 \)};
+
+    \draw<4-7> [blue, thick] plot[smooth] function {0.5 * x + 1};
+    \node<4-7> at (3, -1.5) [black, above] {\( f(x) = \dfrac{1}{2}x + 1 \)};
+
+    \draw<8->  [blue, thick] plot[smooth] function {0.25 * x ** 2 - 1};
+    \node<8->  at (3, -1.5) [black, above] {\( f(x) = \dfrac{1}{4}x^{2} - 1 \)};
+
+    \drawPoint<2> [above left] (a_0) {3} {1} ((x; f(x)))
+    \drawPoint<3> [above left] (a_1) {3} {1} ((3; 1))
+
+    \drawPoint<4> [above left] (b_0) {0} {1} ((x; f(x)))
+    \drawPoint<5> [above left] (b_1) {0} {1} ((0; 1))
+
+    \drawPoint<6> [above left] (c_0) {-2} {0} ((x; f(x)))
+    \drawPoint<7> [above left] (c_1) {-2} {0} ((-2; 0))
+
+    \drawPoint<8>              (d_0) {-3} {1.25} ((x; f(x)))
+    \drawPoint<9>              (d_1) {-3} {1.25} (\left( -3; \dfrac{5}{4} \right))
+\end{ctikz}
+
+
+** Définition: Racine d'un polynôme
+
+- Soit \( P \) un polynôme, et \( f \) la fonction polynomiale associée.
+
+\vfill
+
+- Une *racine d'un polynôme* \( P \) est une valeur \( \alpha \) telle que \( f(\alpha) = 0 \).
+  + _Exemple:_ \( f(x) = \dfrac{1}{4}x^{2} - 1 \) a pour racines \( 2 \) et \( -2 \).
+
+\vfill
+\vfill
+
+- Plus généralement, on parle de *zéro* ou *point d'annulation* d'une fonction pour une valeur en laquelle la fonction s'annule.
+
+
+** Définition: Degré d'un polynôme
+
+- Le *degré d'un polynôme* est le degré le plus élevé de ses monômes.
+  + Le degré d'un monôme est la somme des exposants des inconnues.
+
+\vfill
+
+- *_Théorème de d'Alembert-Gauss:_*
+  + Un polynôme *non nul* de degré \( n \) a au plus \( n \) racines distinctes.
+  + Le seul polynôme ayant une infinité de racines est le *polynôme nul*.
+
+
+** Définition: Équation du second degré
+
+- Soit \( P \) un polynôme de degré 2, et \( f \) la fonction polynomiale associé.
+
+- Une *équation du second degré* est une équation qui peut s'écrire sous les formes:
+  + \( f(x) = 0 \).
+  + \( ax^{2} + bx + c = 0 \), avec \( a \neq 0 \).
+
+
+** Définition: Discriminant et Résolution d'équation du second degré
+
+- La résolution de l'équation \( f(x) = 0 \) utilise la *méthode du discriminant*:
+  + On appelle *discriminant* de \( f \), le réel \( \Delta = b^{2} - 4ac \).
+
+\vfill
+
+- Si \( \Delta > 0 \), l'équation admet deux racines: \( \dfrac{-b -\sqrt{ \Delta }}{2a} \) et \( \dfrac{-b +\sqrt{ \Delta }}{2a} \)
+- Si \( \Delta = 0 \), l'équation admet une racine: \( - \dfrac{b}{2a} \)
+- Si \( \Delta < 0 \), l'équation n'admet aucune racine.
+
+
+** Récapitulons
+
+- Soit \( P \), un polynôme à une inconnue \( X \) de degré \( n \).
+
+- Le polynôme \( P \) peut s'écrire sous la forme suivante (avec \( a_{n} \neq 0 \)):
+  \[ \sum_{i = 0}^{n} a_{i}X^{i} \]
+
+- La fonction polynomiale \( f \) est une fonction obtenue en évaluant \( P \).
+
+- Les racines du polynôme \( P \) sont les valeurs \( \alpha \) telles que \( f(\alpha) = 0 \).
+
+\vfill
+
+- Lorsque \( P \) est un polynôme de degré 2:
+  + Il existe une méthode pour trouver les racines de l'équation \( f(x) = 0 \).
+
+
+* Objectif: Résolvons une équation de degré 4
+
+** Définition: Algorithme de recherche d'un zéro d'une fonction
+
+- Un *algorithme de recherche d'un zéro d'une fonction* est un algorithme de recherche d'une valeur approchée d'un \( x \) vérifiant \( f(x) = 0 \), pour une fonction \( f \) donnée.
+
+\vfill
+
+- Ces algorithmes vont *converger* vers un zéro de la fonction.
+  + Ils ne donneront jamais de résultats exacts, mais s'approcher de plus en plus.
+
+- Ces algorithmes s'arrêtent lorsqu'une certaine précision est atteinte.
+
+
+** Définition: Dérivée polynomiale
+
+- La *dérivée polynomiale* est l'application linéaire de \( \set{R}[X] \) dans \( \set{R}[X] \).
+  + Cette application associe \( X^{n} \) à \( nX^{n - 1} \).
+
+\vfill
+
+- Soit \( P(X) = a_{n}X^{n} + a_{n - 1}X^{n - 1} + ... + a_{1}X + a_{0} \).
+  + On obtient \( P' \) la dérivée du polynôme \( P \).
+  + \( P' = na_{n}X^{n - 1} + (n - 1)a_{n - 1}X^{n - 2} + ... + a_{1} \).
+
+
+** Graphiquement: Dérivée d'une fonction
+
+- Soit \( f(x) = \dfrac{1}{50}x^{3} + \dfrac{1}{10}x^{2} - 1 \).
+  + La dérivée est: \( f'(x) = 3 \cdot \dfrac{1}{50}x^{2} + 2 \cdot \dfrac{1}{10}x \)
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw    [blue, thick] plot[smooth] function {0.02 * x ** 3 + 0.1 * x ** 2 - 1};
+    \draw    [red, thick]  plot[smooth] function {0.06 * x ** 2 + 0.2 * x};
+\end{ctikz}
+
+
+** Définition: Continuité et dérivabilité d'une fonction
+
+- Une fonction est *continue* sur un intervalle lorsque qu'elle est continue en chacune de ses valeurs dans cet invervalle.
+  + Une fonction est *continue* s'il n'y a pas de discontinuités, de ruptures.
+
+\vfill
+
+- _Propriété:_ Les fonctions polynomiales sont continues et dérivables.
+
+
+** Graphiquement: Continuité d'une fonction traversant 0
+
+- Soit \( f = \dfrac{1}{50}x^{3} + \dfrac{1}{10}x^{2} - 1 \), une fonction continue:
+  + En prenant \( a \) et \( b \) deux réels tels que \( f(a) \) et \( f(b) \) soient de signes opposés.
+  + \( f \) coupe au moins la droite \( y = 0 \) au moins un fois dans \( [a; b] \).
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw [blue, thick] plot[smooth] function {0.02 * x ** 3 + 0.1 * x ** 2 - 1};
+    \drawPoint [above left] (a) {-4} {-0.68};
+    \drawPoint [above left] (b) {4} {1.88};
+\end{ctikz}
+
+
+
+* Algorithme: Méthode de dichotomie
+
+** Présentation: Méthode de dichotomie
+
+- La *méthode de dichotomie* consiste à répéter les partages d'un intervalle en deux parties en sélectionnant le sous-intervalle dans lequel il existe un zéro de la fonction.
+
+\vfill
+
+- À chaque itération de l'intervalle \( [a; b] \), le milieu est choisi par \( \dfrac{a + b}{2} \).
+
+
+** Graphiquement: Méthode de dichotomie
+
+- Soit \( f(x) = \dfrac{1}{50}x^{3} + \dfrac{1}{10}x^{2} - 1 \)
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw [blue, thick] plot[smooth] function {0.02 * x ** 3 + 0.1 * x ** 2 - 1};
+    \drawPoint<1-2> [above left] (a_0) {-4} {-0.68} (a);
+    \drawPoint<1-6> [above left] (b_0) {4} {1.88} (b);
+
+    \drawPoint<2-2> [above left] (m_1) {0} {-1} (m);
+    \drawPoint<3-4> [above left] (a_1) {0} {-1} (a);
+
+    \drawPoint<4-4> [above left] (m_2) {2} {-0.44} (m);
+    \drawPoint<5-8> [above left] (a_2) {2} {-0.44} (a);
+
+    \drawPoint<6-6> [above left] (m_3) {3} {0.44} (m);
+    \drawPoint<7->  [above left] (b_3) {3} {0.44} (b);
+
+    \drawPoint<8-8> [above left] (m_4) {2.5} {-0.0625} (m);
+    \drawPoint<9->  [above left] (a_4) {2.5} {-0.0625} (a);
+\end{ctikz}
+
+
+* Algorithme: Méthode de Newton
+
+** Présentation: Méthode de Newton
+
+- La *méthode de Newton* utilise une *relation de récurrence* afin de converger vers le zéro de la fonction.
+
+\vfill
+
+- La relation de récurrence est:
+  \[ x_{k + 1} = x_{k} - \dfrac{ f(x_{k}) }{ f'(x_{k}) } \]
+
+\vfill
+
+- Cette méthode converge *plus rapidement* que la méthode de dichotomie, mais nécessite une valeur initiale proche d'un zéro.
+
+
+** Graphiquement: Méthode de Newton
+
+- Soit \( f(x) = \dfrac{1}{50}x^{3} + \dfrac{1}{10}x^{2} - 1 \) et \( f'(x) = \dfrac{3}{50}x^{2} + \dfrac{1}{5}x \)
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw [blue, thick] plot[smooth] function {0.02 * x ** 3 + 0.1 * x ** 2 - 1};
+
+    \drawPoint<2-4> [above]      (fx_0) {1} {-0.88} (f(x_{0})));
+
+    \draw     <3-4> [red] plot[smooth] function {0.26 * x - 1.14};
+    \drawPoint<4-5> [above]      (x_1)  {4.385} {0} (x_{1});
+
+    \drawPoint<6-8> [below left] (fx_1) {4.385} {2.61} (f(x_{1}));
+
+    \draw     <7-8> [red] plot[smooth] function {2.03 * x - 6.28};
+    \drawPoint<8-9> [above]      (x_2)  {3.1}   {0} (x_{2});
+
+    \drawPoint<10-> [above left] (fx_2) {3.1}   {0.56} (f(x_{2}));
+\end{ctikz}
+
+\vfill
+
+- <only@1>
+- <only@2>Prenons \( x_{0} = 1 \)
+- <only@3>Prenons \( x_{0} = 1: \ x_{1} = x_{0} - \dfrac{ f(x_{0}) }{ f'(x_{0}) } \)
+- <only@4>Prenons \( x_{0} = 1: \ x_{1} = 1 - \dfrac{ -0.88 }{ 0.26 } \)
+- <only@5>Prenons \( x_{0} = 1: \ x_{1} \approx 4.385 \)
+- <only@6>Soit \( x_{1} = 4.385 \)
+- <only@7>Soit \( x_{1} = 4.385: \ x_{2} = x_{1} - \dfrac{ f(x_{1}) }{ f'(x_{1}) } \)
+- <only@8>Soit \( x_{1} = 4.385: \ x_{2} = 4.385 - \dfrac{ 2.61 }{ 2.03 } \)
+- <only@9>Soit \( x_{1} = 4.385: \ x_{2} \approx 3.1 \)
+- <only@10>Soit \( x_{2} = 3.1: ... \)
+
+
+* Algorithme: Méthode de la sécante
+
+** Présentation: Méthode de la sécante
+
+- La *méthode de la sécante* est similaire à la méthode de Newton, utilisant une relation de récurrence.
+
+\vfill
+
+- La relation de récurrence est:
+  \[ x_{k + 1} = x_{k} - \dfrac{ x_{k} - x_{k - 1} }{ f(x_{k}) - f(x_{k - 1}) } f(x_{k}) \]
+
+\vfill
+
+- Cette méthode ne requiert pas de calcul de la dérivée, mais converge plus lentement que la méthode de Newton.
+
+
+* Quelques précisions
+
+** Précision: Sujet du ~105torus~
+
+- Le sujet précise les notions suivantes:
+  + Les équations sont de degré 4: \( a_{4}x^{4} + a_{3}x^{3} + a_{2}x^{2} + a_{1}x + a_{0} \).
+  + Les équations de degré 4 n'auront qu'une seule solution entre \( [0; 1] \).
+  + Les valeurs initiales des algorithmes.
+
+
+* Passons au Python!
