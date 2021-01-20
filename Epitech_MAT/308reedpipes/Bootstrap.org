@@ -1,0 +1,402 @@
+#+TITLE: 308reedpipes - Numerical Machine and Cubic Splines
+#+SUBTITLE: [Bootstrap] Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Matrix.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* ~308reedpipes~: Introduction
+
+** Définition: Interpolation
+
+- L'*interpolation* est une opération permettant de remplacer une courbe, ou une fonction, par une autre courbe (ou fonction) *plus simple*.
+  + Cette nouvelle courbe, ou fonction, coïncide avec la première en un nombre fini de points (ou valeurs).
+
+\vfill
+\pause
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \drawPoint [above right] (A) {-2} {0};
+    \drawPoint [above left]  (B) {1}  {-0.75};
+    \drawPoint [above left]  (C) {3}  {1.25};
+
+    \draw      [blue, thick] plot[smooth] function {0.25 * x ** 2 - 1};
+\end{ctikz}
+
+
+** ~308reedpipes~: Spline cubique
+
+- Nous allons utiliser une *spline cubique* d'interpolation.
+  + Pour cela, nous devons faire quelques rappels.
+
+
+* Rappel ~Maths Tek1~: Polynômes
+
+** Définition: Polynôme
+
+- Un *polynôme* est une expression formée de sommes et de produits de constantes et d'*inconnues*.
+  + Ces constantes sont appelés des *coefficients*.
+  + _Exemple:_ \( 2X^{2} + 3YZ + 12 \) a 3 inconnues \( X \), \( Y \) et \( Z \).
+
+\vfill
+
+- Un polynôme peut être exprimé en somme de *monômes*.
+  + Un monôme est une expression ne comportant qu'un seul terme.
+
+
+** Précision: Pour ce cours...
+
+- Nous n'allons étudier que:
+  + Les polynômes à *une seule inconnue*, appelée \( X \).
+  + Les polynômes à *coefficients réels*.
+
+\vfill
+
+- Ainsi, nous allons étudier uniquement que les polynômes dans \( \set{R}[X] \).
+
+
+** Caractérisation: Polynôme à une inconnue
+
+- Un polynôme à une inconnue \( X \) est une expression de la forme:
+  \[ a_{0} + a_{1}X^{1} + a_{2}X^{2} + ... + a_{n}X^{n} \]
+  + Avec \( a_{0}, a_{1}, ..., a_{n} \) des coefficients réels.
+  + Avec \( a_{n} \neq 0 \).
+
+\vfill
+
+- Réécrivons cette expression: \( \sum_{i = 0}^{n} a_{i}X^{i} \), avec \( a_{n} \neq 0 \).
+
+
+** Définition: Fonction polynomiale
+
+- Une *fonction polynomiale* est une fonction obtenue en évaluant un polynôme en l'inconnue \( X \).
+
+\vfill
+
+- _Exemple_: Considérons le polynôme \( P(X) =  \sum_{i = 0}^{n} a_{i}X^{i} \), avec \( a_{n} \neq 0 \).
+  + La fonction polynomiale \( f \) associée est alors définie par:
+    \[ f(x) = \sum_{i = 0}^{n} a_{i}x^{i} \]
+
+\vfill
+
+- Par abus de langage, on appelle parfois une fonction polynomiale un polynôme.
+
+
+** Exemples: Fonctions polynomiales courantes
+
+- Quelques fonctions polynomiales courantes:
+  + <only@1-3> Les *fonctions constantes*: \( n = 0 \)
+  + <only@4-7> Les *fonctions affines*: \( n = 1 \)
+  + <only@8->  Les *fonctions quadratiques*: \( n = 2 \) (*fonctions polynomiales de degré 2*)
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-5} {-1.5} {5} {2.9}
+
+    \clip (-4.9, -1.4) rectangle (4.9, 2.8);
+
+    \draw<1-3> [blue, thick] plot[smooth] function {1};
+    \node<1-3> at (3, -1.5) [black, above] {\( f(x) = 1 \)};
+
+    \draw<4-7> [blue, thick] plot[smooth] function {0.5 * x + 1};
+    \node<4-7> at (3, -1.5) [black, above] {\( f(x) = \dfrac{1}{2}x + 1 \)};
+
+    \draw<8->  [blue, thick] plot[smooth] function {0.25 * x ** 2 - 1};
+    \node<8->  at (3, -1.5) [black, above] {\( f(x) = \dfrac{1}{4}x^{2} - 1 \)};
+
+    \drawPoint<2> [above left] (a_0) {3} {1} ((x; f(x)))
+    \drawPoint<3> [above left] (a_1) {3} {1} ((3; 1))
+
+    \drawPoint<4> [above left] (b_0) {0} {1} ((x; f(x)))
+    \drawPoint<5> [above left] (b_1) {0} {1} ((0; 1))
+
+    \drawPoint<6> [above left] (c_0) {-2} {0} ((x; f(x)))
+    \drawPoint<7> [above left] (c_1) {-2} {0} ((-2; 0))
+
+    \drawPoint<8>              (d_0) {-3} {1.25} ((x; f(x)))
+    \drawPoint<9>              (d_1) {-3} {1.25} (\left( -3; \dfrac{5}{4} \right))
+\end{ctikz}
+
+
+** Définition: Racine d'un polynôme
+
+- Soit \( P \) un polynôme, et \( f \) la fonction polynomiale associée.
+
+\vfill
+
+- Une *racine d'un polynôme* \( P \) est une valeur \( \alpha \) telle que \( f(\alpha) = 0 \).
+  + _Exemple:_ \( f(x) = \dfrac{1}{4}x^{2} - 1 \) a pour racines \( 2 \) et \( -2 \).
+
+\vfill
+\vfill
+
+- Plus généralement, on parle de *zéro* ou *point d'annulation* d'une fonction pour une valeur en laquelle la fonction s'annule.
+
+
+** Définition: Degré d'un polynôme
+
+- Le *degré d'un polynôme* est le degré le plus élevé de ses monômes.
+  + Le degré d'un monôme est la somme des exposants des inconnues.
+
+\vfill
+
+- *_Théorème de d'Alembert-Gauss:_*
+  + Un polynôme *non nul* de degré \( n \) a au plus \( n \) racines distinctes.
+  + Le seul polynôme ayant une infinité de racines est le *polynôme nul*.
+
+
+* Rappel ~Maths Tek1~: Matrices
+
+** Définition: Matrices
+
+- Une *matrice* à $m$ lignes et $n$ colonnes est un tableau rectangle de \( m \times n \) nombres.
+  - Ces nombres sont appelés les *coefficients* de la matrice.
+
+\vfill
+
+- _Exemple:_ Une matrice $A$ de taille \( (m, n) \). \( A = \mathcal{M}_{m, n} \).
+
+\begin{center}
+    \( A =
+        \begin{pmatrix}
+            a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+            a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+            \vdots  & \vdots  & \ddots & \vdots  \\
+            a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+        \end{pmatrix}
+    \)
+\end{center}
+
+
+** Définition: Produit matriciel
+
+- Le *produit matriciel* désigne l'opération de multiplication de matrices.
+
+- Soit $A$ et $B$, deux matrices. Le produit matriciel \( A \cdot B \) n'est possible que lorsque le nombre de colonnes de $A$ est égale au nombre de lignes de $B$.
+
+  \vfill
+
+- Soit \( A = (A_{ij}) \in \mathcal{M}_{m, n} \) et \( B = B_{ij} \in \mathcal{M}_{n, p} \), \\
+  Le produit matriciel \( A \cdot B = C = (c_{ij}) \in \mathcal{M}_{m, p} \): \pause
+  \begin{align*}
+      \forall i, j : c_{ij} &= \sum_{k = 1}^{n} a_{ik}b_{kj} \\
+                            &= a_{i1}b_{1j} + a_{i2}b_{2j} + ... + a_{in}b_{nj}
+  \end{align*}
+
+
+** Exemple: Produit matriciel
+
+\( A \cdot B = C \iff \forall i, j : c_{ij} = \displaystyle\sum_{k = 1}^{n} a_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + ... + a_{in}b_{nj} \)
+
+\vfill
+
+_Exemple:_ Multiplication de deux matrices \( \mathcal{M}_{3,2} \times \mathcal{M}_{2,4} \) donnant une matrice \( \mathcal{M}_{3,4} \).
+
+\begin{columns}
+    \begin{column}{0.7\textwidth}<0->
+
+        \begin{ctikz}
+            \matrix <1-2> (A) [Matrix] at (0, 0) {
+                a_{1,1} \& a_{1,2} \\
+                a_{2,1} \& a_{2,2} \\
+                a_{3,1} \& a_{3,2} \\
+            };
+
+            \matrix <1-2> (B) [Matrix] at (4, 2) {
+                b_{1,1} \& b_{1,2} \& b_{1,3} \& b_{1,4} \\
+                b_{2,1} \& b_{2,2} \& b_{2,3} \& b_{2,4} \\
+            };
+
+            \matrix <3-> (AN) [Matrix] at (0, 0) {
+                1 \& 2 \\
+                3 \& 4 \\
+                5 \& 6 \\
+            };
+
+            \matrix <3-> (BN) [Matrix] at (4, 2) {
+                2 \& 3 \& 4 \& 5 \\
+                4 \& 5 \& 6 \& 7 \\
+            };
+
+            \matrix (C) [Matrix] at (4, 0) {
+                \only<1-4>{c_{1,1}} \& \only<1-7>{c_{1,2}} \& \only<1-10>{c_{1,3}} \& \only<1-13>{c_{1,4}} \\
+                \only<1-16>{c_{2,3}} \& \only<1-19>{c_{2,2}} \& \only<1-22>{c_{2,3}} \& \only<1-25>{c_{2,4}} \\
+                \only<1-28>{c_{3,1}} \& \only<1-31>{c_{3,2}} \& \only<1-34>{c_{3,3}} \& \only<1-37>{c_{3,4}} \\
+            };
+
+            \matrix (CN) [matrix of math nodes, nodes = {minimum width=.9cm, minimum height=.7cm}] at (4, 0) {
+                \only<5->{10} \& \only<8->{13} \& \only<11->{16} \& \only<14->{19} \\
+                \only<17->{22} \& \only<20->{29} \& \only<23->{36} \& \only<26->{43} \\
+                \only<29->{34} \& \only<32->{45} \& \only<35->{56} \& \only<38->{67} \\
+            };
+
+            \draw <2-14> [ColorLine=blue] (A-1-1.base west) to (C-1-4.base east);
+            \draw <15-26> [ColorLine=blue] (A-2-1.base west) to (C-2-4.base east);
+            \draw <27-38> [ColorLine=blue] (A-3-1.base west) to (C-3-4.base east);
+
+            \draw <2-5,15-17,27-29>   [ColorLine=red]  (B-1-1.mid) to (C-3-1.base);
+            \draw <6-8,18-20,30-32>   [ColorLine=red]  (B-1-2.mid) to (C-3-2.base);
+            \draw <9-11,21-23,33-35>  [ColorLine=red]  (B-1-3.mid) to (C-3-3.base);
+            \draw <12-14,24-26,36-38> [ColorLine=red]  (B-1-4.mid) to (C-3-4.base);
+        \end{ctikz}
+
+    \end{column}
+    \begin{column}{0.3\textwidth}<0->
+
+        \begin{align*}
+            \only<2-5>{
+                c_{1, 1} &= \sum_{k=1}^{n} a_{1k}b_{k1} \\
+                         &= a_{1,1}b_{1,1} + a_{1,2}b_{2,1} \\
+                \onslide<4-> {
+                         &= 1 \cdot 2 + 2 \cdot 4 = 10 \\
+                }
+            }
+            \only<6-8>{
+                c_{1, 2} &= \sum_{k=1}^{n} a_{1k}b_{k2} \\
+                         &= a_{1,1}b_{1,2} + a_{1,2}b_{2,2} \\
+                \onslide<7-> {
+                         &= 1 \cdot 3 + 2 \cdot 5 = 13 \\
+                }
+            }
+            \only<9-11>{
+                c_{1, 3} &= \sum_{k=1}^{n} a_{1k}b_{k3} \\
+                         &= a_{1,1}b_{1,3} + a_{1,2}b_{2,3} \\
+                \onslide<10-> {
+                         &= 1 \cdot 4 + 2 \cdot 6 = 16 \\
+                }
+            }
+            \only<12-14>{
+                c_{1, 4} &= \sum_{k=1}^{n} a_{1k}b_{k4} \\
+                         &= a_{1,1}b_{1,4} + a_{1,2}b_{2,4} \\
+                \onslide<13-> {
+                         &= 1 \cdot 5 + 2 \cdot 7 = 19 \\
+                }
+            }
+            \only<15-17>{
+                c_{2, 1} &= \sum_{k=1}^{n} a_{2k}b_{k1} \\
+                         &= a_{2,1}b_{1,1} + a_{2,2}b_{2,1} \\
+                \onslide<16-> {
+                         &= 3 \cdot 2 + 4 \cdot 4 = 22 \\
+                }
+            }
+            \only<18-20>{
+                c_{2, 2} &= \sum_{k=1}^{n} a_{2k}b_{k2} \\
+                         &= a_{2,1}b_{1,2} + a_{2,2}b_{2,2} \\
+                \onslide<19-> {
+                         &= 3 \cdot 3 + 4 \cdot 5 = 29 \\
+                }
+            }
+            \only<21-23>{
+                c_{2, 3} &= \sum_{k=1}^{n} a_{2k}b_{k3} \\
+                         &= a_{2,1}b_{1,3} + a_{2,2}b_{2,3} \\
+                \onslide<22-> {
+                         &= 3 \cdot 4 + 4 \cdot 6 = 36 \\
+                }
+            }
+            \only<24-26>{
+                c_{2, 4} &= \sum_{k=1}^{n} a_{2k}b_{k4} \\
+                         &= a_{2,1}b_{1,4} + a_{2,2}b_{2,4} \\
+                \onslide<25-> {
+                         &= 3 \cdot 5 + 4 \cdot 7 = 43 \\
+                }
+            }
+            \only<27-29>{
+                c_{3, 1} &= \sum_{k=1}^{n} a_{3k}b_{k1} \\
+                         &= a_{3,1}b_{1,1} + a_{3,2}b_{2,1} \\
+                \onslide<16-> {
+                         &= 5 \cdot 2 + 6 \cdot 4 = 34 \\
+                }
+            }
+            \only<30-32>{
+                c_{3, 2} &= \sum_{k=1}^{n} a_{3k}b_{k2} \\
+                         &= a_{3,1}b_{1,2} + a_{3,2}b_{2,2} \\
+                \onslide<19-> {
+                         &= 5 \cdot 3 + 6 \cdot 5 = 45 \\
+                }
+            }
+            \only<33-35>{
+                c_{3, 3} &= \sum_{k=1}^{n} a_{3k}b_{k3} \\
+                         &= a_{3,1}b_{1,3} + a_{3,2}b_{2,3} \\
+                \onslide<22-> {
+                         &= 5 \cdot 4 + 6 \cdot 6 = 56 \\
+                }
+            }
+            \only<36-38>{
+                c_{3, 4} &= \sum_{k=1}^{n} a_{3k}b_{k2} \\
+                         &= a_{3,1}b_{1,4} + a_{3,2}b_{2,4} \\
+                \onslide<25-> {
+                         &= 5 \cdot 5 + 6 \cdot 7 = 67 \\
+                }
+            }
+        \end{align*}
+
+    \end{column}
+\end{columns}
+
+
+** Méthodes d'inversion de matrices
+
+- Il existe aussi un *élément inverse* pour les matrices.
+
+\vfill
+
+- Il existe plusieurs méthodes:
+  + Méthode des cofacteurs
+    - ~103cipher~
+
+  + Élimination de Gauss-Jordan (Pivot de Gauss)
+    - ~306radiator~
+
+  + Polynôme annulateur
+
+  + Factorisation LU
+
+  + ...
+
+
+* Algorithme: Spline d'interpolation
+
+** Algorithme: Spline d'interpolation
+
+- L'algorithme se trouve ici: [\href{https://fr.wikipedia.org/wiki/Spline#Algorithme_de_calcul}{Lien vers Wikipédia}].
+  + Analysons-le avec ~NumPy~
+
+\vfill
+
+- L'implémentation *DOIT* être faite en Python uniquement.
+
+
+** Algorithme: Matrice obtenue
+
+- Voici la matrice inverse \( R \), noté \( R^{-1} \), obtenue avec ~SageMath~:
+
+\vfill
+
+\begin{center}
+    \( R^{-1} =
+        \begin{pmatrix}
+                          1 &               0 &               0 &               0 &               0 \\
+                                                                                                    \\
+            - \frac{15}{56} &    \frac{9}{28} & -  \frac{3}{35} &   \frac{3}{140} & -  \frac{1}{56} \\
+                                                                                                    \\
+               \frac{1}{14} & -  \frac{3}{35} &   \frac{12}{35} & -  \frac{3}{35} &    \frac{1}{14} \\
+                                                                                                    \\
+            -  \frac{1}{56} &   \frac{3}{140} & -  \frac{3}{35} &    \frac{9}{28} & - \frac{15}{56} \\
+                                                                                                    \\
+                          0 &               0 &               0 &               0 &               1
+        \end{pmatrix}
+    \)
+\end{center}
