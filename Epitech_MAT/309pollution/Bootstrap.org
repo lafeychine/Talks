@@ -1,0 +1,81 @@
+#+TITLE: 309pollution - Extrapolation and Pollution
+#+SUBTITLE: [Bootstrap] Mathématiques - 3^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Polynôme de Bernstein
+
+** Définition: Polynôme de Bernstein
+
+- Les *polynômes de Bernstein* sont des polynômes définis sur l'intervalle \( [0; 1] \).
+  + Pour un degré donné \( n \ge 0 \), il y a \( n + 1 \) polynômes de Bernstein.
+  + Ces polynômes sont notés \( B_{0}^{n}, B_{1}^{n}, ..., B_{n}^{n} \).
+
+\vfill
+
+- Le polynôme \( B_{k}^{n} \) est définit par: \( B_{k}^{n}(u) = \binom{n}{k} \cdot u^{k} \cdot (1 - u)^{n - k} \)
+  + Où \( \binom{n}{k} \) sont les *coefficients binomiaux*.
+  + Pour rappel: \( \binom{n}{k} = \frac{n!}{k! \cdot (n - k)!} \)
+
+
+** Exemple: Polynôme de Bernstein
+
+- Dessinons les polynômes de Bernstein de degré 3.
+
+\vfill
+
+\begin{ctikz}[, xscale=5, yscale=2.5]
+    \drawGrid* {-0.1} {-0.1} {1.1} {1.1};
+
+    \clip (0, 0) rectangle (1, 1);
+
+    \draw [blue,   thick] plot[domain=0:1, smooth] function {     -x ** 3 + 3 * x ** 2 - 3 * x + 1 };
+    \draw [orange, thick] plot[domain=0:1, smooth] function {  3 * x ** 3 - 6 * x ** 2 + 3 * x };
+    \draw [red,    thick] plot[domain=0:1, smooth] function { -3 * x ** 3 + 3 * x ** 2 };
+    \draw [black,  thick] plot[domain=0:1, smooth] function {      x ** 3 };
+\end{ctikz}
+
+\vfill
+
+- Ces polynômes partitionnent l'unité: \( \sum_{k = 0}^{n} B_{k}^{n}(u) = 1 \)
+
+
+* Courbes de Bézier
+
+** Définition: Courbe de Bézier
+
+- Les *courbes de Bézier* permettent de décrire par des points la forme d'une courbe géométrique.
+  + Ces points sont appelés *points de contrôle*.
+
+\vfill
+
+- La courbe de Bézier s'obtient en évaluant la fonction \( P : [0; 1] \to \set{R} \).
+  + Soit \( n + 1 \) points de contrôle, noté \( P_{0}, P_{1}, ..., P_{n} \), on obtient la formule suivante:
+  + \( P(x) = \sum_{k = 0}^{n}B_{k}^{n}(x) \cdot P_{k} \), avec \( x \in [0; 1] \)
+
+\vfill
+
+- Exemple: [\href{https://en.wikipedia.org/wiki/Bézier_curve#Constructing_Bézier_curves}{Lien vers Wikipédia}]
+
+
+* Surface de Bézier
+
+** Définition: Surface de Bézier
+
+- La *surface de Bézier* est obtenable en généralisant à une dimension supplémentaire.
+  + La fonction \( P \) prendra donc deux paramètres: \( P : [0; 1] \times [0; 1] \to \set{R} \times \set{R} \).
+  + La fonction \( P \) prendra donc deux paramètres: \( P : [0; 1]^{2} \to \set{R}^{2} \).
+
+\vfill
+
+- Soient les points de contrôle \( P_{(0, 0)}, P_{(1, 0)}, ... P_{(n_{1}, 0)}, P_{(0, 1)}, ..., P_{(n_{1}, n_{2})} \).
+  + \( P(x_{1}, x_{2}) = \sum_{k_{1} = 0}^{n_{1}} \sum_{k_{2} = 0}^{n_{2}} B_{k_{1}}^{n_{1}}(t_{1}) \cdot B_{k_{2}}^{n_{2}}(t_{2}) \cdot P_{(k_{1}, k_{2})} \)
