@@ -1,0 +1,10 @@
+*** Malloc
+
+-----
+
+_Language:_ French
+
+_Topics:_ Discover what the ~malloc~ family function does. With a lot of general culture about ~C~ and ~POSIX~.
+
+_When:_ 9th February 2021.
+_Link:_ [[https://www.twitch.tv/videos/907229831][Part 1]] and [[https://www.twitch.tv/videos/907255659][Part 2]]

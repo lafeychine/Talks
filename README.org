@@ -1,3 +1,1 @@
-* Lists of Talks:
-
-** Epitech_MAT: Mathematics activities at Epitech school
+This repository contains source codes of various Talks I presented. 
