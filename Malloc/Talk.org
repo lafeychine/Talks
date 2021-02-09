@@ -1,0 +1,1011 @@
+#+TITLE: Les dessous de ~malloc~
+#+SUBTITLE: Savez-vous vraiment ce qu'est ~malloc~?
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../template/Beamer.org
+#+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
+
+#+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
+
+#+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+
+* COMMENT Introduction
+
+- Bienvenue pour cette présentation autour de ~malloc~, afin de comprendre et apprendre davantage autour de cette famille de fonction.
+- Ah ~malloc~, vous l'avez utilisé depuis vos premiers jours d'Epitech.
+- Et maintenant, et ceux pour ces deux prochaines semaines, c'est à votre tour d'implémenter ce fameux ~malloc~.
+
+- Alors, qu'allons-nous voir durant ces deux heures?
+- Et bien, nous allons préciser ce qu'est cette fonction: Qu'est-ce qu'elle fait, mais aussi, ce qu'elle ne fait pas.
+- Nous allons nous pencher sur tout ce qui tourne autour de ~malloc~, mais nous allons aussi volontairement dévier vers d'autres sujets.
+- Ainsi, nous allons seulement préciser ce que vous devez absolument savoir pour pouvoir faire ce projet.
+- Nous n'allons pas voir d'algorithme: La partie implémentation: Je vous laisse le plaisir de la découvrir.
+
+- Avant toute chose, les slides ainsi que les exemples seront partagées sur le chat Twitch à la fin de la présentation.
+- Je pense que j'ai tout dis, je vous propose donc de commencer.
+
+
+* Introduction: Définissons l'allocation
+
+** Définition: Attribution de mémoire (1/5)
+
+- _Allocation *automatique*:_
+  + Variables automatique (Variable locale ou Argument de fonction)
+  + _Mémoire:_ Allouée lors de l'entrée de contexte, libérée à la sortie.
+  + _Cas d'échec:_ Dépassement de pile (/Stack overflow/).
+
+\vfill
+
+- _Allocation *statique*:_
+  + Variables statiques (~static~) ou globales.
+  + _Mémoire:_ Allouée au chargement du programme. Jamais libérée.
+  + _Cas d'échec:_ Allocation initiale trop grande: ~execve~ renvoie ~ENOMEM~.
+
+
+** Définition: Attribution de mémoire (2/5)
+
+- _Allocation *dynamique*:_
+  + Appels à des fonctions d'allocations.
+
+\vfill
+
+- Regardons le manuel:
+  + ~man 3 malloc~
+  + ~malloc(3)~
+
+
+** Manuel: ~malloc(3)~ (1/2)
+
+#+BEGIN_SRC C
+NAME
+    malloc, free, calloc, realloc, reallocarray
+        - allocate and free dynamic memory
+
+SYNOPSIS
+    #include <stdlib.h>
+
+    void *malloc(size_t size);
+    void free(void *ptr);
+    void *calloc(size_t nmemb, size_t size);
+    void *realloc(void *ptr, size_t size);
+    void *reallocarray(void *ptr, size_t nmemb, size_t size);
+#+END_SRC
+
+
+** Manuel: ~malloc(3)~ (2/2)
+
+#+BEGIN_SRC man
+ERRORS
+    calloc(), malloc(), realloc(), and reallocarray()
+        can fail with the following error:
+
+    ENOMEM Out of memory. Possibly, the application hit the
+           RLIMIT_AS or RLIMIT_DATA limit (see getrlimit(2)).
+
+CONFORMING TO
+    malloc(), free(), calloc(), realloc():
+        POSIX.1-2001, POSIX.1-2008, C89, C99.
+
+    reallocarray() is a nonstandard extension that first
+        appeared in OpenBSD 5.6 and FreeBSD 11.0.
+#+END_SRC
+
+
+** Définition: Attribution de mémoire (3/5)
+
+- <1-> _Allocation *dynamique*:_
+  + Appels à des fonctions d'allocations.
+  + _Mémoire:_
+    * Allouée à l'appel d'une fonction d'allocation (~malloc~).
+    * Libérée à l'appel d'une fonction de libération (~free~).
+  + _Cas d'échec:_ Plus de mémoire?
+
+
+* Implémentons: Essayons ~malloc~
+
+** Implémentons: Liste doublement chaînée
+
+- _Objectif:_ Ajouter des nœuds à une liste chaînée jusqu'à ce que ~malloc~ indique ~Out of memory~.
+
+\vfill
+
+- L'implémentation est une liste *doublement* chaînée *non-circulaire*.
+
+\vfill
+
+- L'implémentation doit comprendre:
+  + Une structure principale: ~list_t~
+  + Une structure nœud: ~node_t~
+
+
+** Structure ~list_t~
+
+- La structure ~list_t~ doit:
+  + Connaître la tête de liste: src_C[:exports code]{node_t *head;}
+  + Connaître la taille mémoire totale de la liste: src_C[:exports code]{___ length;}
+
+\vfill
+
+- Comment représenter une taille?
+  + Regardons ~system_data_types(7)~
+
+\pause
+
+#+BEGIN_SRC man
+size_t   Used for a count of bytes.
+         It is the result of the sizeof operator.
+         Conforming to: C99+, POSIX.1-2001+
+#+END_SRC
+
+
+** Structure ~node_t~
+
+- La structure ~node_t~ doit:
+  + Être liée dans la liste doublement chaînée: src_C[:exports code]{node_t *prev; *next;}
+  + Contenir des données (/payload/) de taille aléatoire: src_C[:exports code]{void *payload;}
+  + Connaître la taille du /payload/: src_C[:exports code]{size_t size_payload;}
+
+\vfill
+
+\pause
+
+\begin{ctikz}[memory graph, node distance=.6cm]
+    \node [arity=3]             (A) { \: \arg{2} \( x_{1} \) };
+    \node [arity=3, below=of A] (B) { \: \arg{2} \( x_{2} \) };
+
+    \node [block, right=1cm of A.arg 2 center] (dataA) { Payload A };
+    \node [block, right=1cm of B.arg 2 center] (dataB) { Payload B };
+
+    \draw [decorate, decoration={brace, amplitude=10pt}]
+        ([yshift=4pt] dataA.north west) --
+        node [yshift=18pt] {\( x_{1} \)}
+        ([yshift=4pt] dataA.north east);
+
+    \draw [decorate, decoration={brace, amplitude=10pt, mirror}]
+        ([yshift=-4pt] dataB.south west) --
+        node [yshift=-18pt] {\( x_{2} \)}
+        ([yshift=-4pt] dataB.south east);
+
+    \node [above=of A.head  north] (NILA) { NIL };
+    \node [below=of B.arg 1 south] (NILB) { NIL };
+
+    \draw [ref] (A.head  center) -- (NILA);
+    \draw [ref] (A.arg 1 center) -- (B.arg 1 north);
+    \draw [ref] (B.head  center) -- (A.head  south);
+    \draw [ref] (B.arg 1 center) -- (NILB);
+
+    \draw [ref] (A.arg 3 center) -- (dataA);
+    \draw [ref] (B.arg 3 center) -- (dataB);
+\end{ctikz}
+
+
+** Structure ~node_t~ améliorée
+
+- Regroupons le /payload/ à la structure ~node_t~.
+
+\vfill
+
+\pause
+
+\begin{ctikz}[memory graph, node distance=.6cm]
+    \node [arity=3]             (A) { \: \arg{2} \( x_{1} \) \arg{3} Payload A };
+    \node [arity=3, below=of A] (B) { \: \arg{2} \( x_{2} \) \arg{3} Payload B };
+
+    \draw [decorate, decoration={brace, amplitude=10pt}]
+        ([xshift=-28pt, yshift=13pt] A.arg 3 center) --
+        node [yshift=18pt] {\( x_{1} \)}
+        ([xshift=28pt, yshift=13pt] A.arg 3 center);
+
+    \draw [decorate, decoration={brace, amplitude=10pt, mirror}]
+        ([xshift=-28pt, yshift=-13pt] B.arg 3 center) --
+        node [yshift=-18pt] {\( x_{2} \)}
+        ([xshift=28pt, yshift=-13pt] B.arg 3 center);
+
+    \node [above=of A.head  north] (NILA) { NIL };
+    \node [below=of B.arg 1 south] (NILB) { NIL };
+
+    \draw [ref] (A.head  center) -- (NILA);
+    \draw [ref] (A.arg 1 center) -- (B.arg 1 north);
+    \draw [ref] (B.head  center) -- (A.head  south);
+    \draw [ref] (B.arg 1 center) -- (NILB);
+\end{ctikz}
+
+
+** Prototypes de fonctions
+
+- La liste ~list_t~ sera initialisée par le développeur:
+  + src_C[:exports code]{list_t list = {NULL, 0};}
+
+\vfill
+
+- Fonctions élémentaires de manipulation:
+  + src_C[:exports code]{node_t *create_node(list_t *list, size_t size);}
+  + src_C[:exports code]{void delete_node(list_t *list, node_t *node);}
+
+\vfill
+
+- Quelques utilitaires:
+  + src_C[:exports code]{bool is_empty(list_t *list);}
+  + src_C[:exports code]{void delete_list(list_t *list);}
+
+
+** Exemple: Graphiquement
+
+\begin{ctikz}[memory graph, node distance=.6cm]
+    % List structure
+    \node [arity=1] (Head) { \: \arg{1}
+                             \texttt{\only<1-3>{0}\only<4-6>{4}\only<7-10>{8}\only<11-13>{12}\only<14>{16}\only<15->{12}}
+                             * \mintinline{C}{sizeof(byte)} +
+                             \texttt{\only<1-2>{0}\only<3-5>{1}\only<6-9>{2}\only<10-12>{3}\only<13-14>{4}\only<15->{3}}
+                             * \mintinline{C}{sizeof(node_t)} };
+
+    % Variable
+    \node [block, left=1cm of Head.west] (ListVar) { \mintinline{C}{list} };
+    \draw [ref] (ListVar) -- (Head);
+
+    \node<8-16> [block, left=1cm of D.west] (NodeVar) { \mintinline{C}{node} };
+    \draw<8-16> [ref] (NodeVar) -- (C.south west);
+
+    % Allocated nodes
+    \node<2->   [arity=3, below right=4cm and 2cm of Head.head, right] (D) { \: \arg{2} \mintinline{C}{sizeof(int) = 4} \arg{3} \texttt{\only<2-3>{???}\only<4->{4}} };
+
+    \node<5-16> [arity=3, above=of D.north west, right] (C) { \: \arg{2} \mintinline{C}{sizeof(int) = 4} \arg{3} \texttt{\only<5-6>{???}\only<7->{3}} };
+
+    \node<9->   [arity=3, above=of C.north west, right] (B) { \: \arg{2} \mintinline{C}{sizeof(int) = 4} \arg{3} \texttt{\only<9-10>{???}\only<11->{2}} };
+
+    \node<12->  [arity=3, above=of B.north west, right] (A) { \: \arg{2} \mintinline{C}{sizeof(int) = 4} \arg{3} \texttt{\only<12-13>{???}\only<14->{1}} };
+
+    % Head pointer
+    \node<1-2>   [below right=1cm of Head.head center] (NILHead) { NIL };
+    \draw<1-2>   [ref] (Head.head center) |- (NILHead);
+
+    \draw<3-5>   [ref] (Head.head center) |- (D.west);
+    \draw<6-9>   [ref] (Head.head center) |- (C.west);
+    \draw<10-12> [ref] (Head.head center) |- (B.west);
+    \draw<13->   [ref] (Head.head center) |- (A.west);
+
+    % Next pointer
+    \draw<6-15>  [ref] (D.head center) -- (C.head south);
+    \draw<10-15> [ref] (C.head center) -- (B.head south);
+    \draw<13->   [ref] (B.head center) -- (A.head south);
+    \draw<16->   [ref] (D.head center) -- (B.head south);
+
+    % Prev pointer
+    \node<3->    [below=of D.arg 1 center] (NILPrev) { NIL };
+    \draw<3->    [ref] (D.arg 1 center) -- (NILPrev);
+    \draw<6-15>  [ref] (C.arg 1 center) -- (D.arg 1 north);
+    \draw<10-15> [ref] (B.arg 1 center) -- (C.arg 1 north);
+    \draw<13->   [ref] (A.arg 1 center) -- (B.arg 1 north);
+    \draw<16->   [ref] (B.arg 1 center) -- (D.arg 1 north);
+
+    % NIL next pointer
+    \node<3-5>   [above left=-0.1cm and .8cm of D.north west] (NILHead) { NIL };
+    \draw<3-5>   [ref] (D.head center) |- (NILHead);
+
+    \node<6-9>   [above left=-0.1cm and .8cm of C.north west] (NILHead) { NIL };
+    \draw<6-9>   [ref] (C.head center) |- (NILHead);
+
+    \node<10-12> [above left=-0.1cm and .8cm of B.north west] (NILHead) { NIL };
+    \draw<10-12> [ref] (B.head center) |- (NILHead);
+
+    \node<13->   [above left=-0.1cm and .8cm of A.north west] (NILHead) { NIL };
+    \draw<13->   [ref] (A.head center) |- (NILHead);
+
+    % prevent bumping
+    \node [below=5cm of Head.center] {};
+\end{ctikz}
+
+*** > Instruction en cours:
+- <only@1>                  src_C[:exports code]{ list_t list = {NULL, 0}; }
+- <only@2-3,5-6,9-10,12-13> src_C[:exports code]{ node_t *tmp = create_node(&(list), sizeof(int)); }
+- <only@4>                  src_C[:exports code]{ memcpy(tmp->payload, &(4), sizeof(int)); }
+- <only@7>                  src_C[:exports code]{ memcpy(tmp->payload, &(3), sizeof(int)); }
+- <only@8>                  src_C[:exports code]{ node = tmp; }
+- <only@11>                 src_C[:exports code]{ memcpy(tmp->payload, &(2), sizeof(int)); }
+- <only@14>                 src_C[:exports code]{ memcpy(tmp->payload, &(1), sizeof(int)); }
+- <only@15-17>              src_C[:exports code]{ delete_node(&(list), node); }
+
+
+* Partie 1: Définissons ~malloc~
+
+** Manuel: ~malloc(3)~ (1/2)
+
+#+BEGIN_SRC C
+NAME
+    malloc, free, calloc, realloc, reallocarray
+        - allocate and free dynamic memory
+
+SYNOPSIS
+    #include <stdlib.h>
+
+    void *malloc(size_t size);
+    void free(void *ptr);
+    void *calloc(size_t nmemb, size_t size);
+    void *realloc(void *ptr, size_t size);
+    void *reallocarray(void *ptr, size_t nmemb, size_t size);
+#+END_SRC
+
+
+** Manuel: ~malloc(3)~ (2/2)
+
+#+BEGIN_SRC man
+ERRORS
+    calloc(), malloc(), realloc(), and reallocarray()
+        can fail with the following error:
+
+    ENOMEM Out of memory. Possibly, the application hit the
+           RLIMIT_AS or RLIMIT_DATA limit (see getrlimit(2)).
+
+CONFORMING TO
+    malloc(), free(), calloc(), realloc():
+        POSIX.1-2001, POSIX.1-2008, C89, C99.
+
+    reallocarray() is a nonstandard extension that first
+        appeared in OpenBSD 5.6 and FreeBSD 11.0.
+#+END_SRC
+
+
+** Réflexion: Lecture de ~malloc(3)~
+
+- _Fil rouge:_
+  + Que signifie "~Out of memory~" dans ~malloc(3)~?
+
+\vfill
+
+- _Quelques questions se posent:_
+  + Sur quelles plateformes ~reallocarray~ est-il disponible?
+  + _Plus généralement:_ Sur quelles plateformes ~malloc~ est-il disponible?
+
+
+** Disponibilité et utilisation de ~malloc~?
+
+- Qu'est-ce que ~POSIX.1-2001~, ~POSIX.1-2008~, ~C89~, ~C99~?
+  + ~standards(7)~ peut nous renseigner.
+
+\vfill
+
+\pause
+
+#+BEGIN_SRC man
+The CONFORMING TO section that appears in many manual pages
+    identifies various standards to which the documented
+    interface conforms.
+#+END_SRC
+
+
+** Manuel: ~standards(7)~
+
+#+BEGIN_SRC man
+C89   This was the first C language standard, ratified by
+      ANSI (American National Standards Institute) in 1989
+      (X3.159-1989). Sometimes this is known as ANSI C [...]
+
+C99   This revision of the C language standard was ratified
+      by ISO in 1999 (ISO/IEC 9899:1999). Available online [...]
+
+POSIX.1-2001, SUSv3
+      This was a 2001 revision and consolidation of the POSIX.1,
+      POSIX.2, and SUS standards into a single document,
+      conducted under the auspices of the Austin Group.
+      The standard is available online [...]
+#+END_SRC
+
+
+** Définition: Norme
+
+- _Définition ISO:_ "Une norme est un *document approuvé* par un *organisme reconnu*, qui a été mis au point par *voie de consensus* entre des *experts du domaine*, et qui fournit des *recommandations* sur la conception, l'utilisation ou la performance des produits, processus, services, systèmes ou personnes."
+
+\vfill
+
+- Offre des garanties:
+  + Utilisation des mêmes termes et définitions.
+  + Cohérence des caractéristiques des produits et des services.
+  + /De multiples autres intêrets/
+
+
+** Exemple: Organismes de Normalisation
+
+- _Organismes les plus connus:_
+  + ~ISO~: /International Organization for Standardization/ (International)
+  + ~AFNOR~: Association Française de Normalisation (France)
+  + ~ANSI~: /American National Standards Institute/ (États-Unis)
+  + ~IEEE~: /Institute of Electrical and Electronics Engineers/ (États-Unis)
+
+\vfill
+
+- _Quelques exemples de normalisation:_
+  + ~ISO 216~: Formats de papiers (Format ~A4~)
+  + ~X3.159-1989~ (ANSI): C89
+  + ~IEEE 754~: Représentation décimale en virgule flottante
+  + ~IEEE 1003~: POSIX (/Portable Operating System Interface/)
+
+
+** Étude de cas: POSIX
+
+- POSIX n'est pas une spécification que pour le langage C.
+  + C'est une spécification pour les *systèmes d'exploitations*.
+
+\vfill
+
+- Quelle nécessité?
+  + Voir _*[[https://www.levenez.com/unix/][Historique des différentes variantes d'UNIX]]*_
+  + Multiplication des variantes d'UNIX: Nécessité d'uniformiser
+
+\vfill
+
+- ~POSIX~: Définition d'interfaces utilisateurs et logicielles.
+  + ~GNU/Linux~ n'est pas normalisée ~POSIX~: Il est uniquement compatible.
+
+
+** Définition: Critère de conformité
+
+- _Définition ISO:_ "L'évaluation de la conformité implique un processus qui sert à démontrer que le produit, service, ou système répond aux exigences d’une norme."
+  + *Être conforme* assure la compatibilité *dans tous les cas*.
+
+\vfill
+
+- Il existe une *infinité d'implémentations* possibles à partir d'une norme:
+  + _Compilateur C:_ ~GCC~, ~Clang~, ~MSVC~...
+  + _Librairie C:_ ~GNU LibC~, ~musl~, ~μClibc~, ~MSVCRT~, ...
+
+\vfill
+
+- ~C ANSI~ définit ~malloc~:
+  + L'environnement *d'éxécution* doit avoir un accès à ~malloc~.
+
+
+** Exemple: Programmes non-conformes
+
++ Qu'est-ce que ~POSIX~ requiert comme exécutables dans un système de fichiers?
+  + _Deux exécutables:_ ~/bin/sh~ et ~/usr/bin/env~
+
+\vfill
+
+- La norme de la hiérarchie des systèmes de fichiers ~FHS~.
+  + Définit l'*arborescence* et le contenu des principaux répertoires des systèmes de fichiers.
+  + Voir ~hier(7)~
+
+\vfill
+
+- _Exemple:_ Distribution NixOS
+  + ~NixOS~ n'est pas conforme à ~FHS~, mais conforme ~POSIX~.
+  + ~#!/bin/bash~ n'est pas conforme à ~POSIX~.
+
+
+** Exemple: Nintendo GameBoy Advance
+
+- Est-ce que ~malloc~ est disponible sur toutes les plateformes?
+  + ~C89~ définit ~malloc~...
+  + ... Toutes plateformes ayant un compilateur ~C89~ normalisé le rend disponible?
+
+\vfill
+
+\pause
+
+- Prenons le cas de la ~Nintendo GameBoy Advance~:
+  + Des programmes sont compilables, en utilisant ~GCC~ (normalisé ~C89~).
+
+#+ATTR_LATEX: :width 0.4\textwidth
+[[./images/GBA.png]]
+
+
+** GameBoy Advance: Où se trouve la mémoire?
+
+
+- La GameBoy Advance comporte 256 (+ 32) Kilo-Octets de mémoire.
+
+\vfill
+
+- Au démarrage de la console, l'ensemble de la mémoire est disponible au programme.
+  + Le programme peut accéder au début de la mémoire via le pointeur ~0x02000000~.
+  + C'est au programme de gérer sa mémoire.
+
+\vfill
+
+- Il n'y a pas de librairie C disponible dans la ~ROM~ de la console.
+  + ~malloc~ n'est pas disponible.
+  + Incorporer sa propre librairie, suivant les besoins.
+
+
+** Définition: Attribution de mémoire (4/5)
+
+- _Allocation *dynamique*:_
+  + Appels à des fonctions d'allocations définies par ~C89~ et ~POSIX~.
+  + Disponible uniquement sur une environnement d'éxécution normalisé.
+
+\vfill
+
+- ~malloc~ offre une implémentation d'allocation:
+  + Pas besoin de l'implémenter pour chaque programme.
+
+\vfill
+
+- ~GNU/Linux~ est un environnement d'éxécution compatible ~POSIX~:
+  + ~malloc~ est disponible grâce à ~GNU LibC~.
+  + ~GNU LibC~ ne propose qu'UNE implémentation.
+
+
+* Implémentons: ~malloc~
+
+** Implémentons: ~malloc~
+
+- Il existe une façon d'implémenter ~malloc~ naïvement:
+  + En utilisant une *double liste chaînée*.
+
+\vfill
+
+- Utilisons notre implémentation!
+  + Quelques changements sont nécessaires.
+
+
+** Repérons les changements nécessaires
+
+#+BEGIN_SRC C
+node_t *create_node(list_t *list, size_t size)
+{
+    node_t *node = malloc(sizeof(node_t) + size);
+
+    /* [...] */
+    return (node);
+}
+#+END_SRC
+
+\vfill
+
+#+BEGIN_SRC C
+node_t *delete_node(list_t *list, node_t *node)
+{
+    /* [...] */
+    free(node);
+}
+#+END_SRC
+
+
+** Appliquons ces changements
+
+- Il faut remplacer ~malloc~:
+  + Il faut s'attribuer soi-même la mémoire.
+  + Utilisons la même technique que sur ~GBA~!
+
+\vfill
+
+- _Implication majeure:_ Mémoire totale limitée dès le début.
+  + Il ne faut pas gaspiller la mémoire.
+
+
+** Comment faire?
+
+- Comment s'attribuer de la mémoire tel que sur ~GBA~?
+  + Allocation *automatique* ou *statique*.
+  + ~malloc~ sera remplacé par un pointeur *bien choisi* de cet espace.
+
+\vfill
+
+\pause
+
+#+BEGIN_SRC C
+list_t list = { 0, NULL };
+byte memory[1 Go];
+
+void *malloc(size_t size)
+{
+    /* [...] */
+}
+
+/* [...] */
+#+END_SRC
+
+
+** Exemple: Graphiquement
+
+\begin{ctikz}[memory graph, node distance=.6cm]
+    % List structure
+    \node [arity=1] (Head) { \: \arg{1}
+                             \texttt{\only<1-3>{0}\only<4-6>{4}\only<7-9>{6}\only<10-12>{9}\only<13-15>{13}\only<16->{11}}
+                             * \mintinline{C}{Ko} +
+                             \texttt{\only<1-2>{0}\only<3-5>{1}\only<6-8>{2}\only<9-11>{3}\only<12-14>{4}\only<15->{3}}
+                             * \mintinline{C}{sizeof(node_t)} };
+
+    % Stack: 16 nodes
+    \begin{scope}[shift={(11, 0)}, scale=0.3]
+        \small
+        \stacktop{}
+        \only<1>{
+            \llcell{16}{highlight}{}
+        }
+        \only<2-4>{
+            \llcell{12}{highlight}{}
+            \llcell{4}{freestruct}{ \only<4>{\mintinline{C}{ptrA}} }
+        }
+        \only<5-7>{
+            \llcell{10}{highlight}{}
+            \llcell{2}{freestruct}{ \only<7>{\mintinline{C}{ptrB}} }
+            \llcell{4}{freestruct}{          \mintinline{C}{ptrA}  }
+        }
+        \only<8-10>{
+            \llcell{7}{highlight}{}
+            \llcell{3}{freestruct}{ \only<10>{\mintinline{C}{ptrC}} }
+            \llcell{2}{freestruct}{           \mintinline{C}{ptrB}  }
+            \llcell{4}{freestruct}{           \mintinline{C}{ptrA}  }
+        }
+        \only<11-13>{
+            \llcell{3}{highlight}{}
+            \llcell{4}{freestruct}{ \only<13>{\mintinline{C}{ptrD}} }
+            \llcell{3}{freestruct}{           \mintinline{C}{ptrC}  }
+            \llcell{2}{freestruct}{           \mintinline{C}{ptrB}  }
+            \llcell{4}{freestruct}{           \mintinline{C}{ptrA}  }
+        }
+        \only<14-15>{
+            \llcell{3}{highlight}{}
+            \llcell{4}{freestruct}{   \mintinline{C}{ptrD} }
+            \llcell{3}{freestruct}{   \mintinline{C}{ptrC} }
+            \llcell{2}{occupiedcell}{ \mintinline{C}{ptrB} }
+            \llcell{4}{freestruct}{   \mintinline{C}{ptrA} }
+        }
+        \only<16>{
+            \llcell{3}{highlight}{}
+            \llcell{4}{freestruct}{ \mintinline{C}{ptrD} }
+            \llcell{3}{freestruct}{ \mintinline{C}{ptrC} }
+            \llcell{2}{highlight}{}
+            \llcell{4}{freestruct}{ \mintinline{C}{ptrA} }
+        }
+        \stackbottom{}
+    \end{scope}
+
+
+    % Allocated nodes
+    \node<2->   [arity=3, below right=4cm and 2cm of Head.head, right] (D) { \: \arg{2} \mintinline{C}{4 * Ko} \arg{3} \texttt{\only<2-3>{???}\only<4->{Payload ptrA}} };
+
+    \node<5-15> [arity=3, above=of D.north west, right] (C) { \: \arg{2} \mintinline{C}{2 * Ko} \arg{3} \texttt{\only<5-6>{???}\only<7->{Payload ptrB}} };
+
+    \node<8->   [arity=3, above=of C.north west, right] (B) { \: \arg{2} \mintinline{C}{3 * Ko} \arg{3} \texttt{\only<8-9>{???}\only<10->{Payload ptrC}} };
+
+    \node<11->  [arity=3, above=of B.north west, right] (A) { \: \arg{2} \mintinline{C}{4 * Ko} \arg{3} \texttt{\only<11-12>{???}\only<13->{Payload ptrD}} };
+
+    % Head pointer
+    \node<1-2>   [below right=1cm of Head.head center] (NILHead) { NIL };
+    \draw<1-2>   [ref] (Head.head center) |- (NILHead);
+
+    \draw<3-5>   [ref] (Head.head center) |- (D.west);
+    \draw<6-8>   [ref] (Head.head center) |- (C.west);
+    \draw<9-11>  [ref] (Head.head center) |- (B.west);
+    \draw<12->   [ref] (Head.head center) |- (A.west);
+
+    % Next pointer
+    \draw<6-14>  [ref] (D.head center) -- (C.head south);
+    \draw<9-14>  [ref] (C.head center) -- (B.head south);
+    \draw<12->   [ref] (B.head center) -- (A.head south);
+    \draw<15->   [ref] (D.head center) -- (B.head south);
+
+    % Prev pointer
+    \node<3->    [below=of D.arg 1 center] (NILPrev) { NIL };
+    \draw<3->    [ref] (D.arg 1 center) -- (NILPrev);
+    \draw<6-14>  [ref] (C.arg 1 center) -- (D.arg 1 north);
+    \draw<9-14>  [ref] (B.arg 1 center) -- (C.arg 1 north);
+    \draw<12->   [ref] (A.arg 1 center) -- (B.arg 1 north);
+    \draw<15->   [ref] (B.arg 1 center) -- (D.arg 1 north);
+
+    % NIL next pointer
+    \node<3-5>   [above left=-0.1cm and .8cm of D.north west] (NILHead) { NIL };
+    \draw<3-5>   [ref] (D.head center) |- (NILHead);
+
+    \node<6-8>   [above left=-0.1cm and .8cm of C.north west] (NILHead) { NIL };
+    \draw<6-8>   [ref] (C.head center) |- (NILHead);
+
+    \node<9-11>  [above left=-0.1cm and .8cm of B.north west] (NILHead) { NIL };
+    \draw<9-11>  [ref] (B.head center) |- (NILHead);
+
+    \node<12->   [above left=-0.1cm and .8cm of A.north west] (NILHead) { NIL };
+    \draw<12->   [ref] (A.head center) |- (NILHead);
+
+    % prevent bumping
+    \node [below=5cm of Head.center] {};
+\end{ctikz}
+
+\vfill
+
+*** > Instruction en cours:
+- <only@1>      src_C[:exports code]{ /* Initialisation */ }
+- <only@2-4>    src_C[:exports code]{ int *ptrA = malloc(4 * Ko); }
+- <only@5-7>    src_C[:exports code]{ int *ptrB = malloc(2 * Ko); }
+- <only@8-10>   src_C[:exports code]{ int *ptrC = malloc(3 * Ko); }
+- <only@11-13>  src_C[:exports code]{ int *ptrD = malloc(4 * Ko); }
+- <only@14-16>  src_C[:exports code]{ free(ptrB); }
+
+
+** Conclusion
+
+- Nous venons de faire une implémentation *naïve* de ~malloc~:
+  + Il n'y a aucune optimisation.
+  + La fonction ~free~ n'est pas implémentée.
+  + La mémoire est directement prise à l'initialisation.
+
+\vfill
+
+- Il faut comprendre que ~malloc~ est d'abord un algorithme de gestion de mémoire.
+  + ~malloc~ a été, en premier lieu, défini dans ce sens.
+
+
+* Partie 2: Allocation dynamique
+
+** Structure d'un programme en mémoire
+
+- Un programme en mémoire est arrangé en plusieurs régions *distinctes*.
+
+- <only@11-12> Librairies dynamiques: Voir ~ld.so(8)~
+  + <only@12> Rendez-vous pour le projet ~ftrace~
+
+\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+    \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
+
+    \node<2->[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
+    \node<2->[draw, fill=black!20, left=.4pt of Background.east] (ReservedRight) {\rotatebox{270}{Espace réservé}};
+
+    \node<3->[draw, fill=olive!20, right=of ReservedLeft, minimum width=1.5cm] (Text) {.text};
+    \node<4->[draw, fill=olive!20, right=of Text]                              (Data) {.data};
+    \node<5->[draw, fill=olive!20, right=of Data]                              (Bss)  {.bss};
+
+    \node<6->[draw, fill=brown!20, left=of ReservedRight, minimum width=1.5cm] (Stack) {Pile};
+    \draw<7->[->, thick] (Stack.west) -- ([xshift=-.5cm]Stack.west);
+
+    \node<8->[draw, fill=blue!20, right=of Bss, minimum width=2.5cm] (Heap) {Tas};
+    \draw<9->[->, thick] (Heap.east) -- ([xshift=.5cm]Heap.east);
+
+    \node<10->[right=of Heap.east, xshift=.6cm, yshift=1cm, minimum height=1cm] {Librairies dynamiques};
+\end{ctikz}
+
+
+** Définition: Mémoire virtuelle
+
+- La *mémoire virtuelle* est un mécanisme d'*isolement* des processus:
+  + Chaque processus est dans une *abstraction idéalisée* des ressources d'un environnement.
+
+\vfill
+\pause
+
+- <5-> Les processus ne manipuleront *uniquement* des pointeurs de la mémoire virtuelle.
+
+\vfill
+
+\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+    \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
+    \node[draw, fill=black!20, left=.4pt of Background.east] (ReservedRight) {\rotatebox{270}{Espace réservé}};
+
+    \node[draw, fill=olive!20, right=of ReservedLeft, minimum width=1.5cm] (Text) {.text};
+    \node[draw, fill=olive!20, right=of Text]                              (Data) {.data};
+    \node[draw, fill=olive!20, right=of Data]                              (Bss)  {.bss};
+
+    \node[draw, fill=brown!20, left=of ReservedRight, minimum width=1.5cm] (Stack) {Pile};
+    \draw[->, thick] (Stack.west) -- ([xshift=-.5cm]Stack.west);
+
+    \node[draw, fill=blue!20, right=of Bss, minimum width=2.5cm] (Heap) {Tas};
+    \draw[->, thick] (Heap.east) -- ([xshift=.5cm]Heap.east);
+
+    \node[right=of Heap.east, xshift=.6cm, yshift=1cm, minimum height=1cm] {Librairies dynamiques};
+
+    \node[below=of Background.south west, yshift=-.3cm, minimum height=1cm, right] {\texttt{0x0}};
+    \node[below=of Background.south east, yshift=-.3cm, minimum height=1cm, left]  {\texttt{0xFFFFFFFF(FFFFFFFF)}};
+\end{ctikz}
+
+
+** Graphiquement: Plusieurs processus
+
+\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=2.3cm}]
+    % Separation
+    \node[draw, fill=black!60, text=white, minimum width=\textwidth, minimum height=.5cm, font=\bfseries] (Break) {Magie Hardware / Software};
+
+
+    % Program 1
+    \node[draw, fill=black!10, minimum width=0.3\textwidth, above left=.75cm and 1.5cm of Break.center, thick] (Background1) {};
+
+    \node[draw, fill=olive!20, right=.4pt of Background1.west, minimum width=1cm]   (Program1) {\rotatebox{270}{Programme}};
+    \node[draw, fill=brown!20, left=.4pt of Background1.east,  minimum width=0.5cm] (Stack1)   {\rotatebox{270}{Pile}};
+    \node[draw, fill=blue!20,  right=of Program1.east,         minimum width=1.5cm] (Heap1)    {\rotatebox{270}{Tas}};
+
+
+    % Program 2
+    \node[draw, fill=black!10, minimum width=0.3\textwidth, above right=.75cm and 1.5cm of Break.center, thick] (Background2) {};
+
+    \node[draw, fill=olive!20, right=.4pt of Background2.west, minimum width=0.5cm] (Program2) {\rotatebox{270}{Programme}};
+    \node[draw, fill=brown!20, left=.4pt of Background2.east,  minimum width=1cm]   (Stack2)   {\rotatebox{270}{Pile}};
+    \node[draw, fill=blue!20,  right=of Program2.east,         minimum width=1cm]   (Heap2)    {\rotatebox{270}{Tas}};
+
+
+    % RAM
+    \node[draw, fill=black!10, minimum width=0.8\textwidth, below=.75cm of Break.center, thick] (BackgroundRAM) {};
+
+    \node[draw, fill=red!20,   right=.4pt of BackgroundRAM.west, minimum width=1cm, thick] (Kernel) {\rotatebox{270}{Kernel}};
+
+    \node[draw, fill=olive!20, right=0cm   of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=blue!20,  right=0.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=brown!20, right=1cm   of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=blue!20,  right=1.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=blue!20,  right=2.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=brown!20, right=3cm   of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=blue!20,  right=5cm   of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=olive!20, right=5.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=olive!20, right=6.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=blue!20,  right=8cm   of Kernel.east, minimum width=0.5cm, thick] {};
+    \node[draw, fill=brown!20, right=8.5cm of Kernel.east, minimum width=0.5cm, thick] {};
+\end{ctikz}
+
+
+** Étude de cas: Évolution du Tas
+
+- Dans la mémoire virtuelle:
+  + Le Tas *n'évolue pas automatiquement*.
+  + Il n'y a que le programme et les librairies dynamiques.
+
+\vfill
+
+- Comment faire évoluer le Tas?
+  + En demandant directement au *Noyau*.
+
+\vfill
+
+- Pourquoi demander au *Noyau*?
+  + La mémoire est un composant matériel externe (RAM, Swap, ...).
+  + Seul le noyau sait l'utiliser.
+
+\vfill
+
+- Sur Linux, deux *appels systèmes* sont disponibles:
+  + ~sbrk(2)~ et ~mmap(2)~
+
+
+** Graphiquement: Espace Utilisateur - Noyau
+
+\begin{ctikz}[, node distance=0cm, every node/.style={thick, minimum height=1cm}]
+    % Users processes
+    \node<1-> [draw, fill=olive!20, minimum width=0.5\textwidth] (Process) {Processus utilisateurs};
+
+    % OS
+    \node<2-> [draw, fill=blue!20,  minimum width=0.6\textwidth, minimum height=1.25cm, below=1cm of Process.center] (OS) {Système d'explotation (GNU, FreeDesktop...)};
+
+    % Kernel
+    \node<3-> [draw, fill=olive!40, minimum width=0.5\textwidth, below=.5cm of OS.center] (Kernel) {Noyau (Linux)};
+
+    % Hardware
+    \node<4-> [draw, fill=black!10, minimum width=0.1\textwidth, below=1cm of Kernel.center] (RAM) {RAM};
+    \node<5-> [draw, fill=black!10, minimum width=0.1\textwidth, below=1cm of Kernel.center, xshift=-3cm]  (CPU) {Processeur};
+    \node<6-> [draw, fill=black!10, minimum width=0.1\textwidth, below=1cm of Kernel.center, xshift=3cm] (Network) {Carte réseau};
+
+    % Prevent bumping
+    \node [below=4cm of Process.center] {};
+\end{ctikz}
+
+
+** Manuel: ~sbrk(2)~
+
+#+BEGIN_SRC C
+NAME
+    brk, sbrk - change data segment size
+
+SYNOPSIS
+    #include <unistd.h>
+
+    int brk(void *addr);
+    void *sbrk(intptr_t increment);
+
+CONFORMING TO
+    4.3BSD; SUSv1
+        marked LEGACY in SUSv2 removed in POSIX.1-2001.
+#+END_SRC
+
+
+** Graphiquement: Évolution du Tas
+
+- Chaque déplacement du *program break* modifie l'espace mémoire attribuée au programme.
+  + Une augmentation du program break attribue de la mémoire.
+  + Une diminution du program break relâche de la mémoire.
+
+\vfill
+
+\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+    \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
+    \node[draw, fill=black!20, left=.4pt of Background.east] (ReservedRight) {\rotatebox{270}{Espace réservé}};
+
+    \node[draw, fill=olive!20, right=of ReservedLeft, minimum width=1.5cm] (Text) {.text};
+    \node[draw, fill=olive!20, right=of Text]                              (Data) {.data};
+    \node[draw, fill=olive!20, right=of Data]                              (Bss)  {.bss};
+
+    \node[draw, fill=brown!20, left=of ReservedRight, minimum width=1.5cm] (Stack) {Pile};
+    \draw[->, thick] (Stack.west) -- ([xshift=-.5cm]Stack.west);
+
+    \node[draw, fill=blue!20, right=of Bss, minimum width=2.5cm] (Heap) {Tas};
+    \draw[->, thick] (Heap.east) -- ([xshift=.5cm]Heap.east);
+
+    \node[right=of Heap.east, xshift=.6cm, yshift=1cm, minimum height=1cm] {Librairies dynamiques};
+
+    \node[below=of Background.south west, yshift=-.3cm, minimum height=1cm, right] {\texttt{0x0}};
+    \node[below=of Background.south east, yshift=-.3cm, minimum height=1cm, left]  {\texttt{0xFFFFFFFF(FFFFFFFF)}};
+
+    \draw[dashed, ultra thick, orange] (Heap.north east) -- (Heap.south east) node[below=-1cm] {Program Break};
+\end{ctikz}
+
+
+** Définition: Attribution de mémoire (5/5)
+
+- <1-> _Allocation *dynamique*:_
+  + <1-> Appels à des fonctions d'allocations définies par ~C89~ et ~POSIX~.
+  + <1-> Disponible uniquement sur une environnement d'éxécution normalisé.
+
+\vfill
+
+- ~malloc~ offre une implémentation d'allocation:
+  + Un algorithme de gestion de mémoire.
+  + Un moyen, si disponible, de demander des ressources au système.
+    * En limitant le nombre d'appels.
+
+\vfill
+
+- Sur les environnements ~POSIX~:
+  + Via des appels systèmes (~sbrk~ ou ~mmap~).
+
+
+* Pour terminer...
+
+** Ouverture
+
+- Pourquoi les problèmes suivants corrompt ~malloc~:
+  + Dépasser la taille du buffer
+  + Double appel à free()
+
+\vfill
+
+- _Réponse:_ Dans vos projets!
+
+
+** Remerciements
+
+- Cédric Bonnet
+  + Le "Before Work" à 8h chaque matin
+
+\vfill
+
+- Albert Corson
+- Adrien Lucbert
+
+
+** Références: Allocation (1/3)
+
+- _*[[https://youtu.be/7aONIVSXiJ8][Matt Porterntroduction to Memory Management in Linux]]*_
+- _*[[https://www.gnu.org/software/libc/manual/html_node/Memory.html][GNU Manual - Malloc]]*_
+- _*[[http://david.decotigny.free.fr/libre/linux-mag-hs-16/lmhs-kernel/main.html][Thomas Petazzoni; David Decotigny - Concepts fondamentaux - Linux]]*_
+
+
+** Références: Hardware (2/3)
+
+- _Super NES:_
+  + _*[[https://youtu.be/-U76YvWdnZM][Retro Game Mechanics Explained - SNES Memory Mapping]]*_
+
+\vfill
+
+- _GameBoy Advance:_
+  + _*[[https://github.com/pret/pokeemerald][GitHub: Décompilation de Pokémon Émeraude]]*_
+  + _*[[https://www.cs.rit.edu/~tjh8300/CowBite/CowBiteSpec.htm][GBA HardWare Specifications]]*_
+
+\vfill
+
+- _SEGA:_
+  + _*[[https://youtu.be/i9bkKw32dGw][GameHut - Être sûr de passer la certification SEGA]]*_
+
+
+** Références: Ouverture (3/3)
+
+- _*[[https://youtu.be/np5SDSeTdAY][Raymond Namyst - Systèmes d'exploitation: Une Introduction]]*_
+- _*[[https://youtu.be/b3NxrZOu_CE?t=907][3Blue1Brown - Réflexion sur l'apprentissage]]*_
+- _*[[https://edolstra.github.io/pubs/nixos-icfp2008-final.pdf][Eelco Dolstra - NixOS: Une distribution Linux purement fonctionnelle]]*_
+
+\vfill
+
+- _Littérature:_
+  + Peter Van der Linden - Expert C Programming: Deep C Secrets
