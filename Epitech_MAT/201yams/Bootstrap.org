@@ -1,0 +1,652 @@
+#+TITLE: 201yams - Rolling dice like god
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/tikzdice/tikzdice.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Introduction
+
+** Définition: Modélisation
+
+- Un *modèle mathématique* est une traduction d'une *observation* afin d'appliquer des outils, techniques ou théories mathématiques.
+  + Inversement, la traduction des *résultats* mathématiques obtenus en prédictions ou opérations dans le monde réel.
+
+\vfill
+
+- Nous voulons étudier des phénomènes caractérisés par le *hasard* et l'*incertitude*.
+  + Nous allons donc utiliser la *théorie des probabilités*.
+
+\vfill
+
+- Cependant, nous avons besoin de pré-requis:
+  + Théorie des ensembles
+  + Théorie du dénombrement
+
+
+* Théorie des Ensembles
+
+** Définition: Ensemble et éléments
+
+- Un *ensemble* est une collection d'objets *distinguables*, appelés *éléments*.
+  + Ainsi, on peut définir l'*appartenance* d'un élément à un ensemble.
+
+\vfill
+
+- _Exemple:_ Prenons un ensemble \( E \):
+  + \( x \) appartient à \( E \), noté \( x \in E \)
+  + \( y \) n'appartient pas à \( E \), noté \( y \not\in E \)
+
+
+\begin{ctikz}
+    \pgfmathsetseed{\year};
+
+    \draw (-4, -1.5) -- (-4, 1.5) -- (4, 1.5) -- (4, -1.5) -- (-4, -1.5);
+
+    \foreach \p in {1, ..., 400} {
+        \draw (3.9 * rand, 1.4 * rand) circle (0.03);
+    }
+
+    \draw[thick] (0, 0) ellipse (2 and 1);
+
+    \coordinate (x) at (0.5, -.5);
+    \coordinate (y) at (2.5, .5);
+
+    \draw (x) circle (0.03);
+    \draw (y) circle (0.03);
+
+    \fill[red] (x) circle (0.05) node[draw, fill=bg, above=.1] {$ x $};
+    \fill[red] (y) circle (0.05) node[draw, fill=bg, above=.1] {$ y $};
+\end{ctikz}
+
+
+** Définition: Égalité et description de l'ensemble
+
+- Un ensemble peut être décrit:
+  + En listant ses éléments: \( \{ 1, 2, 3, 4, 5, 6 \} \)
+  + Par les propriétés caractérisant ses éléments: Les entiers de 1 et 6.
+
+\vfill
+
+- Deux ensembles sont *égaux* s'ils contiennent les mêmes éléments.
+
+\vfill
+
+- _Exemple:_ Soit \( A = \{ 1, 2, 3, 4, 5, 6 \} \) et \( B \) les entiers de 1 à 6.
+  + \( A \) et \( B \) contiennent les mêmes éléments: \( A = B \)
+
+
+
+** Détails: Notations
+
+- L'ensemble décrit en listant ses éléments n'a pas de *notation unique*:
+  + L'ordre des éléments est *sans importance*: \( \{ 1, 2 \} = \{ 2, 1 \} \)
+  + La répétition *ne modifie pas* l'ensemble: \( \{ 1, 2 \} = \{ 1, 2, 2 \} = \{ 1, 2, 2, 1 \} \)
+
+\vfill
+
+- Les ensembles usuels:
+  + \( \emptyset \), parfois noté \( \{ \} \), l'*ensemble vide* ne contenant aucun élément
+  + \( \set{N} = \{ 0, 1, 2, ... \} \), l'ensemble des *entiers naturels*
+  + \( \set{Z} = \{ ..., -2, -1, 0, 1, 2, ... \} \), l'ensemble des *entiers relatifs*
+  + \( \set{R} \), l'ensemble des *réels*
+
+\vfill
+
+- On peut noter que \( \set{N} \), \( \set{Z} \) et \( \set{R} \) sont des ensembles *infinis*:
+  + Il n'est pas possible de lister leurs éléments.
+
+
+** Définition: Sous-ensemble
+
+- Un *sous-ensemble* \( B \) de l'ensemble \( A \) est un ensemble dont tous les éléments de \( B \) sont dans \( A \).
+
+\vfill
+
+- _Exemple:_
+  + Soit \( A = { 1, 2, 3 } \), l'ensemble \( B = { 2 } \) est un sous-ensemble de \( A \), noté \( B \subset A \).
+  + On a \( \emptyset \subset \set{N} \subset \set{Z} \subset \set{R} \)
+
+
+** Définition: Cardinalité d'un ensemble
+
+- Le *cardinal* (ou taille) d'un ensemble est le nombre d'éléments de cet ensemble.
+  + Si l'ensemble est *infini*, le cardinal est \( +\infty \).
+
+\vfill
+
+- _Exemples:_
+  + \( A = \{ 1, 2, 3 \} \) a 3 éléments: \( \Card A = 3 \) ou \( |A| = 3 \)
+  + \( B = \set{N} \) a une infinité d'éléments: \( \Card B = +\infty \) ou \( |B| = +\infty \)
+
+
+
+** Définition: Produit cartésien
+
+- Le *produit cartésien* de deux ensembles \( A \) et \( B \) est l'ensemble de tous les couples, dont:
+  + La première composante appartient à \( A \).
+  + La seconde composante appartient à \( B \).
+
+\vfill
+
+- _Exemple:_ Soit \( A = \{ 1, 2, 3 \} \) et \( B = \{ 2, 4, 6 \} \)
+  + \( A \times B = \{ (1, 2), (1, 4), (1, 6), (2, 2), (2, 4), (2, 6), (3, 2), (3, 4), (3, 6) \} \)
+
+
+* Théorie des Probabilités: 1^{ère} partie
+
+** Définition: Expériences aléatoires
+
+- Une *expérience aléatoire* est une expérience:
+  + *Renouvable* dans des conditions *identiques*.
+  + Chaque résultat *ne peut pas* être déterminé.
+
+\vfill
+
+- _Exemples:_
+  + Lancers d'une pièce de monnaie
+  + Lancers d'un dé à 6 faces
+
+
+** Définition: Modèle / Univers
+
+- Un *modèle* ou un *univers*, noté \( \Omega \), est l'*ensemble* des résultats *possibles* d'une expérience aléatoire.
+  + Les éléments de cette ensemble sont appelées les *issues*.
+
+\vfill
+
+- _Exemples:_
+  + Lancers d'une pièce de monnaie: \( \Omega = \{ Pile, Face \} \)
+  + Lancers d'un dé à 6 faces: \( \Omega = \{ 1, 2, 3, 4, 5, 6 \} \)
+
+
+** Définition: Événement
+
+- Un *événement* lié à une expérience aléatoire est un sous-ensemble de l'univers \( \Omega \).
+  + L'événement décrit se qu'il peut se produire, ou non, dans une expérience.
+  + Un événement ne contenant qu'un *événement élémentaire*.
+  + L'événement \( \Omega \) est l'*événement certain*.
+  + L'événement vide est l'*événement impossible*.
+
+\vfill
+
+- _Exemples:_
+  + Obtenir \( Pile \) par un lancer d'une pièce de monnaie: \( \{ Pile \} \)
+  + Obtenir un résultat pair d'un dé à 6 faces: \( \{ 2, 4, 6 \} \)
+
+
+** Définition: Probabilité d'un événement
+
+- La *probabilité* d'un événement est une valeur comprise entre 0 et 1.
+  + Cette valeur représente la *plausibilité* de l'événement.
+    * 0 représente 0%: Impossible
+    * 1 représente 100%: Certain
+
+\vfill
+
+- _Exemples:_
+  + Probabilité d'obtenir \( Pile \) par un lancer de pièce de monnaie: \( 0.5 \)
+  + Probabilité d'obtenir un résultat pair d'un dé à 6 faces: \( 0.5 \)
+
+
+** Définition: Loi de probabilité
+
+- La *loi de probabilité* \( \Prob \) est une fonction qui à un événement associe une valeur.
+  + Cette valeur représente la probabilité de l'événement.
+
+\vfill
+
+- _Exemples:_
+  + Soit l'événement \( A \): "Obtenir \( Pile \) par un lancer de pièce de monnaie"
+    * \( \Prob(A) = \Prob(\{ Pile \}) = 0.5 \)
+
+  + Soit l'événement \( B \): "Obtenir un résultat pair d'un dé à 6 faces"
+    * \( \Prob(B) = \Prob(\{ 2, 4, 6 \}) = 0.5 \)
+
+
+** Définition: Loi uniforme / Équiprobabilité
+
+- L'*équiprobabilité* de deux événements signifie qu'ils ont la même probabilité.
+  + La *loi uniforme* modélise une expérience aléatoire dont les résultats sont équiprobables.
+
+\vfill
+
+- Soit l'univers \( \Omega \) et l'événement \( A \subset \Omega \) régie par la loi uniforme:
+  + On a: \( \Prob(A) = \frac{\Card A}{\Card \Omega} \)
+
+\vfill
+
+- _Exemple:_
+  + Soit l'événement \( A \): "Obtenir un résultat pair d'un dé à 6 faces"
+    * \( \Prob(A) = \frac{\Card A}{\Card \Omega} = \frac{ \Card \{ 2, 4, 6 \} }{ \Card \{ 1, 2, 3, 4, 5, 6 \} } = \frac{3}{6} = 0.5 \)
+
+
+** Définition: Arbre de probabilité
+
+- Un *arbre de probabilité* est un arbre décrivant une expérience aléatoire.
+  + Cet arbre permet de calculer les probabilités.
+
+\vfill
+
+- _Exemple:_
+  + Soit l'événement \( A \): "Obtenir au moins 1 fois pile après deux lancers"
+
+\vfill
+
+\begin{ctikz}[issue/.style={draw, minimum width=1.2cm},
+              level 1/.style={level distance=3cm,sibling distance=2.5cm},
+              level 2/.style={level distance=3cm,sibling distance=1cm}]
+
+    \node {} [grow'=right]
+        child { node[issue] {\( Pile \)}
+            child { node[issue] {\( Pile \)}
+                node[right=1cm] {\( \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4} \)} edge from parent node[fill=bg] {\( 1/2 \)}
+            }
+            child { node[issue] {\( Face \)}
+                node[right=1cm] {\( \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4} \)} edge from parent node[fill=bg] {\( 1/2 \)}
+            }
+            edge from parent node[fill=bg] {\( 1/2 \)}
+        }
+        child { node[issue] {\( Face \)}
+            child { node[issue] {\( Pile \)}
+                node[right=1cm] {\( \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4} \)} edge from parent node[fill=bg] {\( 1/2 \)}
+            }
+            child { node[issue] {\( Face \)}
+                node[right=1cm] {\( \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4} \)} edge from parent node[fill=bg] {\( 1/2 \)}
+            }
+            edge from parent node[fill=bg] {\( 1/2 \)}
+        };
+\end{ctikz}
+
+
+* Passons au ~201yams~: 1^{ère} partie
+
+** Modélisons le jeu
+
+- Le jeu ~Yams~ est un jeu de lancers de dés.
+  + L'objectif étant de faire des combinaisons de dés.
+
+\vfill
+
+- Nous allons travailler dans une version simplifiée du jeu:
+  + Il faut *déterminer* l'issue d'un tour de jeu.
+
+\vfill
+
+- _Exemple:_ Avec les dés suivants: \scalebox{0.5}{ \dieone \dieone \diethree \diefour \diefive }
+  + Déterminer la probabilité d'obtenir la combinaison souhaitée.
+
+
+** Étude de cas: Obtenir un *2-three-of-kind* (Contexte) (1/4)
+
+- Prenons le jeu suivant: \scalebox{0.5}{ \dieone \dietwo \dietwo \diefive \diesix }
+  + On souhaite obtenir un *2-three-of-kind*.
+
+\vfill
+
+- Un *2-three-of-kind* est obtenu s'il existe au moins 3 dés parmi les 5 dés qui ont la face 2.
+  + On va jouer uniquement les dés qui n'ont pas la face désirée.
+
+\vfill
+
+- On note \( T \), l'événement "Obtenir un *2-three-of-kind*"
+
+
+** Étude de cas: Obtenir un *2-three-of-kind* (Arbre de probabilité) (2/4)
+
+- Soit les événements suivants:
+  + \( S_{i} \): "Obtenir un 2 avec le \( i \)^{ème} dé" (Succès)
+  + \( E_{i} \): "Ne pas obtenir un 2 avec le \( i \)^{ème} dé" (Échec)
+
+\vfill
+
+\begin{ctikz}[issue/.style={draw, minimum width=1.2cm},
+              level 1/.style={level distance=3cm,sibling distance=1.8cm},
+              level 2/.style={level distance=3cm,sibling distance=1.8cm},
+              level 3/.style={level distance=3cm,sibling distance=1.8cm}]
+
+    \node {} [grow'=right]
+        child { node[issue] {\( S_{1} \)}
+            node[right=1cm] {\( \frac{1}{6} \)} edge from parent node[fill=bg] {\( 1/6 \)}
+        }
+        child { node[issue] {\( E_{1} \)}
+            child { node[issue] {\( S_{2} \)}
+                node[right=1cm] {\( \frac{5}{6} \cdot \frac{1}{6} = \frac{5}{36} \)} edge from parent node[fill=bg] {\( 1/6 \)}
+            }
+            child { node[issue] {\( E_{2} \)}
+                child { node[issue] {\( S_{3} \)}
+                    node[right=1cm] {\( \frac{5}{6} \cdot \frac{5}{6} \cdot \frac{1}{6} = \frac{25}{216} \)} edge from parent node[fill=bg] {\( 1/6 \)}
+                }
+                child { node[issue] {\( E_{3} \)}
+                    node[right=1cm] {\( \frac{5}{6} \cdot \frac{5}{6} \cdot \frac{5}{6} = \frac{125}{216} \)} edge from parent node[fill=bg] {\( 5/6 \)}
+                }
+                edge from parent node[fill=bg] {\( 5/6 \)}
+            }
+            edge from parent node[fill=bg] {\( 5/6 \)}
+        };
+\end{ctikz}
+
+
+** Étude de cas: Obtenir un *2-three-of-kind* (Calcul de probabilité) (3/4)
+
+- Soit les événements suivants:
+  + \( S_{i} \): "Obtenir un 2 avec le \( i \)^{ème} dé" (Succès)
+  + \( E_{i} \): "Ne pas obtenir un 2 avec le \( i \)^{ème} dé" (Échec)
+
+\vfill
+
+- La probabilité d'obtenir un *2-three-of-a-kind* est:
+  + \( \Prob(T) = \Prob(S_{1}) + \Prob(E_{1}) \cdot \Prob(S_{2}) + \Prob(E_{1}) \cdot \Prob(E_{2}) \cdot \Prob(S_{3}) \)
+  + \( \iff \Prob(T) = \frac{1}{6} + \frac{5}{6} \cdot \frac{1}{6} + \frac{5}{6} \cdot \frac{5}{6} \cdot \frac{1}{6} \)
+  + \( \iff \Prob(T) \approx 0.42 \)
+
+
+** Étude de cas: Obtenir un *2-three-of-kind* (Deux dés supplémentaires) (4/4)
+
+- Prenons le jeu suivant: \scalebox{0.5}{ \dieone \dietwo \diethree \diefour \diesix }
+  + Calculons la probabilité d'obtenir un *2-three-of-kind*
+
+\vfill
+
+- Essayons de faire un arbre de probabilité!
+
+\vfill
+
+- Le calcul est trop fastidieux...
+  + Nos outils ne sont pas assez puissants...
+
+
+* Théorie du dénombrement
+
+** Introduction
+
+- La *combinatoire*, ou *théorie du dénombrement*, permet de compter les éléments d'un ensemble sans les énumérer.
+
+\vfill
+
+- _Exemple:_
+  + Combien existe-t'il de nombres différents à \( n \) bits?
+  + De combien de manières différentes peut-on ordonner \( n \) éléments distincs?
+
+
+** Définition: Permutation
+
+- Une *permutation* d'un ensemble fini est une séquence ordonnée de tous les éléments de cet ensemble, où chaque élément apparaît une seule fois.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3 \} \)
+  + Il existe 6 permutations de \( E \):
+    * \( 123 \), \( 132 \), \( 213 \), \( 231 \), \( 312 \), \( 321 \)
+  + Il y a 3 choix pour le premier élément, 2 pour le deuxième, et 1 pour le dernier.
+
+\vfill
+
+- Dans un ensemble à \( n \) éléments, il existe *\( n! \) permutations*.
+  + Il y a \( n \) choix pour le 1er élément, \( n - 1 \) pour le deuxième, ...
+
+
+** Définition: \( k \)-permutation
+
+- Une *\( k \)-permutation* d'un ensemble est une séquence ordonnée de \( k \) éléments de cet ensemble, sans qu'un élément apparaisse plus d'une fois dans la séquence.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3, 4 \} \)
+  + Il existe 12 \( 2 \)-permutations de \( E \):
+    * \( 12 \), \( 13 \), \( 14 \), \( 21 \), \( 23 \), \( 24 \), \( 31 \), \( 32 \), \( 34 \), \( 41 \), \( 42 \), \( 43 \)
+  + Il y a 4 choix pour le premier élément et 3 pour le deuxième élément.
+
+\vfill
+
+- Le nombre de \( k \)-permutations d'un ensemble à \( n \) éléments est: *\( \frac{n!}{(n - k)!} \)*
+  + \( n \cdot (n - 1) \cdot (n - 2) \cdot ... \cdot (n - k + 1) \)
+
+\vfill
+
+- _Remarque:_ Une permutation d'un ensemble à \( n \) éléments est une \( n \)-permutation.
+
+
+** Définition: \( k \)-combinaison
+
+- Une *\( k \)-combinaison* d'un \( n \)-ensemble est un l'ensemble formé par la \( k \)-permutation.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3, 4 \} \)
+  + Il existe 6 \( 2 \)-combinaisons de \( E \):
+    * \( 12 \), \( 13 \), \( 14 \), \( 23 \), \( 24 \), \( 34 \)
+
+\vfill
+
+- Le nombre de \( k \)-combinaisons d'un ensemble à \( n \) éléments est: *\( \frac{n!}{(n - k)! \cdot k!} \)*
+
+
+** Définition: Coefficients binomiaux
+
+- Les *coefficients binomiaux* sont le nombre de \( k \)-combinaisons dans un ensemble à \( n \) éléments.
+  + On utilise la notation \( \binom{n}{k} \) et se prononce *k parmi n*.
+
+\vfill
+
+- On a donc la relation suivante: \( \binom{n}{k} = \frac{n!}{(n - k)! \cdot k!} \)
+
+
+* Passons au ~201yams~: 2^{ème} partie
+
+** Étude de cas: Obtenir un *Straight* (1/3)
+
+- Il existe deux *straight* possibles:
+  + Le 5-Straight: \scalebox{0.5}{ \dieone \dietwo \diethree \diefour \diefive }
+  + Le 6-Straight: \scalebox{0.5}{ \dietwo \diethree \diefour \diefive \diesix }
+
+\vfill
+
+- _Exemple:_ Avec ce jeu: \scalebox{0.5}{ \dieone \dietwo \diefour \diefour \diesix }
+  + Nous devons relancer que 2 dés afin d'obtenir un *5-Straight*.
+
+
+** Étude de cas: Obtenir un *Straight* (2/3)
+
+- Nous avons donc un ensemble \( D \) à 6 éléments (chaque face du dé).
+  + Nous souhaitons énumérer l'ensemble des possibilités \( D \times D \).
+
+\vfill
+
+\begin{center}
+    \begin{tabular}{c | c | c | c | c | c}
+        \scalebox{0.5}{\dieone\dieone} & \scalebox{0.5}{\dieone\dietwo} & \scalebox{0.5}{\dieone\diethree} & \scalebox{0.5}{\dieone\diefour} & \scalebox{0.5}{\dieone\diefive} & \scalebox{0.5}{\dieone\diesix} \\
+        \scalebox{0.5}{\dietwo\dieone} & \scalebox{0.5}{\dietwo\dietwo} & \scalebox{0.5}{\dietwo\diethree} & \scalebox{0.5}{\dietwo\diefour} & \scalebox{0.5}{\dietwo\diefive} & \scalebox{0.5}{\dietwo\diesix} \\
+        \scalebox{0.5}{\diethree\dieone} & \scalebox{0.5}{\diethree\dietwo} & \scalebox{0.5}{\diethree\diethree}  &\scalebox{0.5}{ \diethree\diefour} & \scalebox{0.5}{\diethree\diefive} & \scalebox{0.5}{\diethree\diesix} \\
+        \scalebox{0.5}{\diefour\dieone} & \scalebox{0.5}{\diefour\dietwo} & \scalebox{0.5}{\diefour\diethree} & \scalebox{0.5}{\diefour\diefour} & \scalebox{0.5}{\diefour\diefive} & \scalebox{0.5}{\diefour\diesix} \\
+        \scalebox{0.5}{\diefive\dieone} & \scalebox{0.5}{\diefive\dietwo} & \scalebox{0.5}{\diefive\diethree} & \scalebox{0.5}{\diefive\diefour} & \scalebox{0.5}{\diefive\diefive} & \scalebox{0.5}{\diefive\diesix} \\
+        \scalebox{0.5}{\diesix\dieone} & \scalebox{0.5}{\diesix\dietwo} & \scalebox{0.5}{\diesix\diethree} & \scalebox{0.5}{\diesix\diefour} & \scalebox{0.5}{\diesix\diefive} & \scalebox{0.5}{\diesix\diesix} \\
+    \end{tabular}
+\end{center}
+
+
+** Étude de cas: Obtenir un *Straight* (3/3)
+
+- Avec ce jeu: \scalebox{0.5}{ \dieone \dietwo \diefour \diefour \diesix }
+  + Nous devons relancer que 2 dés afin d'obtenir un *5-Straight*.
+
+\vfill
+
+- Il y a 2 choix possibles: \scalebox{0.5}{\diethree\diefive} et \scalebox{0.5}{\diefive\diethree}
+  + Où, pour chaque dé, il y a \( \frac{1}{6} \) de chances que la bonne face tombe.
+
+\vfill
+
+- Avec ce jeu, la probabilité d'obtenir un *5-Straight* est: \( 2 \cdot \left( \frac{1}{6} \right)^{2} \)
+
+
+** Généralement: Obtenir un *Straight*
+
+- Dans un jeu, si on souhaite relancer \( k \) dés.
+  + On souhaite obtenir une \( k \)-permutation: Il y aura donc \( k! \) possibilités.
+
+- Comme chacune des possibilités à \( \frac{1}{6} \) chances de se produire, alors: \( k! \cdot \left( \frac{1}{6} \right)^{k} \)
+
+\vfill
+
+- _Exemple:_ On souhaite obtenir un *5-Straight* avec \scalebox{0.5}{ \dieone \dietwo \dieone \dietwo \diesix }
+  + Il faut donc relancer 3 dés.
+  + On souhaite obtenir les *3-permutations* de l'ensemble \( \left\{ \scalebox{0.5}{\diethree}, \scalebox{0.5}{\diefour}, \scalebox{0.5}{\diefive} \right\} \)
+
+
+
+* Théorie des Probabilités: 2^{ème} partie
+
+** Définition: Épreuve de Bernoulli
+
+- Une *épreuve de Bernoulli* de paramètre \( p \) est une expérience aléatoire comportant deux issues: Le *succès* ou l'*échec*.
+  + Le paramètre \( p \) représente la probabilité de succès de l'expérience.
+
+\vfill
+
+- _Exemple:_
+  + Le lancer d'une pièce est une épreuve de Bernoulli de paramètre \( p = \frac{1}{2} \)
+    * Si le "succès" est représenté par l'obtention de \( Pile \), l'"échec" sera l'obtention de \( Face \).
+
+
+** Définition: Variable aléatoire
+
+- La notion de *variable aléatoire* recouvre toute quantité numérique que l'on peut déterminer en connaissant entièrement le résultat de l'expérience.
+
+\vfill
+
+- _Exemple:_ Suivant l'expérience, on peut définir une infinité de variables aléatoires.
+  + Dans l'expérience du lancer de deux dés:
+    * \( S \): "Somme des résultats des dés"
+    * \( D \): "Différence entre le résultat du premier dé et celui du second"
+    * \( I \): "Nombre de dés donnant un résultat impair"
+
+  + Dans l'expérience consistant à lancer un dé jusqu'à obtenir un 6:
+    * \( N \): "Nombre de lancers nécessaire pour obtenir un 6"
+    * \( N_{1} \): "Nombre de fois où on obtient un 1 avant d'obtenir un 6"
+
+
+** Définition: Variable de Bernoulli
+
+- Une *variable de Bernoulli* est une variable aléatoire ayant deux valeurs possibles: 0 ou 1.
+
+\vfill
+
+- La *variable de Bernoulli* sert à représenter l'issue d'une épreuve de Bernoulli.
+
+\vfill
+
+- _Exemple:_ Soit \( X \) l'issue d'une épreuve de Bernoulli de paramètre \( p \)
+  + \( \Prob(X = 1) = p \), représentant le succès
+  + \( \Prob(X = 0) = 1 - p \), représentant l'échec
+
+
+** Définition: Loi de Bernoulli
+
+- La *loi de Bernoulli* de paramètre \( p \) est une distribution de probabilité, qui:
+  + Prend la valeur 1 avec la probabilité \( p \).
+  + Prend la valeur 0 avec la probabilité \( 1 - p \).
+
+\vfill
+
+- La *loi de Bernoulli* décrit le comportement d'une expérience de Bernoulli.
+
+\vfill
+
+- On dit que \( X \) *suit* la loi de Bernoulli de paramètre \( p \):
+  + \( \Prob(X = 1) = p \)
+  + \( \Prob(X = 0) = 1 - p \)
+
+
+** Définition: Loi binomiale
+
+- La *loi binomiale* de paramètres \( n \) et \( p \) modélise la fréquence du nombre de succès obtenus lors de la répétition de plusieurs expériences aléatoires *identiques* et *indépendantes*.
+  + \( p \) représente la probabilité de succès
+  + \( n \) représente le nombre d'expériences réalisées
+
+\vfill
+
+- La *loi binomiale* permet de résoudre le problème rencontré avec l'*arbre des probabilités*.
+
+
+** Exemple: Loi binomiale
+
+- On lance 3 dés et on s'intéresse à la probabilité d'avoir *une seule fois* le 2 apparaît.
+  + Il peut apparaître 0, 1, 2 ou 3 fois.
+  + Chaque lancer est identique et indépendants entre eux.
+  + Il y a une probabilité \( \frac{1}{6} \) d'obtenir la face 2.
+  + Posons \( X \) qui suit la loi Binomiale de paramètre \( \left( 3, \frac{1}{6} \right) \):
+    * \( \Prob(X = 1) \) sera notre résultat.
+
+\vfill
+
+- On lance 3 dés et on s'intéresse à la probabilité d'avoir *au moins une fois* le 2:
+    * \( \Prob(X = 1) + \Prob(X = 2) + \Prob(X = 3) \)
+
+
+** Formule: Loi binomiale
+
+- La *loi binomiale* de paramètres \( n \) et \( p \) modélise la fréquence du nombre de succès obtenus lors de la répétition de plusieurs expériences aléatoires *identiques* et *indépendantes*.
+  + \( p \) représente la probabilité de succès
+  + \( n \) représente le nombre d'expériences réalisées
+
+\vfill
+
+- La probabilité de \( k \) succès dans une répétition de \( n \) expériences est:
+  + \( \Prob(X = k) = \binom{n}{k} \cdot p^{k} \cdot (1 - p)^{n - k} \)
+
+
+* Passons au ~201yams~: 3^{ème} partie
+
+** Étude de cas: Obtenir un *2-three-of-kind*
+
+- Prenons le jeu suivant: \scalebox{0.5}{ \dieone \dietwo \dietwo \diefive \diesix }
+  + On souhaite obtenir un *2-three-of-kind*.
+  + On note \( T \), l'événement "Obtenir un *2-three-of-kind*"
+
+\vfill
+
+- On va définir la variable aléatoire \( X \) qui suit la loi binomiale de paramètre \( \left( 3, \frac{1}{6} \right) \)
+
+\vfill
+
+- La probabilité d'obtenir un *2-three-of-a-kind* est:
+  + \( \Prob(T) = \Prob(X = 1) + \Prob(X = 2) + \Prob(X = 3) \)
+  + \( \Prob(T) \approx 0.42 \)
+
+
+** Étude de cas: Obtenir un *1-three-of-kind*
+
+- Prenons le jeu suivant: \scalebox{0.5}{ \dieone \dietwo \dietwo \diefive \diesix }
+  + On souhaite obtenir un *1-three-of-kind*.
+  + On note \( T \), l'événement "Obtenir un *1-three-of-kind*"
+
+\vfill
+
+- On va définir la variable aléatoire \( X \) qui suit la loi binomiale de paramètre \( \left( 4, \frac{1}{6} \right) \)
+
+\vfill
+
+- La probabilité d'obtenir un *2-three-of-a-kind* est:
+  + \( \Prob(T) = \Prob(X = 2) + \Prob(X = 3) + \Prob(X = 4) \)
+  + \( \Prob(T) \approx 0.13 \)
+
+
+* Passons au Python!
+
+** Python: Compétences à acquérir
+
+- Liste des compétences à acquérir avec le ~201yams~:
+  + Utilisation de ~Python 3.6+~
+    * Shebang correct: ~#!/usr/bin/env python3~
+    * Entrypoint correct: ~__name__ == "__main__"~
+    * Affichage via les ~f-strings~
+
+  + Formatage du code: ~black~
