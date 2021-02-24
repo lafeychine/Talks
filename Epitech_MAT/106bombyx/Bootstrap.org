@@ -1,0 +1,131 @@
+#+TITLE: 106bombyx - Bombyx booming bylaw
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Quelques notions de suites
+
+** Définition: Suite
+
+- Une *suite* est une famille d'éléments, appelés *termes*, *indexée* par les entiers naturels.
+  + Une suite est une fonction de \( \set{N} \) dans \( \set{R} \).
+
+\vfill
+
+- Ainsi, une suite \( u \) associe à tout entier naturel \( n \) un nombre réel noté \( u_{n} \).
+  + Les nombres réels \( u_{n} \) sont les *termes* de la suite.
+  + Les nombres entiers \( n \) sont les *indices* ou les *rangs*.
+
+\vfill
+
+- La suite \( u \) peut également se noter \( (u_{n}) \).
+
+
+** Exemple: Suite
+
+- Soit \( u \), la suite correspondant à la liste suivante \( 1, 5, 2, 6, 3, 7, 4, 8, ... \).
+  + \( u_{0} = 1 \)
+  + \( u_{1} = 5 \)
+  + \( u_{2} = 2 \)
+  + \( u_{3} = 6 \)
+  + ...
+
+\vfill
+
+- Il *ne faut pas confondre* \( (u_{n}) \) et \( u_{n} \):
+  + \( (u_{n}) \) désigne la suite.
+  + \( u_{n} \) désigne le \( n \)-ième terme de la suite.
+
+
+** Définition: Suite explicite
+
+- Une suite est définie *explicite* lorsqu'une fonction \( f \) permet de calculer chaque terme de la suite à partir *de son rang*.
+  + Formule du type: \( u_{n} = f(n) \)
+
+\vfill
+
+- _Exemple:_ Soit \( f : x \to x^2 \), et \( (u_{n}) \) définie par \( u_{n} = f(n) \).
+  + \( u_{0} = 0^{2} = 0 \)
+  + \( u_{1} = 1^{2} = 1 \)
+  + \( u_{2} = 2^{2} = 4 \)
+  + ...
+  + \( u_{n} = n^2 \)
+
+
+** Définition: Suite par récurrence
+
+- Une suite est définie par *relation de récurrence* lorsqu'une fonction \( f \) permet de calculer chaque terme de la suite à partir *d'autres termes* d'une suite.
+  + Ces suites doivent expliciter les termes nécessaires.
+  + Formule du type: \( u_{n + 1} = f(u_{n}) \), avec \( u_{i} = x \)
+
+\vfill
+
+- _Exemple:_ La suite de Fibonacci
+  + \( u_{0} = 0, u_{1} = 1, u_{n} = u_{n - 1} + u_{n - 2} \)
+
+\pause
+
+\begin{math}
+    \begin{cases}
+        u_{0} = 0 \\
+        u_{1} = 1 \\
+        u_{n} = u_{n - 1} + u_{n - 2} \\
+    \end{cases}
+\end{math}
+
+
+* ~106bombyx~: Étude des populations
+
+* Théorie du chaos
+
+** Références
+
+- _*[[https://youtu.be/m923FsfhNYE][Docteur Nozman - Cet objet est chaostique]]*_
+- _*[[https://youtu.be/ovJcsL7vyrk][Veritasium - This equation will change how you see the world]]*_
+
+\vfill
+
+- Pour aller plus loin:
+  + _*[[https://youtu.be/ETrYE4MdoLQ][Numberphile - The Feigenbaum Constant]]*_
+
+
+* ~106bombyx~: Récapitulons
+
+** ~106bombyx~: Récapitulons
+
+- Il vous est demandé, pour une population initiale de \( n \) individus:
+
+\vfill
+
+- _Cas 1:_ D'afficher le nombre d'individus des 100 premières générations, pour un taux de croissance \( k \) fixé.
+
+\vfill
+
+- _Cas 2:_ D'afficher le nombre d'individus des \( x_{i} \) générations, pour chaque taux de croissance \( k \):
+  + \( \forall k \) allant de 1 à 4 avec des pas de 0.01
+  + \( \forall i \in [\![ i_{0} ; i_{1} ]\!] \), donné en paramètres
+
+
+* Passons au Python!
+
+** Considéré comme acquis
+
+- Utilisation de formateur: ~black --check <entrypoint> .~
+
+- Utilisation de typage: ~mypy --strict <entrypoint> .~
+
+- Gestion des arguments: ~argparse~
+
+\vfill
+
+- Toutes les notions de lisibilité du premier semestre.
+  + Les remarques que j'ai pu faire en review.
