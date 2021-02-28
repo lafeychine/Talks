@@ -13,22 +13,6 @@
 #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
 
 
-* COMMENT Introduction
-
-- Bienvenue pour cette présentation autour de ~malloc~, afin de comprendre et apprendre davantage autour de cette famille de fonction.
-- Ah ~malloc~, vous l'avez utilisé depuis vos premiers jours d'Epitech.
-- Et maintenant, et ceux pour ces deux prochaines semaines, c'est à votre tour d'implémenter ce fameux ~malloc~.
-
-- Alors, qu'allons-nous voir durant ces deux heures?
-- Et bien, nous allons préciser ce qu'est cette fonction: Qu'est-ce qu'elle fait, mais aussi, ce qu'elle ne fait pas.
-- Nous allons nous pencher sur tout ce qui tourne autour de ~malloc~, mais nous allons aussi volontairement dévier vers d'autres sujets.
-- Ainsi, nous allons seulement préciser ce que vous devez absolument savoir pour pouvoir faire ce projet.
-- Nous n'allons pas voir d'algorithme: La partie implémentation: Je vous laisse le plaisir de la découvrir.
-
-- Avant toute chose, les slides ainsi que les exemples seront partagées sur le chat Twitch à la fin de la présentation.
-- Je pense que j'ai tout dis, je vous propose donc de commencer.
-
-
 * Introduction: Définissons l'allocation
 
 ** Définition: Attribution de mémoire (1/5)
@@ -964,20 +948,9 @@ CONFORMING TO
 - _Réponse:_ Dans vos projets!
 
 
-** Remerciements
-
-- Cédric Bonnet
-  + Le "Before Work" à 8h chaque matin
-
-\vfill
-
-- Albert Corson
-- Adrien Lucbert
-
-
 ** Références: Allocation (1/3)
 
-- _*[[https://youtu.be/7aONIVSXiJ8][Matt Porterntroduction to Memory Management in Linux]]*_
+- _*[[https://youtu.be/7aONIVSXiJ8][Matt Porter - Introduction to Memory Management in Linux]]*_
 - _*[[https://www.gnu.org/software/libc/manual/html_node/Memory.html][GNU Manual - Malloc]]*_
 - _*[[http://david.decotigny.free.fr/libre/linux-mag-hs-16/lmhs-kernel/main.html][Thomas Petazzoni; David Decotigny - Concepts fondamentaux - Linux]]*_
 
