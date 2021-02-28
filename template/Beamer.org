@@ -16,3 +16,6 @@
 #+LATEX_HEADER: \surroundwithmdframed[font=\small]{minted}
 
 #+LATEX_HEADER: \usepackage[none]{hyphenat}
+
+
+#+MACRO: NEWLINE @@latex:\\@@
