@@ -1,0 +1,211 @@
+#+TITLE: 202unsold - Statistics for Selling Suit Stock
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/tikzdice/tikzdice.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Rappels ~201yams~: Probabilités
+
+** Définition: Événement
+
+- Un *événement* lié à une expérience aléatoire est un sous-ensemble de l'univers \( \Omega \).
+  + L'événement décrit se qu'il peut se produire, ou non, dans une expérience.
+  + Un événement ne contenant qu'un élément est un *événement élémentaire*.
+  + L'événement \( \Omega \) est l'*événement certain*.
+  + L'événement vide est l'*événement impossible*.
+
+\vfill
+
+- _Exemples:_
+  + Obtenir \( Pile \) par un lancer d'une pièce de monnaie: \( \{ Pile \} \)
+  + Obtenir un résultat pair d'un dé à 6 faces: \( \{ 2, 4, 6 \} \)
+
+
+** Définition: Probabilité d'un événement
+
+- La *probabilité* d'un événement est une valeur comprise entre 0 et 1.
+  + Cette valeur représente la *plausibilité* de l'événement.
+    * 0 représente 0%: Impossible
+    * 1 représente 100%: Certain
+
+\vfill
+
+- _Exemples:_
+  + Probabilité d'obtenir \( Pile \) par un lancer de pièce de monnaie: \( 0.5 \)
+  + Probabilité d'obtenir un résultat pair d'un dé à 6 faces: \( 0.5 \)
+
+
+** Définition: Loi de probabilité
+
+- La *loi de probabilité* \( \Prob \) est une fonction qui à un événement associe une valeur.
+  + Cette valeur représente la probabilité de l'événement.
+
+\vfill
+
+- _Exemples:_
+  + Soit l'événement \( A \): "Obtenir \( Pile \) par un lancer de pièce de monnaie"
+    * \( \Prob(A) = \Prob(\{ Pile \}) = 0.5 \)
+
+  + Soit l'événement \( B \): "Obtenir un résultat pair d'un dé à 6 faces"
+    * \( \Prob(B) = \Prob(\{ 2, 4, 6 \}) = 0.5 \)
+
+
+** Définition: Variable aléatoire
+
+- La notion de *variable aléatoire* recouvre toute quantité numérique que l'on peut déterminer en connaissant entièrement le résultat de l'expérience.
+
+\vfill
+
+- _Exemple:_ Suivant l'expérience, on peut définir une infinité de variables aléatoires.
+  + Dans l'expérience du lancer de deux dés:
+    * \( S \): "Somme des résultats des dés"
+    * \( D \): "Différence entre le résultat du premier dé et celui du second"
+    * \( I \): "Nombre de dés donnant un résultat impair"
+
+  + Dans l'expérience consistant à lancer un dé jusqu'à obtenir un 6:
+    * \( N \): "Nombre de lancers nécessaire pour obtenir un 6"
+    * \( N_{1} \): "Nombre de fois où on obtient un 1 avant d'obtenir un 6"
+
+
+** Relation: Loi de probabilité d'une variable aléatoire
+
+- La *loi de probabilité* d'une variable aléatoire \( X \) associe, pour chaque valeur \( x_{i} \) prise par \( X \), la probabilité de l'événement \( (X = x_{i}) \).
+
+\vfill
+
+- _Exemples:_
+  + La variable aléatoire \( X \) qui suit la loi de Bernoulli de paramètre \( p \).
+  + La variable aléatoire \( X \) qui suit la loi binomiale de paramètre \( n, p \).
+
+
+* Théorie des Probabilités
+
+** Défintion: Espérance
+
+- L'*espérance* d'une variable aléatoire \( X \), noté \( \Esp(X) \):
+  + C'est la moyenne des *valeurs prises* par \( X \).
+  + Cette moyenne est *pondérée* par les probabilités associées.
+
+\vfill
+
+- Soit la variable aléatoire \( X \) prenant les valeurs \( x_{1}, x_{2}, ..., x_{n} \).
+  + Avec pour chaque valeur prise, une probabilité associée \( p_{1}, p_{2}, ..., p_{n} \).
+
+\[ \Esp(X) = \frac{ x_{1} \cdot p_{1} + x_{2} \cdot p_{2} + ... + x_{n} \cdot p_{n} }{ p_{1} + p_{2} + ... p_{n} } = \frac{ \sum_{i = 1}^{n} x_{i} \cdot p_{i} }{ \sum_{i = 1}^{n} p_{i} } \]
+
+
+** Exemple 1: Espérance
+
+- _Exemple:_ Prenons l'expérience du lancer d'un dé.
+  + Soit \( X \), la variable aléatoire "Résultat du lancer du dé"
+
+\vfill
+
+#+ATTR_LATEX: :environment array :mode math :align c|c|c|c|c|c|c
+| x_{i}            |           1 |           2 |           3 |           4 |           5 |           6 |
+|------------------+-------------+-------------+-------------+-------------+-------------+-------------|
+| \Prob(X = x_{i}) | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} |
+
+\vfill
+
+- On obtient: \( \Esp(X) = 1 \cdot \frac{1}{6} + 2 \cdot \frac{1}{6} + 3 \cdot \frac{1}{6} + 4 \cdot \frac{1}{6} + 5 \cdot \frac{1}{6} + 6 \cdot \frac{1}{6} \)
+  + \( \Esp(X) =  \frac{1}{6} + \frac{2}{6} + \frac{3}{6} + \frac{4}{6} + \frac{5}{6} + \frac{6}{6} = \frac{21}{6} = 3.5 \)
+
+
+** Exemple 2: Espérance
+
+- _Exemple:_ Prenons l'expérience du lancer d'un dé *truqué*.
+  + Soit \( Y \), la variable aléatoire "Résultat du lancer du dé"
+
+\vfill
+
+#+ATTR_LATEX: :environment array :mode math :align c|c|c|c|c|c|c
+| y_{i}            |            1 |            2 |            3 |            4 |            5 |            6 |
+|------------------+--------------+--------------+--------------+--------------+--------------+--------------|
+| \Prob(Y = y_{i}) | \frac{1}{12} | \frac{1}{12} | \frac{2}{12} | \frac{2}{12} | \frac{3}{12} | \frac{3}{12} |
+
+\vfill
+
+- On obtient: \( \Esp(Y) = 1 \cdot \frac{1}{12} + 2 \cdot \frac{1}{12} + 3 \cdot \frac{2}{12} + 4 \cdot \frac{2}{12} + 5 \cdot \frac{3}{12} + 6 \cdot \frac{3}{12} \)
+  + \( \Esp(Y) =  \frac{1}{12} + \frac{2}{12} + \frac{6}{12} + \frac{8}{12} + \frac{15}{12} + \frac{18}{12} = \frac{50}{12} \approx 4.16 \)
+
+
+** Définition: Variance
+
+- La *variance* est une mesure de la *dispersion* des valeurs d'une *distribution de probabilité*.
+  + La *variance* est la moyenne des carrés des écarts à la moyenne.
+
+\vfill
+
+- Quelques formules permettent de calculer la variance:
+  + Formule de *Koenig-Huygens* (on admet l'existance \( \Esp(X^{2}) \)):
+
+\[ \Var(X) = \Esp(X^{2}) - (\Esp(X))^{2} \]
+
+
+** Exemple 1: Variance
+
+- _Exemple:_ Prenons l'expérience du lancer d'un dé.
+  + Soit \( X \), la variable aléatoire "Résultat du lancer du dé"
+
+\vfill
+
+#+ATTR_LATEX: :environment array :mode math :align c|c|c|c|c|c|c
+| x_{i}            |           1 |           2 |           3 |           4 |           5 |           6 |
+|------------------+-------------+-------------+-------------+-------------+-------------+-------------|
+| \Prob(X = x_{i}) | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} | \frac{1}{6} |
+
+\vfill
+
+- On obtient: \( \Var(X) = \left( 1^{2} \cdot \frac{1}{6} + 2^{2} \cdot \frac{1}{6} + 3^{2} \cdot \frac{1}{6} + 4^{2} \cdot \frac{1}{6} + 5^{2} \cdot \frac{1}{6} + 6^{2} \cdot \frac{1}{6} \right) - (\Esp(X))^{2} \)
+  + \( \Var(X) =  \left( \frac{1}{6} + \frac{4}{6} + \frac{9}{6} + \frac{16}{6} + \frac{25}{6} + \frac{36}{6} \right) - \left( \frac{21}{6} \right)^{2} = \frac{91}{6} - \frac{441}{36} \approx 2.91 \)
+
+
+** Exemple 2: Variance
+
+- _Exemple:_ Prenons l'expérience du lancer d'un dé *truqué*.
+  + Soit \( Y \), la variable aléatoire "Résultat du lancer du dé"
+
+\vfill
+
+#+ATTR_LATEX: :environment array :mode math :align c|c|c|c|c|c|c
+| y_{i}            |            1 |            2 |            3 |            4 |            5 |            6 |
+|------------------+--------------+--------------+--------------+--------------+--------------+--------------|
+| \Prob(Y = y_{i}) | \frac{1}{12} | \frac{1}{12} | \frac{2}{12} | \frac{2}{12} | \frac{3}{12} | \frac{3}{12} |
+
+\vfill
+
+- On obtient: \( \Var(Y) = \left( 1^{2} \cdot \frac{1}{12} + 2^{2} \cdot \frac{1}{12} + 3^{2} \cdot \frac{2}{12} + 4^{2} \cdot \frac{2}{12} + 5^{2} \cdot \frac{3}{12} + 6^{2} \cdot \frac{3}{12} \right) - (\Esp(Y))^{2} \)
+  + \( \Var(Y) = \left( \frac{1}{12} + \frac{4}{12} + \frac{18}{12} + \frac{32}{12} + \frac{75}{12} + \frac{108}{12} \right) - \left( \frac{50}{12} \right)^{2} = \frac{238}{12} - \frac{2500}{144} \approx 2.47 \)
+
+
+* ~202unsold~: Modélisons
+
+* Passons au Python!
+
+** Python: Compétences acquises
+
+- Liste des compétences considérées acquises avec le ~201yams~:
+  + Utilisation de ~Python 3.6+~
+    * Shebang correct: ~#!/usr/bin/env python3~
+    * Entrypoint correct: ~__name__ == "__main__"~
+    * Affichage via les ~f-strings~
+
+  + Formatage du code: ~black~
+
+
+** Python: Compétences à acquérir
+
+- Liste des compétences à acquérir avec le ~202unsold~:
+  + Gestion des arguments avec ~argparse~
+  + Typage primitifs:
+    * ~int~, ~str~, ~float~, ~List[]~, ~Tuple[]~, ...
+    * Vérification du typage: ~mypy~
