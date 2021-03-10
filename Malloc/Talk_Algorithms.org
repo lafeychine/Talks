@@ -1,0 +1,898 @@
+#+TITLE: Les dessous de ~malloc~
+#+SUBTITLE: Algorithmes d'allocation mémoire
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../template/Beamer.org
+#+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
+
+#+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
+
+#+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+
+* Rappel: Allocation dynamique
+
+** Définition: Allocation dynamique
+
+- L'*allocation dynamique* est une manière d'attribution de mémoire:
+  + Appels à des fonctions d'allocation définies par ~C89~ et ~POSIX~.
+    * Famille ~malloc~: ~malloc(3)~, ~calloc(3)~, ~realloc(3)~ et ~free(3)~
+  + Disponible uniquement sur un environnement d'exécution normalisé.
+
+\vfill
+
+- Ces fonctions d'allocations offrent *une implémentation*:
+  + Un algorithme de gestion de mémoire pour la mémoire déjà attribuée.
+  + Un moyen, si disponible, de demander davantage de mémoire au système.
+
+
+** Définition: Mémoire attribuée
+
+- La *mémoire attribuée* correspond à la *mémoire réservée* pour un processus.
+
+\vfill
+
+- Cette mémoire peut être:
+  + Attribuée à l'initialisation d'un processus.
+    * _Exemple:_ Systèmes embarqués comme la GBA
+  + Attribuée dynamiquement, par le biais d'appels système.
+    * _Exemple:_ Environnement ~POSIX~: ~sbrk(2)~ et ~mmap(2)~
+
+\vfill
+\pause
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node<8-9>[draw, fill=black!20, left=.4pt of Background.east, minimum width=.9\textwidth] (Right) {...};
+
+    \node<10-11>[draw, fill=black!20, left=.4pt of Background.east, minimum width=.3\textwidth] (Right) {...};
+    \node<10-11>[right=of Left, minimum width=.6\textwidth] {Tas};
+
+    \node<12-13>[draw, fill=black!20, left=.4pt of Background.east, minimum width=.6\textwidth] (Right) {...};
+    \node<12-13>[right=of Left, minimum width=.3\textwidth] {Tas};
+
+    \draw<8->[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+\end{ctikz}
+
+\vfill
+
+*** > Instruction en cours:
+- <only@8-8>  src_C[:exports code]{ /* Initialisation */ }
+- <only@9-10> src_C[:exports code]{ sbrk(40 * Ko); }
+- <only@11->  src_C[:exports code]{ sbrk(-20 * Ko); }
+
+
+* Introduction: Qu'est-ce qu'un algorithme?
+
+** Définition: Problème
+
+- Un *problème* est la description générale de ce qui doit être résolu.
+  + Cette description offre une *relation* entre les *instances* et les sorties attendues.
+
+\vfill
+
+- _Exemple:_ Trouver la distance minimale entre deux adresses à Bordeaux.
+  + "Trouver la distance minimale entre la gare et l'aéroport"
+  + "Trouver la distance minimale entre ~EPITECH~ et le miroir d'eau"
+
+\vfill
+
+- La notion de *problème* peut-être représentée par la *déclaration* d'une fonction.
+  + src_Haskell[:exports code]{minimal_distance: Address -> Address -> Length}
+
+
+** Définition: Algorithme
+
+- Un *algorithme* est un procédé qui résout un problème, ce procédé:
+  + est *automatique* et *systématique*.
+  + est une suite *finie* d'opérations ou d'instructions.
+  + est une *description* des méthodes utilisées.
+
+\vfill
+
+- L'algorithme donne un *résultat* (ou sortie) à chaque *entrée* d'un problème donné.
+  + Cette entrée correspond à *une instance* du problème.
+
+\vfill
+
+- Pour un problème donné, il peut exister aucun, un seul ou plusieurs algorithmes permettant de le résoudre.
+  + _Exemple:_ *Aucun algorithme* ne peut résoudre le problème de l'arrêt.
+
+
+** Définition: Programme
+
+- La traduction d'un algorithme en langage de programmation s'appelle l'*implémentation*.
+  + Cela permet de générer un *programme*, *exécutable* par un ordinateur.
+
+\vfill
+
+- Plusieurs implémentations d'un même algorithme est possible:
+  + Langages de programmation différents.
+  + Rédactions différentes.
+  + ...
+
+\vfill
+
+- La notion d'*implémentation* peut-être représentée par la *définition* d'une fonction.
+  + src_Haskell[:exports code]{minimal_distance = ...}
+
+
+** Pour résumer
+
+\begin{ctikz}[node distance=2cm, every node/.style={minimum height=.8cm, minimum width=2.5cm}]
+    \node [draw]                 (A) { Problème };
+    \node [draw, below=of A]     (B) { Instance };
+    \node [draw, right=6cm of A] (C) { Algorithme };
+    \node [draw, below=of C]     (D) { Programme };
+
+    \draw<2-> [->, thick] (A) -- (B) node [fill=bg, midway] { \small décrit };
+    \draw<4-> [->, thick] (A) -- (C) node [fill=bg, midway] { \small est résolu par };
+    \draw<6-> [->, thick] (C) -- (D) node [fill=bg, midway] { \small décrit };
+    \draw<8-> [->, thick] (B) -- (D) node [fill=bg, midway] { \small est résolu par };
+
+    \node<3-> [above right=0cm and -.8cm of B.north] {1..\( k \)};
+    \node<7-> [above left=0cm and -.8cm of D.north] {1..\( n \)};
+
+    \node<5-> [below left=0cm and -.7cm of C.west] {0..\( m \)};
+    \node<9-> [above left=0cm and -.4cm of D.west] {0..\( m * n \)};
+\end{ctikz}
+
+\vfill
+
+- _Pour un problème donné:_
+  + <3-> Le problème décrit 1 à \( k \) instances.
+  + <5-> Le problème peut être résolu par 0 à \( m \) algorithmes...
+    *  <7-> ... qui peuvent être implémentés par 1 à \( n \) implémentations.
+  + <9-> Le problème peut être résolu par 0 à \( m * n \) programmes.
+
+
+* Modélisons un allocateur
+
+** Analyse: Caractérisation d'un allocateur
+
+- Un allocateur est un *gestionnaire de mémoire*:
+  + Il est en charge de la *mémoire attribuée*.
+  + Il *doit* connaître quelles parties sont utilisées/libérées.
+
+\vfill
+
+- Un allocateur *n'a pas* la possibilité de dynamiquement déplacer des parties utilisées.
+  + _Note:_ Les *systèmes de fichiers* ont cette possibilité (Voir ~filesystems(5)~)
+
+\vfill
+
+- Un allocateur *ne peut* savoir ni la taille, ni le nombre d'allocation demandé.
+  + De même, l'ordre des allocations et des libérations sont *imprévisibles*.
+
+
+** Définition: Bloc (/chunk/)
+
+- Un bloc, ou /chunk/, est un *morceau virtuel* de la mémoire attribuée.
+  + Les blocs permettent de sectionner la mémoire afin de la redistribuer.
+
+\vfill
+\pause
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node[draw, fill=black!20, left=.4pt of Background.east,  minimum width=.1\textwidth] (Right) {...};
+    \draw[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+
+    \node<6-9>   [freestruct, right=of Left, minimum width=.4\textwidth] (A) {ptrA};
+    \node<8->    [freestruct, right=of A,    minimum width=.2\textwidth] (B) {ptrB};
+    \node<10-10> [highlight,  right=of Left, minimum width=.4\textwidth] (A) {ptrA};
+    \node<11-11> [highlight,  right=of Left, minimum width=.4\textwidth] (A) {};
+    \node<12->   [freestruct, right=of Left, minimum width=.3\textwidth] (C) {ptrC};
+    \node<12->   [highlight,  right=of C,    minimum width=.1\textwidth] (A) {};
+    \node<14->   [freestruct, right=of B,    minimum width=.15\textwidth] (D) {ptrD};
+\end{ctikz}
+
+\vfill
+
+*** > Instruction en cours:
+- <only@4>     src_C[:exports code]{ /* Initialisation */ }
+- <only@5-6>   src_C[:exports code]{ void *ptrA = malloc(40 * Ko); }
+- <only@7-8>   src_C[:exports code]{ void *ptrB = malloc(20 * Ko); }
+- <only@9-10>  src_C[:exports code]{ free(ptrA); }
+- <only@11-12> src_C[:exports code]{ void *ptrC = malloc(30 * Ko); }
+- <only@13-14> src_C[:exports code]{ void *ptrD = malloc(15 * Ko); }
+
+
+** Analyse: Problématiques d'un allocateur
+
+- Les requêtes d'allocation et de libération sont *imprévisibles*:
+  + Un allocateur est soumis à la *fragmentation*.
+
+\vfill
+
+- La *fragmentation* représente l'ensemble des "trous" de mémoire.
+  + Plus ils sont petits, plus les requêtes d'allocation ne peuvent utiliser ces blocs.
+
+\vfill
+
+- Dûe à l'imprévisibilité de l'ordre d'allocation/libération:
+  + Il est *prouvé impossible* qu'un algorithme puisse *ne pas* avoir de fragmentation.
+
+
+** Définition: Problème d'allocation
+
+- _Problème:_ *Maximiser l'utilisation effective* de la mémoire.
+  + Cela implique de *minimiser la fragmentation*.
+
+\vfill
+
+- _Instances du problème:_ Tout type de programmes.
+  + Allocations dès l'initialisation
+  + Allocations continues: Logger, ...
+  + Allocations spontanées: Serveur (réception d'une requête), ...
+  + ...
+
+
+* Construisons les opérations
+
+** Introduction: Opérations élémentaires
+
+- L'algorithme de l'allocateur devra *minimiser la fragmentation*.
+
+\vfill
+
+- Il faut *construire* ce qu'il est possible de faire:
+  + Construire des *primitives* / *opérations élémentaires*
+  + Ces opérations *doivent* être simples.
+
+\vfill
+
+- _Exemple:_ *Graphes* pour résoudre le plus court chemin (~Lem-In~)
+
+
+** Analyse de l'allocateur
+
+- Le prototype d'allocation est src_C[:exports code]{void *malloc(size_t size);}
+  + Le bloc renvoyé *doit* permettre d'écrire au moins src_C[:exports code]{size} bytes de long.
+
+\vfill
+
+- Le prototype de libération est src_C[:exports code]{void free(void *ptr);}
+  + *Seul* le pointeur est passé en paramètre.
+
+\vfill
+
+- Des données ont besoin d'être *sauvegardées*:
+  + La taille du /payload/ / La taille du bloc
+  + L'utilisation actuelle du bloc
+    * _Bloc alloué:_ Bloc actuellement *transmis* à l'utilisateur
+    * _Bloc libéré:_ Bloc *relâché* par l'utilisateur
+
+
+** Graphiquement: Structure de donnée du bloc (1/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 7, 8, 31} \\
+        \bitbox{32}[bgcolor=purple!10]{Taille du payload} \\
+        \bitbox{8}[bgcolor=orange!10]{Bloc utilisé?} &
+        \bitbox{24}[bgcolor=black!10]{} \\
+        \wordbox[lrt]{1}{Payload} \\
+        \skippedwords \\
+        \wordbox[lrb]{1}{}
+    \end{bytefield}
+\end{center}
+
+
+** Définition: Alignement
+
+- L'*alignement mémoire* permet d'*assurer* la lecture et l'écriture.
+  + Cet alignement se fait généralement sur un double mot.
+    * src_C[:exports code]{2 * sizeof(size_t)}
+  + Au minimum (src_C[:exports code]{sizeof(size_t) = 4}), cela vaut ~8~ bytes.
+
+\vfill
+
+- Le pointeur renvoyé par l'allocateur *doit* être aligné.
+  + _Remarque:_ Il suffit d'aligner la taille des requêtes d'allocation.
+
+\vfill
+\pause
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0-31} \\
+        \bitbox{29}[bgcolor=purple!10]{Adresse/Taille du pointeur} &
+        \bitbox{3}[bgcolor=red!40]{0}
+    \end{bytefield}
+\end{center}
+
+
+** Graphiquement: Structure de donnée du bloc (2/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \bitbox{29}[bgcolor=purple!10]{Taille du payload} &
+        \bitbox{2}[bgcolor=red!40]{0} &
+        \bitbox{1}[bgcolor=orange!10]{F} \\
+        \wordbox[lrt]{1}{Payload} \\
+        \skippedwords \\
+        \wordbox[lrb]{1}{}
+    \end{bytefield}
+\end{center}
+
+
+** Étude de cas: Analyse de la mémoire (1/2)
+
+- Avec notre structure de donnée, il est possible:
+  + d'*itérer* sur chacun des blocs (liste chaînée *simple*).
+  + de *créer* de nouveaux blocs: *Séparer* un bloc en morceaux.
+  + <only@4-9> de *fusionner* des blocs...
+  + <only@10-> de *fusionner* des blocs *uniquement dans un sens*!
+
+\vfill
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node[draw, fill=black!20, left=.4pt of Background.east,  minimum width=.1\textwidth] (Right) {...};
+    \draw[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+
+    \node<-5>  [freestruct, right=of Left, minimum width=.1\textwidth] (A) {A};
+    \node<6-6> [highlight,  right=of Left, minimum width=.1\textwidth] (A) {A};
+    \node<-6>  [highlight,  right=of A, minimum width=.1\textwidth] (B) {B};
+    \node<7->  [highlight,  right=of Left, minimum width=.2\textwidth] (B) {AB};
+
+    \node [freestruct, right=of B, minimum width=.1\textwidth] (C) {C};
+    \node [highlight,  right=of C, minimum width=.1\textwidth] (D) {D};
+
+    \node<-8> [freestruct, right=of D, minimum width=.1\textwidth] (E) {E};
+    \node<9-> [highlight,  right=of D, minimum width=.1\textwidth] (E) {E};
+
+    \node [freestruct, right=of E, minimum width=.1\textwidth] (F) {F};
+\end{ctikz}
+
+\vfill
+\pause
+
+*** > Instruction en cours:
+- <only@5-7> src_C[:exports code]{ free(A); }
+- <only@8->  src_C[:exports code]{ free(E); }
+
+
+** Définition: Données de bas-de-bloc (/Boundary tags/)
+
+- Pour permettre la *fusion* de deux blocs, il faudrait pouvoir *connaître la taille* du bloc précédent.
+  + Utile *uniquement* pour l'opération de fusion.
+
+\vfill
+
+- Intégrer la taille du bloc précédent dans la structure.
+  + _Alternative:_ Ajouter un bas-de-bloc (/Boundary tags/).
+
+\vfill
+
+- Le champ sera ajouté à la structure de donnée du bloc.
+
+
+** Graphiquement: Structure de donnée du bloc (3/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{F} \\
+            \wordbox[lr]{1}{Payload \( n \)} \\
+            \skippedwords \\
+            \bitbox{29}[bgcolor=green!10]{Taille du payload \( n \)} &
+            \bitbox{3}[bgcolor=red!40]{0}
+        \end{rightwordgroup} \\
+    \end{bytefield}
+\end{center}
+
+
+** Graphiquement: Structure de donnée du bloc (3/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n - 1 \)}
+            \bitbox[lr]{29}[bgcolor=green!10]{Taille du payload \( n - 1 \)} &
+            \bitbox[lr]{3}[bgcolor=red!40]{0}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{F} \\
+            \wordbox[lr]{1}{Payload \( n \)} \\
+            \skippedwords \\
+            \bitbox{29}[bgcolor=green!10]{Taille du payload \( n \)} &
+            \bitbox{3}[bgcolor=red!40]{0}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n + 1 \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n + 1 \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{F} \\
+            \wordbox[lr]{1}{Payload \( n + 1 \)}
+        \end{rightwordgroup}
+    \end{bytefield}
+\end{center}
+
+
+** Restructuration: Amélioration de la structure (1/2)
+
+- La taille du bloc précédent est dans *chaque* bloc.
+  + _Objectif:_ Avoir la donnée *uniquement* pour les blocs *libérés*.
+
+\vfill
+
+- Il est possible d'utiliser la place dans le bloc libéré.
+  + La donnée est disponible *uniquement* si le bloc est libéré.
+
+\vfill
+
+- Il faut déplacer l'information de l'utilisation du bloc.
+  + Le bit d'utilisation indiquera l'utilisation du *bloc précédent*.
+
+
+** Graphiquement: Structure de donnée du bloc (4/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n - 1 \)}
+            \bitbox[lr]{32}[bgcolor=black!20]{} &
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=black!20]{} \\
+            \wordbox[lr]{1}{Payload \( n \)} \\
+            \skippedwords \\
+            \wordbox[lr]{1}{}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n + 1 \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n + 1 \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{0} \\
+            \wordbox[lrt]{1}{Payload \( n + 1 \)}
+        \end{rightwordgroup}
+    \end{bytefield}
+\end{center}
+
+
+** Graphiquement: Structure de donnée du bloc (4/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n - 1 \)}
+            \bitbox[lr]{32}[bgcolor=black!20]{} &
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=black!20]{} \\
+            \wordbox[lr]{1}{Payload \( n \)} \\
+            \skippedwords \\
+            \bitbox{29}[bgcolor=green!10]{Taille du payload \( n \)} &
+            \bitbox{3}[bgcolor=red!40]{0}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n + 1 \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n + 1 \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{1} \\
+            \wordbox[lrt]{1}{Payload \( n + 1 \)}
+        \end{rightwordgroup}
+    \end{bytefield}
+\end{center}
+
+
+** Étude de cas: Analyse de la mémoire (2/2)
+
+- Avec notre structure de donnée, il est possible d'*itérer*, de *créer* et de *fusionner* des blocs.
+
+\vfill
+
+- Il est probable que l'on recherche à trouver un bloc libéré.
+  + Ce n'est *pas efficace*: Il faut itérer sur *chaque bloc*.
+
+\vfill
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node[draw, fill=black!20, left=.4pt of Background.east,  minimum width=.1\textwidth] (Right) {...};
+    \draw[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+
+    \node [freestruct, right=of Left, minimum width=.1\textwidth] (A) {A};
+    \node [highlight,  right=of A,    minimum width=.1\textwidth] (B) {B};
+    \node [freestruct, right=of B,    minimum width=.1\textwidth] (C) {C};
+    \node [highlight,  right=of C,    minimum width=.1\textwidth] (D) {D};
+    \node [freestruct, right=of D,    minimum width=.1\textwidth] (E) {E};
+    \node [freestruct, right=of E,    minimum width=.1\textwidth] (F) {F};
+\end{ctikz}
+
+
+** Restructuration: Amélioration de la structure (2/2)
+
+- Lors de l'allocation, il faut itérer sur *chaque* bloc.
+  + _Objectif:_ Itérer *uniquement* sur les blocs libérés.
+
+\vfill
+
+- Il est possible d'utiliser la place dans le bloc libéré.
+  + La donnée est disponible *uniquement* si le bloc est libéré.
+
+\vfill
+
+- _Remarque:_ Bloc de taille minimale
+
+
+** Graphiquement: Structure de donnée du bloc (5/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n - 1 \)}
+            \bitbox[lr]{32}[bgcolor=black!20]{} &
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=black!20]{} \\
+            \wordbox[lr]{1}{Payload \( n \)} \\
+            \skippedwords \\
+            \wordbox[lr]{1}{}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n + 1 \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n + 1 \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{0} \\
+            \wordbox[lrt]{1}{Payload \( n + 1 \)}
+        \end{rightwordgroup}
+    \end{bytefield}
+\end{center}
+
+
+** Graphiquement: Structure de donnée du bloc (5/5)
+
+# Prevent byteField to bug
+src_C[:exports code]{}
+
+\begin{center}
+    \begin{bytefield}{32}
+        \bitheader{0, 28, 29, 30, 31} \\
+        \begin{rightwordgroup}{Bloc \( n - 1 \)}
+            \bitbox[lr]{32}[bgcolor=black!20]{} &
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=black!20]{} \\
+            \wordbox{1}[bgcolor=olive!20]{Structure de donnée de liaison} \\
+            \skippedwords \\
+            \bitbox{29}[bgcolor=green!10]{Taille du payload \( n \)} &
+            \bitbox{3}[bgcolor=red!40]{0}
+        \end{rightwordgroup} \\
+        \begin{rightwordgroup}{Bloc \( n + 1 \)}
+            \bitbox{29}[bgcolor=purple!10]{Taille du payload \( n + 1 \)} &
+            \bitbox{2}[bgcolor=red!40]{0} &
+            \bitbox{1}[bgcolor=orange!10]{1} \\
+            \wordbox[lrt]{1}{Payload \( n + 1 \)}
+        \end{rightwordgroup}
+    \end{bytefield}
+\end{center}
+
+
+** Définition: Structure arène (/Arena/)
+
+- La *structure arène* est la structure "point d'entrée".
+  + Vous avez sans doute utilisé une *variable statique*.
+
+\vfill
+
+- Cette structure permet de sauvegarder des données élémentaires.
+
+
+** Conclusion: Manipulons les données
+
+- Avec notre structure de données, nous avons les *primitives* suivantes:
+  + *Créer* et *Fusionner* des blocs.
+  + *Itérer* sur chacun des blocs.
+  + Avec un algorithme de parcours: *Itérer* sur chacun des blocs libérés.
+
+\vfill
+
+- Avec notre structure de données, il est possible d'*appliquer* des algorithmes.
+  + Nous avons *assez* de primitives.
+
+
+* Algorithmes de sélection de mémoire
+
+** Introduction: Algorithme d'allocation
+
+- L'algorithme de l'allocateur devra *minimiser la fragmentation*.
+
+\vfill
+
+- L'algorithme d'allocation doit définir:
+  + Lors de l'allocation: La *politique de sélection* du bloc mémoire.
+  + Lors de la libération: La *politique de recyclage* du bloc mémoire.
+
+\vfill
+
+- L'algorithme utilisera les *primitives* définies: Structure de donnée.
+
+\vfill
+
+- Un algorithme peut:
+  + Être *générique* (Support de tout type d'application)
+  + Être *spécifique* (Optimisé pour un certain type d'application)
+
+
+** Définition: Sélection séquentielle (/Sequential Fits/)
+
+- La *sélection séquentielle* est un ensemble de politiques de sélection.
+  + Elle se base sur l'itération de l'*ensemble* des blocs libérés.
+
+\vfill
+
+- La *structure de donnée de liaison* des blocs libérés sera *une liste chaînée*.
+  + L'ensemble des blocs libéré seront dans une *unique* liste chainée.
+
+\vfill
+
+- Plusieurs algorithmes en découle.
+
+
+** Définition: Algorithme /Best fit/
+
+- L'algorithme /Best fit/ recherche *le plus petit* bloc *assez grand*.
+
+\vfill
+
+- _Fonctionnement:_
+  + Si un bloc libéré est de même taille que la requête: Renvoyer ce bloc.
+  + Itérer sur *chacun* des blocs afin de trouver le plus petit bloc assez grand.
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node[draw, fill=black!20, left=.4pt of Background.east,  minimum width=.1\textwidth] (Right) {...};
+    \draw[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+
+    \node [freestruct, right=of Left, minimum width=.05\textwidth] (A) {A};
+    \node [highlight,  right=of A,    minimum width=.15\textwidth] (B) {B};
+    \node [freestruct, right=of B,    minimum width=.05\textwidth] (C) {C};
+
+    \node<-4> [highlight,    right=of C,     minimum width=.1\textwidth]  (D)     {D};
+    \node<5-> [occupiedcell, right=of C,     minimum width=.03\textwidth] (DLeft) {};
+    \node<5-> [highlight,    right=of DLeft, minimum width=.07\textwidth] (D)     {D};
+
+    \node [freestruct, right=of D,    minimum width=.05\textwidth] (E) {E};
+    \node [freestruct, right=of E,    minimum width=.1\textwidth]  (F) {F};
+    \node [highlight,  right=of F,    minimum width=.15\textwidth] (G) {G};
+    \node [freestruct, right=of G,    minimum width=.1\textwidth]  (H) {H};
+\end{ctikz}
+
+\vfill
+
+- <6-> _Contrainte:_
+  + <7-> Itération, au pire des cas, sur l'*ensemble* des blocs libérés.
+
+
+** Définition: Algorithme /First fit/
+
+- L'algorithme /First fit/ recherche *le premier* bloc *assez grand*.
+
+\vfill
+
+- _Fonctionnement:_
+  + Le premier bloc assez grand pour satisfaire la requête est renvoyé.
+
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=1cm}]
+    \node[highlight, minimum width=\textwidth, thick] (Background) {};
+
+    \node[draw, fill=black!20, right=.4pt of Background.west, minimum width=.1\textwidth] (Left) {...};
+
+    \node[draw, fill=black!20, left=.4pt of Background.east,  minimum width=.1\textwidth] (Right) {...};
+    \draw[dashed, ultra thick, orange] (Right.north west) -- (Right.south west);
+
+    \node [freestruct, right=of Left, minimum width=.05\textwidth] (A) {A};
+
+    \node<-3> [highlight,    right=of A,     minimum width=.15\textwidth]  (B) {B};
+    \node<4-> [occupiedcell, right=of A,     minimum width=.03\textwidth] (ALeft) {};
+    \node<4-> [highlight,    right=of ALeft, minimum width=.12\textwidth] (B) {B};
+
+    \node [freestruct, right=of B, minimum width=.05\textwidth] (C) {C};
+    \node [highlight,  right=of C, minimum width=.1\textwidth]  (D) {D};
+
+    \node [freestruct, right=of D, minimum width=.05\textwidth] (E) {E};
+    \node [freestruct, right=of E, minimum width=.1\textwidth]  (F) {F};
+    \node [highlight,  right=of F, minimum width=.15\textwidth] (G) {G};
+    \node [freestruct, right=of G, minimum width=.1\textwidth]  (H) {H};
+\end{ctikz}
+
+\vfill
+
+- <5-> _Contrainte:_
+  + <6-> Fragmentation *beaucoup plus* importante:
+    * <7-> De nombreux *petits* blocs au début de la liste.
+
+
+** Conclusion: Sélection séquentielle (/Sequential Fits/)
+
+- D'autres algorithmes existent:
+  + _Exemple:_ /Next fit/...
+
+\vfill
+
+- D'autres structures de données de sélection sont disponibles:
+  + _Exemple:_ Arbres binaires; Listes ordonnées...
+
+\vfill
+
+- _Contrainte principale:_
+  + Avoir l'ensemble des blocs dans la même liste.
+
+
+** Définition: Sélection par liste individuelle (/Segregated Free Lists/)
+
+- La *sélection séquentielle* est un ensemble de politiques de sélection.
+  + Elle se base sur l'itération de *plusieurs ensembles* de blocs libérés.
+
+\vfill
+
+- La *structure de donnée de liaison* des blocs libérés sera *plusieurs listes chaînées*.
+  + L'ensemble des blocs libérés seront dans *plusieurs* listes chainées.
+
+\vfill
+
+- Plusieurs algorithmes en découlent.
+
+
+** Définition: Algorithme de regroupement (/Segregated Fits/)
+
+- L'algorithme /Segregated Fits/ regroupe un ensemble de taille de blocs libérés dans une liste.
+
+\vfill
+
+- Listons différentes catégories de listes:
+  + Listes *exactes*:
+    * Le premier bloc sera utilisé.
+  + Listes d'*une rangée de tailles*:
+    * Un algorithme de sélection (/Best fit/, ...) sélectionnera le bloc.
+  + ...
+
+\vfill
+
+- L'ensemble des listes est sauvegardé dans la *structure arène*.
+
+
+** Conclusion: Algorithme d'allocation
+
+- _Rappel:_ L'algorithme d'allocation doit définir:
+  + Lors de l'allocation: La *politique de sélection* du bloc mémoire.
+  + Lors de la libération: La *politique de recyclage* du bloc mémoire.
+
+\vfill
+
+- Un algorithme d'allocation regroupera *plusieurs* algorithmes.
+
+\vfill
+
+- Il existe d'autres algorithmes permettant de limiter la fragmentation.
+  + Nous avons survolé les algorithmes *principaux*.
+
+
+* Existence de différents algorithmes d'allocations
+
+** Étude de cas: Algorithme d'allocation ~GNU LibC~
+
+- L'algorithme utilisé dans la ~GNU LibC~ est ~ptmalloc2~.
+  + C'est une version améliorée de ~dlmalloc~, supportant le *parallélisme*.
+
+\vfill
+
+- L'implémentation de la ~GNU LibC~ comporte:
+  + 4 /Segregated Free Lists/:
+    * _Fast:_ Listes *exactes* - /First fit/
+    * _Small:_ Listes d'*une rangée de tailles* - /First fit/
+    * _Large:_ Listes d'*une rangée de tailles* - /Best fit/
+    * _Unsorted:_ Liste d'attente
+
+
+** Analyse: Objectifs d'algorithmes d'allocations
+
+- Certains algorithmes sont conçus pour répondre à des *problématiques spécifiques*:
+  + Gestion du *parallélisme*.
+  + *Vérification* d'applications dégénérées.
+  + *Disponibilité* sur plusieurs environnement d'exécution.
+
+\vfill
+
+- Certaines implémentations sont flexibles:
+  + *Configurabilité* des algorithmes (Voir ~mallopt(3)~)
+    * *Efficacité* sur un certain type d'application
+
+
+* Pour terminer...
+
+** Overture
+
+- Des algorithmes de *garbage collector* ont été proposés en complément de ~malloc~.
+  + Les langages ~Go~, ~Java~ ou ~Python~ utilisent un garbage collector.
+  + Les langages ~C++11~ ou ~Rust~ utilisent d'autres mécanismes.
+
+\vfill
+
+- Seriez-vous capable de faire un ~malloc~ possédant un *garbage collector*?
+
+\vfill
+
+- La recherche sur les algorithmes d'allocation *continue*!
+  + _Problème actuel:_ Orienté sur les algorithmes d'allocation *parallélisés*.
+
+
+** Références: Allocateurs
+
+- _*[[https://www.researchgate.net/publication/2448703_Dynamic_Storage_Allocation_A_Survey_and_Critical_Review][Wilson, Johnstone, Nelly, Boles - Dynamic Storage Allocation]]*_
+
+\vfill
+
+- Quelques allocateurs connus:
+  + _*[[http://gee.cs.oswego.edu/dl/html/malloc.html][Doug Lea - dlmalloc]]*_
+  + _*[[https://sourceware.org/glibc/wiki/MallocInternals][GNU LibC - ptmalloc2]]*_
+  + _*[[https://people.freebsd.org/~jasone/jemalloc/bsdcan2006/jemalloc.pdf][Jason Evans - jemalloc]]*_
+
+\vfill
+
+- De *nouveaux* allocateurs:
+  + _*[[https://google.github.io/tcmalloc/design.html][Google - Thread Caching malloc]]*_
+  + _*[[https://github.com/microsoft/snmalloc][Microsoft - Message Passing Allocator]]*_
+
+
+** Références: Lectures
+
+- _*[[https://dept-info.labri.fr/~gavoille/UE-TAP/cours.pdf][Cyril Gaviolle - Techniques Algorithmiques et Programmation]]*_
+
+\vfill
+
+- _*[[https://fr.wikipedia.org/wiki/The_Art_of_Computer_Programming][Donald E. Knuth - The Art of Computer Programming]]*_
+- _*[[https://fr.wikipedia.org/wiki/Introduction_%C3%A0_l%27algorithmique][Cormen, Leiserson, Rivest, Stein - Introduction à l'algorithmique]]*_
+
