@@ -1,0 +1,297 @@
+#+TITLE: 203hotline - Avoiding Overload
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+* Rappel ~201yams~: Théorie du dénombrement
+
+** Définition: Permutation
+
+- Une *permutation* d'un ensemble fini est une séquence ordonnée de tous les éléments de cet ensemble, où chaque élément apparaît une seule fois.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3 \} \)
+  + Il existe 6 permutations de \( E \):
+    * \( 123 \), \( 132 \), \( 213 \), \( 231 \), \( 312 \), \( 321 \)
+  + Il y a 3 choix pour le premier élément, 2 pour le deuxième, et 1 pour le dernier.
+
+\vfill
+
+- Dans un ensemble à \( n \) éléments, il existe *\( n! \) permutations*.
+  + Il y a \( n \) choix pour le 1er élément, \( n - 1 \) pour le deuxième, ...
+
+
+** Définition: \( k \)-permutation
+
+- Une *\( k \)-permutation* d'un ensemble est une séquence ordonnée de \( k \) éléments de cet ensemble, sans qu'un élément apparaisse plus d'une fois dans la séquence.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3, 4 \} \)
+  + Il existe 12 \( 2 \)-permutations de \( E \):
+    * \( 12 \), \( 13 \), \( 14 \), \( 21 \), \( 23 \), \( 24 \), \( 31 \), \( 32 \), \( 34 \), \( 41 \), \( 42 \), \( 43 \)
+  + Il y a 4 choix pour le premier élément et 3 pour le deuxième élément.
+
+\vfill
+
+- Le nombre de \( k \)-permutations d'un ensemble à \( n \) éléments est: *\( \frac{n!}{(n - k)!} \)*
+  + \( n \cdot (n - 1) \cdot (n - 2) \cdot ... \cdot (n - k + 1) \)
+
+\vfill
+
+- _Remarque:_ Une permutation d'un ensemble à \( n \) éléments est une \( n \)-permutation.
+
+
+** Définition: \( k \)-combinaison
+
+- Une *\( k \)-combinaison* d'un \( n \)-ensemble est un l'ensemble formé par la \( k \)-permutation.
+
+\vfill
+
+- _Exemple:_ Soit \( E = \{ 1, 2, 3, 4 \} \)
+  + Il existe 12 \( 2 \)-permutations de \( E \):
+    * \( 12 \), \( 21 \), \( 13 \), \( 31 \), \( 14 \), \( 41 \), \( 23 \), \( 32 \), \( 24 \), \( 42 \), \( 34 \), \( 43 \)
+  + Il existe 6 \( 2 \)-combinaisons de \( E \):
+    * \( 12 \), \( 13 \), \( 14 \), \( 23 \), \( 24 \), \( 34 \)
+
+\vfill
+
+- Le nombre de \( k \)-combinaisons d'un ensemble à \( n \) éléments est: *\( \frac{n!}{(n - k)! \cdot k!} \)*
+
+
+** Définition: Coefficients binomiaux
+
+- Les *coefficients binomiaux* sont le nombre de \( k \)-combinaisons dans un ensemble à \( n \) éléments.
+  + On utilise la notation \( \binom{n}{k} \) et se prononce *k parmi n*.
+
+\vfill
+
+- On a donc la relation suivante: \( \binom{n}{k} = \frac{n!}{(n - k)! \cdot k!} \)
+
+
+* Rappel ~201yams~: Loi binomiale
+
+** Définition: Épreuve de Bernoulli
+
+- Une *épreuve de Bernoulli* de paramètre \( p \) est une expérience aléatoire comportant deux issues: Le *succès* ou l'*échec*.
+  + Le paramètre \( p \) représente la probabilité de succès de l'expérience.
+
+\vfill
+
+- _Exemple:_
+  + Le lancer d'une pièce est une épreuve de Bernoulli de paramètre \( p = \frac{1}{2} \)
+    * Si le "succès" est représenté par l'obtention de \( Pile \), l'"échec" sera l'obtention de \( Face \).
+
+
+** Définition: Variable de Bernoulli
+
+- Une *variable de Bernoulli* est une variable aléatoire ayant deux valeurs possibles: 0 ou 1.
+
+\vfill
+
+- La *variable de Bernoulli* sert à représenter l'issue d'une épreuve de Bernoulli.
+
+\vfill
+
+- _Exemple:_ Soit \( X \) l'issue d'une épreuve de Bernoulli de paramètre \( p \)
+  + \( \Prob(X = 1) = p \), représentant le succès
+  + \( \Prob(X = 0) = 1 - p \), représentant l'échec
+
+
+** Définition: Loi de Bernoulli
+
+- La *loi de Bernoulli* de paramètre \( p \) est une distribution de probabilité, qui:
+  + Prend la valeur 1 avec la probabilité \( p \).
+  + Prend la valeur 0 avec la probabilité \( 1 - p \).
+
+\vfill
+
+- La *loi de Bernoulli* décrit le comportement d'une expérience de Bernoulli.
+
+\vfill
+
+- On dit que \( X \) *suit* la loi de Bernoulli de paramètre \( p \):
+  + \( \Prob(X = 1) = p \)
+  + \( \Prob(X = 0) = 1 - p \)
+
+
+** Définition: Loi binomiale
+
+- La *loi binomiale* de paramètres \( n \) et \( p \) modélise la fréquence du nombre de succès obtenus lors de la répétition de plusieurs expériences aléatoires *identiques* et *indépendantes*.
+  + \( p \) représente la probabilité de succès
+  + \( n \) représente le nombre d'expériences réalisées
+
+
+** Exemple: Loi binomiale
+
+- On lance 3 dés et on s'intéresse à la probabilité d'avoir *une seule fois* le 2 apparaît.
+  + Il peut apparaître 0, 1, 2 ou 3 fois.
+  + Chaque lancer est identique et indépendants entre eux.
+  + Il y a une probabilité \( \frac{1}{6} \) d'obtenir la face 2.
+  + Posons \( X \) qui suit la loi Binomiale de paramètre \( \left( 3, \frac{1}{6} \right) \):
+    * \( \Prob(X = 1) \) sera notre résultat.
+
+\vfill
+
+- On lance 3 dés et on s'intéresse à la probabilité d'avoir *au moins une fois* le 2:
+    * \( \Prob(X = 1) + \Prob(X = 2) + \Prob(X = 3) \)
+
+
+** Formule: Loi binomiale
+
+- La *loi binomiale* de paramètres \( n \) et \( p \) modélise la fréquence du nombre de succès obtenus lors de la répétition de plusieurs expériences aléatoires *identiques* et *indépendantes*.
+  + \( p \) représente la probabilité de succès
+  + \( n \) représente le nombre d'expériences réalisées
+
+\vfill
+
+- La probabilité de \( k \) succès dans une répétition de \( n \) expériences est:
+  + \( \Prob(X = k) = \binom{n}{k} \cdot p^{k} \cdot (1 - p)^{n - k} \)
+
+
+* Modélisons ~203hotline~: Loi binomiale
+
+** Modélisons: ~203hotline~
+
+- _Énoncé:_ /La variable aléatoire représente le nombre de personnes appelant à un moment donné/
+  + Soit \( X \): "Le nombre de personnes appelant à un moment donné"
+  + Un moment donné est représenté par *une seconde*.
+
+\vfill
+
+- _Énoncé:_ /Cette variable aléatoire suit la *loi binomiale*/
+  + Le paramètre \( p \) est la probabilité de l'appel.
+  + Le paramètre \( n \) sera le nombre de personnes appelant par jour.
+
+\vfill
+
+- L'évaluation \( X = x_{i} \) indique la *répartition des appels* sur les lignes:
+  + De \( x_{0} \) à \( x_{25} \): Capacité de réception normale
+  + De \( x_{26} \) à \( x_{3500} \): Surcharge (/Overload/)
+
+
+** Exemple: ~203hotline~
+
+- _Exemple:_ L'appel dure en moyenne 3 minutes (/180 secondes/).
+  + Quelle est la répartition des appels sur 20 lignes? \( \Prob(X = x_{20}) \)?
+
+\vfill
+
+- La probabilité de l'appel \( p \) est de \( \frac{3 \cdot 60}{ 8 \cdot (60 \cdot 60) } = 0.00625 \)
+
+\vfill
+
+- \( \Prob(X = x_{20}) = \binom{3500}{20} \cdot 0.00625^{20} \cdot (1 - 0.00625)^{(3500 - 20)} = 0.08197... \approx 0.082 \)
+  + \( \binom{3500}{20} = 29622136420926310437925978097241771862989620082937950 \)
+  + \( 0.00625^{20} = 0.0000000000000000000000000000000000000000000082718061255... \)
+  + \( (1 - 0.00625)^{(3500 - 20)} = 0.0000000003345438053247220205677789220581332905... \)
+
+
+* Définition: Loi de Poisson
+
+** Propriétés: Loi de Poisson
+
+- La loi binomiale pour un \( n \) grand et un \( p \) petit effectue des opérations manipulant de très grands et très petits nombres.
+  + Opérations complexes à calculer
+  + Grande instabilité numérique
+
+\vfill
+
+- Le *paradigme de Poisson* évoque qu'*un grand nombre* de variables de Bernoulli indépendantes *de petit paramètre* suit *approximativement* la loi de Poisson.
+
+
+** Définition: Loi de Poisson
+
+- La *loi de Poisson*, ou *loi des événements rares*, décrit le comportement du nombre d'événements se produisant dans un intervalle de temps fixé.
+
+\vfill
+
+- _Exemple:_ Un événement se produit en moyenne 2 fois par minute.
+  + En 5 minutes, quelle est la probabilité que l'événement se produise uniquement 8 fois?
+
+\vfill
+
+- _Remarque:_ La Loi de Poisson ne fonction que si l'on connait l'espérance ou la fréquence moyenne de l'apparition de l'événement (dépendant de la modélisation).
+
+
+** Formule: Loi de Poisson
+
+- Soit \( X \), la variable aléatoire suivant la *loi de Poisson* de paramètre \( \lambda \).
+  + \( \lambda \) représente la fréquence moyenne de l'apparition de l'événement, dans un intervalle fixé.
+
+\vfill
+
+- La probabilité de \( k \) apparitions de l'événement est:
+  + \( \Prob(X = k) = \e^{- \lambda} \cdot \frac{ \lambda^{k} }{ k! } \)
+
+\vfill
+
+- _Exemple:_ Un événement se produit en moyenne 2 fois par minute.
+  + En 5 minutes, quelle est la probabilité que l'événement se produise uniquement 8 fois?
+  + Soit \( X \), la variable aléatoire qui suit la loi de Poisson de paramètre \( \lambda = 2 \cdot 5 = 10 \)
+  + _Réponse:_ \( \Prob(X = 8) \approx 0.11 \)
+
+
+* Modélisons ~203hotline~: Loi binomiale
+
+** Modélisons: ~203hotline~
+
+- _Énoncé:_ /La variable aléatoire représente le nombre de personnes appelant à un moment donné/
+  + Soit \( X \): "Le nombre de personnes appelant à un moment donné"
+  + Un moment donné est représenté par *une seconde*.
+
+\vfill
+
+- _Énoncé:_ /Cette variable aléatoire suit la *loi de Poisson*/
+  + Le paramètre \( \lambda \) est la moyenne des appels dans une journée.
+
+\vfill
+
+- L'évaluation \( X = x_{i} \) indique la *répartition des appels* sur les lignes:
+  + De \( x_{0} \) à \( x_{25} \): Capacité de réception normale
+  + De \( x_{26} \) à \( x_{3500} \): Surcharge (/Overload/)
+
+
+** Exemple: ~203hotline~
+
+- _Exemple:_ L'appel dure en moyenne 3 minutes (/180 secondes/).
+  + Quelle est la répartition des appels sur 20 lignes? \( \Prob(X = x_{20}) \)?
+
+\vfill
+
+- La moyenne des appels \( \lambda \) dans une journée est: \( 3500 * \frac{3 \cdot 60}{ 8 \cdot (60 \cdot 60) } = 21.875 \)
+
+\vfill
+
+- \( \Prob(X = x_{20}) = \e^{- 21.875} \cdot \frac{ 21.875^{20} }{ 20! } = 0.08177... \approx 0.082 \)
+  + \( \e^{- 21.875} = 0.00000000031608814543 \)
+  + \( 21.875^{20} = 629449994211702352800495558.54049... \)
+  + \( 20! = 2432902008176640000 \)
+
+
+* Passons au Python!
+
+** Python: Compétences acquises
+
+- Liste des compétences acquises avec le ~202unsold~:
+  + Compétences du ~201yams~
+  + Gestion des arguments avec ~argparse~
+  + Typage primitifs:
+    * ~int~, ~str~, ~float~, ~List[]~, ~Tuple[]~, ...
+    * Vérification du typage: ~mypy~
+
+
+** Python: Compétences à acquérir
+
+- Liste des compétences à acquérir avec le ~203hotline~:
+  + Détection des invariants de boucles
+  + Variables par défaut
+  + Utilisation du framework de test ~PyTest~
