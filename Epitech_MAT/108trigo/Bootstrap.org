@@ -1,0 +1,195 @@
+#+TITLE: 108trigo - Further Fiddling with Fancy Fundamental Functions
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+# #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+
+* Introduction: Séries entières
+
+** Problématique: Évaluation de fonction
+
+- Nous avons étudier les *fonctions polynomiales*.
+  + Nous savons les évaluer rapidement: ~107transfer~
+
+\vfill
+
+- Cependant, toutes les fonctions *ne sont pas* des fonctions polynomiales.
+
+\vfill
+
+- _Exemple:_ \( f : x \mapsto 2^{x} \)
+  + Il y a un équivalent *facile* à effectuer.
+
+\vfill
+
+- _Exemple:_ \( f : x \mapsto \sin x \)
+  + Il n'y a pas d'équivalent intuitif.
+
+
+** Exemple: Sinusoïde
+
+- _Rappel:_ Le *cercle trigonométrique* est un cercle dont le *rayon est égal à 1* et qui est centré sur l'*origine du repère*.
+
+\vfill
+
+\begin{ctikz}[scale=2]
+    \drawGrid* {-1.3} {-1.3} {1.5} {1.3}
+    \draw (0, 0) circle (1cm);
+    \drawPoint [below left] (O) {0} {0};
+
+    \coordinate (M) at (.8660256, 0);
+
+    \drawPoint <2-> (A) {.8660256} {.5} (A);
+    \node <2-> at (O) [above right=-1mm and 2mm] {$ \alpha $};
+    \draw <2-> pic[Angle, scale=1.3] {angle=M--O--A};
+    \draw <2-> (O) -- (A);
+
+    \draw <3-> (0.8660256, .1) -| (0.76, 0);
+    \draw <3-> [blue, very thick] (O) -- (M) node [midway, below] {$ \cos( \alpha ) $};
+    \draw <3-> [red, very thick] (M) -- (A) node [midway, right] {$ \sin( \alpha ) $};
+\end{ctikz}
+
+
+** Graphiquement: Sinusoïde
+
+- Caractérisons la fonction sinus:
+  + \( \sin(0) = 0 \), \( \sin \left( \frac{\pi}{2} \right) = 1 \)
+  + La fonction est \( 2 \pi \)-périodique
+
+\vfill
+\pause
+
+\begin{ctikz}
+    \drawGrid* {-3} {-1.5} {8} {1.5}
+
+    \clip (-2.9, -1.4) rectangle (7.9, 1.4);
+
+    \draw [blue, thick, domain=-3:8] plot[smooth] function {sin(x)};
+\end{ctikz}
+
+\vfill
+\pause
+
+- Pour mieux visualiser:
+  * _*[[https://fr.wikipedia.org/wiki/Sinus_(math%C3%A9matiques)#/media/Fichier:Sin_drawing_process.gif][Animation tracé du sinus]]*_ et _*[[https://fr.wikipedia.org/wiki/Fonction_trigonom%C3%A9trique#/media/Fichier:Cercle_trace_sinus_cosinus_anim.gif][Animation du tracé du cosinus et du sinus]]*_
+
+
+** Graphiquement: Approximation d'une sinusoïde par des polynômes
+
+- L'objectif est d'approximer par *un polynôme* la fonction sinusoïde.
+  + _Rappel:_ Un polynôme est une expression de la forme \( \sum_{i = 0}^{n} a_{i}X^{i} \), avec \( a_{n} \neq 0 \).
+
+\vfill
+\pause
+
+\begin{ctikz}
+    \drawGrid* {-3} {-1.5} {8} {1.5}
+
+    \clip (-2.9, -1.4) rectangle (7.9, 1.4);
+
+    \draw [blue, thick, domain=-3:8]   plot[smooth] function {sin(x)};
+
+    \draw<5-7> [orange,  thick, domain=-3:8] plot[smooth] function {- x ** 3 / 3! + x};
+    \draw<6-7> [olive,   thick, domain=-3:8] plot[smooth] function {x ** 5 / 5! - x ** 3 / 3! + x};
+    \draw<7-7> [magenta, thick, domain=-3:8] plot[smooth] function {- x ** 7 / 7! + x ** 5 / 5! - x ** 3 / 3! + x};
+    \draw<8->  [red,     thick, domain=-3:8] plot[smooth] function {x ** 17 / 17! - x ** 15 / 15! + x ** 13 / 13! - x ** 11 / 11! + x ** 9 / 9! - x ** 7 / 7! + x ** 5 / 5! - x ** 3 / 3! + x};
+\end{ctikz}
+
+\vfill
+
+- <only@5> \color{orange} \( - \frac{1}{6} \cdot x^{3} + x \)
+- <only@6> \color{orange} \( - \frac{1}{6} \cdot x^{3} + x \) \qquad \color{olive} \( \frac{1}{120} \cdot x^{5} - \frac{1}{6} \cdot x^{3} + x \)
+- <only@7> \color{orange} \( - \frac{1}{6} \cdot x^{3} + x \) \qquad \color{olive} \( \frac{1}{120} \cdot x^{5} - \frac{1}{6} \cdot x^{3} + x \) \qquad \color{magenta} \( - \frac{1}{7!} \cdot x^{7} + \frac{1}{120} \cdot x^{5} - \frac{1}{6} \cdot x^{3} + x \)
+- <only@8> \color{red} \( \frac{1}{17!} \cdot x^{17} - \frac{1}{15!} \cdot x^{15} + ... + \frac{1}{120} \cdot x^{5} - \frac{1}{6} \cdot x^{3} + x \)
+
+
+** Analyse: Sinusoïde
+
+- _Question:_ De quel degré sera notre polynôme?
+  + _Rappel du *Théorême d'Alembert-Gauss*:_ Un polynôme de degré \( n \) a *au plus* \( n \) racines.
+
+\vfill
+
+- La fonction sinus a une *infinité* de racines.
+  + Le *seul* polynôme ayant une infinité de racines est le polynôme nul.
+  + Il faudrait avoir un polynôme de *degré infini*.
+
+
+* Séries entières réelles
+
+** Définition: Série entière réelle
+
+- Une *série entière réelle* est une série de fonctions de la forme \( \sum_{n} a_{n} x^{n} \)
+  + Où \( (a_{n}) \in \set{R}^{\set{N}} \) (Rappel ~106bombyx~: \( \set{R}^{\set{N}} \) est une suite réelle).
+
+\vfill
+
+- Les séries entières permettent, par leur évaluation, d'approximer des fonctions.
+  + En évaluant les termes jusqu'à l'infini, on fini par obtenir la fonction.
+
+\vfill
+
+- _Exemple d'application:_ Approximation de sinus en calculant les premiers termes de la série entière.
+
+
+** Graphiquement: ~108trigo~
+
+\begin{ctikz}
+    \drawGrid* {-6} {-2.5} {6} {4}
+
+    \clip (-5.9, -2.4) rectangle (5.9, 3.9);
+
+    \draw<1-1> [orange, thick, domain=-6:6] plot[smooth] function {cos(x)};
+    \draw<1-1> [blue,   thick, domain=-6:6] plot[smooth] function {sin(x)};
+    \node<1-1> [orange, draw=black, fill=bg] at (4, 3) {\( y = cos(x) \)};
+    \node<1-1> [blue,   draw=black, fill=bg] at (4, 2) {\( y = sin(x) \)};
+
+    \draw<2-2> [magenta, thick, domain=-2.5:2.5] plot[smooth] function {cosh(x)};
+    \draw<2-2> [olive,   thick, domain=-2.5:2.5] plot[smooth] function {sinh(x)};
+    \node<2-2> [magenta, draw=black, fill=bg] at (4, 3) {\( y = cosh(x) \)};
+    \node<2-2> [olive,   draw=black, fill=bg] at (4, 2) {\( y = sinh(x) \)};
+
+    \draw<3-3> [red, thick, domain=-6:1.5] plot[smooth] function {exp(x)};
+    \node<3-3> [red, draw=black, fill=bg] at (4, 3) {\( y = exp(x) \)};
+\end{ctikz}
+
+
+** Formules: Quelques séries entières
+
+- \( \e^{x} = 1 + x + \frac{x^2}{2!} + \frac{x^{3}}{3!} + \frac{x^{4}}{4!} + ... \pause = \sum_{i = 0}^{+ \infty} \frac{x^{i}}{i!} \) \pause
+
+- \( \cos x = 1 - \frac{x^{2}}{2!} + \frac{x^{4}}{4!} - \frac{x^{6}}{6!} + ... \pause = \sum_{i = 0}^{+ \infty} \frac{(-1)^{i} \cdot x^{2 \cdot i}}{(2 \cdot i)!} \) \pause
+
+- \( \sin x = x - \frac{x^{3}}{3!} + \frac{x^{5}}{5!} - \frac{x^{7}}{7!} + ... \pause = \sum_{i = 0}^{+ \infty} \frac{(-1)^{i} \cdot x^{2 \cdot i + 1}}{(2 \cdot i + 1)!} \) \pause
+
+- \( \ch x = 1 + \frac{x^{2}}{2!} + \frac{x^{4}}{4!} + \frac{x^{6}}{6!} + ... \pause = \sum_{i = 0}^{+ \infty} \frac{x^{2 \cdot i}}{(2 \cdot i)!} \) \pause
+
+- \( \sh x = x + \frac{x^{3}}{3!} + \frac{x^{5}}{5!} + \frac{x^{7}}{7!} + ... \pause = \sum_{i = 0}^{+ \infty} \frac{x^{2 \cdot i + 1}}{(2 \cdot i + 1)!} \) \pause
+
+
+** Définition: Généralisation au cas matricielle
+
+- Les opérations matricielles sont la *généralisation aux matrices carrées* des opérations réelles des séries entières réelles.
+
+\vfill
+
+- La généralisation s'opère en utilisant des opérations matricielles:
+  + _Exemple:_ \( \sin x = \sum_{i = 0}^{+ \infty} \frac{(-1)^{i} \cdot x^{2 \cdot i + 1}}{(2 \cdot i + 1)!} \) donne \( \sin A = \sum_{i = 0}^{+ \infty} \frac{(-1)^{i} \cdot A^{2 \cdot i + 1}}{(2 \cdot i + 1)!} \)
+
+
+* Passons au Python!
+
+** Python: Compétences à acquérir
+
+- Liste des compétences à acquérir avec le ~108trigo~:
+  + Utilisation du framework de test ~PyTest~
