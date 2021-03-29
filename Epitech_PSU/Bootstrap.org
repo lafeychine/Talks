@@ -1,0 +1,204 @@
+#+TITLE: strace - System call retrieval
+#+SUBTITLE: [Bootstrap] Programmation Système UNIX
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../template/Beamer.org
+#+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
+
+#+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
+
+# #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+* Étape 1: Appels systèmes
+
+** Définition: Appels systèmes
+
+- Un *appel système* est un /appel/ par le programme afin de demander au *noyau* d'effectuer une action.
+  + _Exemple:_ Gestion de fichiers, de processus, du réseau...
+
+\vfill
+
+- _Rappel:_ Le programme se trouve dans la *mémoire virtuelle*.
+  + Il n'a *aucun accès* au monde extérieur.
+
+\vfill
+
+- Pour comprendre les mécanismes: Voir ~intro(2)~ et ~syscalls(2)~
+
+
+** Définition: Appels systèmes sur Linux (/Interruption/)
+
+- Sur le noyau ~Linux~, il est possible de faire un appel système *via une interruption*.
+
+\vfill
+
+- Sur l'architecture ~x86_64~:
+  + ~int~ est l'instruction d'interruption:
+  + Instruction ~INT~ sur ~NASM~.
+  + La table d'interruption, à l'index 128, correspond à la procédure d'appel système.
+
+\vfill
+
+- Les registres utilisés sont:
+  + _Numéro du ~syscall~:_ ~eax~ (Voir la _*[[https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_32.tbl][table des syscalls]]*_)
+  + _Paramètres:_ ~ebx~, ~ecx~, ~edx~, ~esi~, ~edi~, ~ebp~
+  + _Résultat:_ ~eax~
+
+
+** Exemple: Appel système avec ~int 0x80~
+
+#+BEGIN_SRC asm
+BITS 64                         ; 64-bit mode
+
+INT_EXIT EQU 1                  ; Exit number syscall
+
+SECTION .text                   ; [Code section]
+
+GLOBAL _start                   ; Export ‘_start’
+
+_start:
+    MOV EAX, INT_EXIT           ; Syscall number
+    MOV EBX, 0                  ; Return value
+    INT 0x80                    ; System call: exit(0)
+#+END_SRC
+
+
+** Définition: Appels systèmes sur Linux (/Instruction ~syscall~/)
+
+- Sur le noyau ~Linux~, sous l'architecture ~x86_64~, il est possible de faire un appel système *via une instruction dédiée*.
+
+\vfill
+
+- Sur l'architecture ~x86_64~:
+  + ~syscall~ est l'instruction dédiée pour faire un appel système:
+    * Instruction ~SYSCALL~ sur ~NASM~.
+
+\vfill
+
+- Les registres utilisés sont:
+  + _Numéro du ~syscall~:_ ~rax~ (Voir la _*[[https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl][table des syscalls]]*_)
+  + _Paramètres:_ ~rdi~, ~rsi~, ~rdx~, ~r10~, ~r8~, ~r9~
+  + _Résultat:_ ~rax~
+
+
+** Exemple: Appel système avec ~syscall~
+
+#+BEGIN_SRC asm
+BITS 64                         ; 64-bit mode
+
+INT_EXIT EQU 60                 ; Exit number syscall
+
+SECTION .text                   ; [Code section]
+
+GLOBAL _start                   ; Export ‘_start’
+
+_start:
+    MOV RAX, SYS_EXIT           ; Syscall number
+    MOV RDI, 0                  ; Return value
+    SYSCALL                     ; System call: exit(0)
+#+END_SRC
+
+
+** Résumons: Appels systèmes sur Linux
+
+- Sur le noyau ~Linux~, sous l'architecture ~x86_64~, il est possible de faire un appel système de deux manières différentes.
+
+\vfill
+
+- Par une interruption: Moyen standard, en ~32 bits~, *obsolète* sous cette architecture.
+  + L'instruction machine est ~0xCD~, ayant ~0x80~ en paramètre.
+
+\vfill
+
+- Par une instruction dédiée: Moyen plus rapide, en ~64 bits~.
+  + L'instruction machine est ~0x0F 0x05~.
+
+
+** Étape 1: Exercice
+
+- Écrire trois programmes:
+  + Un programme ~NASM~ effectuant un ~write~ avec les interruptions
+  + Un programme ~NASM~ effectuant un ~write~ avec l'instruction ~syscall~
+  + Un programme ~C~ effectuant un ~write~ avec la ~GNU LibC~
+
+
+* Étape 2: Découvrons ~ptrace(2)~
+
+** Introduction: Processus et fil d'exécution
+
+- Un *processus* est un programme en *cours d'exécution* par un ordinateur, qui contient:
+  + Un *ensemble d'instructions* à exécuter.
+  + Un *espace d'adressage* en mémoire virtuelle.
+
+\vfill
+
+- Un processus pourra exécuter son ensemble d'instructions par des *fils d'exécutions* (/thread/).
+  + _Rappel:_ Sous ~POSIX~ via ~pthreads(7)~
+  + _Remarque:_ Tous les fils d'exécutions *partagent* la même mémoire.
+
+\vfill
+
+- Un processus qui se duplique créera un nouveau processus:
+  + _Rappel:_ Sous ~POSIX~, via ~fork(2)~
+  + La mémoire sera copiée.
+  + Seul le fil d'exécution faisant l'appel de duplication sera copié et instancié.
+
+
+** Définition: ~ptrace(2)~
+
+- D'après ~ptrace(2)~:
+  + La fonction système ~ptrace~ offre la capacité à un processus d'observer, de contrôler et de modifier la mémoire d'un fil d'exécution d'un autre processus.
+
+\vfill
+
+- Ce mécanisme comporte:
+  + Le processus ~tracer~ ayant les capacités offerte par ~ptrace~.
+  + Le fil d'exécution ~tracee~ étant le fil d'exécution alteré par ~ptrace~.
+
+\vfill
+
+- Pour que cela fonctionne, ~ptrace~ oblige:
+  + Le processus ~tracer~ doit être *attaché* à un ~tracee~ pour effectuer des opérations.
+  + L'ensemble des interactions entre ~tracer~ et ~tracee~ s'effectuent par des *signaux*.
+
+
+** Déroulement: ~ptrace(2)~
+
+- Lorsque un ~tracer~ va vouloir suivre un programme:
+  + Il va effectuer un ~fork(2)~
+
+\vfill
+
+- Dans le parent:
+  + Attente de l'enfant: ~waitpid(...)~
+  + Demande d'action: ~ptrace(PTRACE_SINGLESTEP, ...)~
+  + Attente d'action: ~waitpid(...)~
+  + ...
+
+\vfill
+
+- Dans l'enfant:
+  + Demande de ~tracee~: ~ptrace(PTRACE_TRACEME)~
+  + Envoi d'un signal ~SIGSTOP~: ~kill(getpid(), SIGSTOP)~
+  + Lancement du programme: ~execve(...)~ ou mieux: ~fexecve(...)~
+    
+
+* Pour la prochaine fois
+
+** Objectif: Prochain follow-up
+
+- Pour le prochain follow-up:
+  + Avoir terminé *complètement* le Bootstrap.
+  + Avoir des *tests*.
+  + S'affranchir de ~PTRACE_SYSCALL~
+    * Utiliser ~PTRACE_SINGLESTEP~
+
+\vfill
+
+- _Quelques indications:_
+  + Existe-t'il un registre permettant de connaître la prochaine instruction à exécuter?
+  + Dans quelle partie de l'ELF la prochaine instruction sera?
+  + Existe-t'il un moyen de récupérer ces données?

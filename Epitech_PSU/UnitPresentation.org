@@ -1,0 +1,100 @@
+#+TITLE: Présentation de l'unité
+#+SUBTITLE: Programmation Système UNIX
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../template/Beamer.org
+#+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
+
+#+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
+
+# #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+
+* Introduction
+
+** Définition: Instrumentation
+
+- L'*instrumentation* regroupe l'ensemble des méthodes afin de modifier le comportement d'un programme à l'*exécution*.
+
+\vfill
+
+- L'instrumentation peut être fait *à l'exécution*:
+  + _Exemple:_ Détection de fuite mémoire avec ~valgrind~
+
+\vfill
+
+- L'instrumentation peut être fait *à la compilation*:
+  + _Exemple:_ Détection de couverture de code (~-gcov~)
+  + _Exemple:_ Détection de fuite mémoire avec ~MemorySanitizer~
+  + Voir la _*[[https://gcc.gnu.org/onlinedocs/gcc-10.2.0/gcc/Instrumentation-Options.html#Instrumentation-Options][documentation GCC]]*_
+
+
+** Analyse: Instrumentation
+
+- L'instrumentation *à l'exécution* requiert des outils contrôlant le programme:
+  + Processeur virtuel avec ~valgrind~ analysant les instructions.
+  + Contrôle via le Kernel grâce à ~ptrace()~
+  + ...
+
+\vfill
+
+- L'instrumentation *à la compilation* requiert l'écriture de plugins pour compilateur:
+  + Plugins ~GCC~ / Plugins ~Clang~ ou ~LLVM~.
+
+\vfill
+
+- Dans la plupart des cas, l'instrumentation va être couplé à un logiciel d'analyse:
+  + _Exemple:_ Ajout d'informations de débuggage (~-g~) utilisable par ~gdb~.
+  + _Contre-exemple:_ ~AddressSanitizer~ fonctionne seul.
+
+
+* Quels sont les projets?
+
+** Projet: ~strace~
+
+- Le projet ~strace~ a pour objectif de reproduire le comportement de ~strace(1)~.
+
+\vfill
+
+- ~strace~ est un programme récupérant à l'exécution les appels systèmes (~syscall~) d'un processus.
+  + Voir la _*[[https://strace.io/][page du projet]]*_
+
+\vfill
+
+- _Objectif:_ Se préparer au ~ftrace~
+
+
+** Projet: ~ftrace~
+
+- Le projet ~ftrace~ a pour objectif de récupérer l'ensemble du flux d'exécution d'un processus.
+
+\vfill
+
+- Le projet doit récupérer:
+  + Les appels systèmes et les signaux (Tel que ~strace~)
+  + Les fonctions statiques et dynamiques
+
+\vfill
+
+- Avec les informations récupérées, il devient possible de faire un /CallGraph/.
+
+
+* Organisation de l'unité
+
+** Organisation
+
+- Le projet ~strace~ dure 3 semaines: Termine le 11 avril.
+  + _Bootstrap:_ Mardi 23 mars
+  + _Follow-Up:_ Mardi 6 avril
+
+\vfill
+
+- Le projet ~ftrace~ dure 4 semaines: Termine le 9 mai.
+  + Il y aura 2 bootstrap et 2 follow-up.
+
+\vfill
+
+- Les soutenances seront la semaine après chaque fin de projet.
