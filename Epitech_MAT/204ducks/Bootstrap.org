@@ -1,0 +1,143 @@
+#+TITLE: 204ducks - Decamping Disturbed Ducks
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+# #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
+
+
+* Introduction: Probabilités continues
+
+** Introduction: Probabilités discrètes
+
+- _Rappel:_ Le *modèle* ou l'*univers*, noté \( \Omega \), est l'ensemble des résultats possibles d'une expérience aléatoire.
+  + Les éléments de cet ensemble sont appelées les *issues*.
+
+\vfill
+
+- Durant les projets ~201yams~, ~202unsold~ et ~203hotline~:
+  + Les issues sont des éléments *distinctement* séparés: *Ensemble dénombrable*.
+  + _Exemple:_ \( \Omega = \{ 1, 2, 3, 4, 5, 6 \} \)
+  + _Exemple:_ \( \Omega = \set{N} \)
+
+\vfill
+
+- Nous avons utilisé les *probabilités discrètes*.
+
+
+** Définition: Variable aléatoire continue
+
+- Une variable aléatoire *continue* peut prendre une infinité *non dénombrable* de valeurs.
+  + Ces valeurs sont généralement des *intervalles réels*.
+
+\vfill
+
+- _Exemples:_
+  + Quel est le temps d'attente dans ce restaurant?
+  + Quel est le poids des individus à la naissance?
+  + ...
+
+
+** Définition: Densité de probabilité
+
+- Une variable aléatoire *à densité* \( X \) est une variable aléatoire réelle, pour laquelle, si l'on pose une *densité de probabilité* \( f \), la probabilité d'appartenance à l'intervalle \( I = [a; b] \) se calcule par l'*intégration* de \( f \) sur \( I \).
+
+\vfill
+
+- Calcul de la probabilité sur un intervalle \( [a, b] \) pour une variable \( X \) de *densité de probabilité* \( f \):
+  + \( \forall (a, b) \in \set{R}^{2}, \, a < b, \, \Prob(a \ge X \ge b) = \int_{a}^{b} f(x)\mathrm{d}x \)
+
+
+* ~204ducks~: Modélisation du problème
+
+** Graphiquement: ~204ducks~
+
+- Fonction de densité de probabilité du ~204ducks~:
+  + \( f : x \mapsto a \cdot \e^{-x} + (4 - 3 \cdot a) \cdot \e^{-2 \cdot x} + (2 \cdot a - 4) \cdot \e^{-4 \cdot x} \)
+
+\vfill
+
+\begin{ctikz}[xscale=2, yscale=2]
+    \drawGrid*[Grid] {-0.5} {-0.5} {6} {1.5}
+
+    \clip (-0.4, -0.4) rectangle (5.9, 1.4);
+
+    \node<1-1> [orange, draw=black, fill=bg] at (5, 0.8) {\( a = 0 \)};
+    \draw<1-1> [orange, thick, domain=0:8] plot[smooth] function { 0 * exp(-x) + (4 - 3 * 0) * exp(-2 * x) + (2 * 0 - 4) * exp(-4 * x) };
+
+    \node<2-2> [blue, draw=black, fill=bg] at (5, 0.5) {\( a = 2.5 \)};
+    \draw<2-2> [blue, thick, domain=0:8] plot[smooth] function { 2.5 * exp(-x) + (4 - 3 * 2.5) * exp(-2 * x) + (2 * 2.5 - 4) * exp(-4 * x) };
+
+    \node<3-> [olive, draw=black, fill=bg] at (5, 0.6) {\( a = 1.6 \)};
+    \draw<3-> [olive, thick, domain=0:8] plot[smooth] function { 1.6 * exp(-x) + (4 - 3 * 1.6) * exp(-2 * x) + (2 * 1.6 - 4) * exp(-4 * x) };
+
+    \draw<4-4> [black, thick, domain=0:1, fill=gray!20] plot[smooth] function { 1.6 * exp(-x) + (4 - 3 * 1.6) * exp(-2 * x) + (2 * 1.6 - 4) * exp(-4 * x) } |- (0, 0);
+    \draw<5-5> [black, thick, domain=0:2, fill=gray!20] plot[smooth] function { 1.6 * exp(-x) + (4 - 3 * 1.6) * exp(-2 * x) + (2 * 1.6 - 4) * exp(-4 * x) } |- (0, 0);
+\end{ctikz}
+
+
+** Rappel ~110borwein~: Intégration
+
+- L'intégration, par *calcul numérique*, est possible via *approximation*.
+
+\vfill
+
+- Durant le ~110borwein~, vous avez vu:
+  + Méthode du *point médian*
+  + Méthode des *trapèzes*
+  + Méthode de *Simpson*
+
+
+* Probabilités continues
+
+** Définition: Espérance
+
+- _Rappel:_ L'*espérance* d'une variable aléatoire \( X \), noté \( \Esp(X) \), est la *moyenne* des valeurs prises par \( X \):
+  + \( \Esp(X) = x_{1} \cdot p_{1} + x_{2} \cdot p_{2} + ... + x_{n} \cdot p_{n} = \sum_{i = 1}^{n} x_{i} \cdot p_{i} \)
+
+\vfill
+
+- L'espérance d'une variable aléatoire réelle \( X \) admettant une densité de probabilité \( f \) est:
+  + \( \Esp(X) = \int_{- \infty}^{+ \infty} x \cdot f(x) \mathrm{d}x \)
+
+\vfill
+
+- On admettra que pour le ~204ducks~, l'intégrale est *absolument convergente*.
+
+
+** Définition: Écart-Type
+
+- _Rappel:_ La *variance* est une mesure de la *dispersion* des valeurs d'une *distribution de probabilité*.
+  + Formule de *Koenig-Huygens*: \( \Var(X) = \Esp(X^{2}) - (\Esp(X))^{2} \)
+
+\vfill
+
+- L'écart-type d'une distribution de probabilité *continue* est:
+  + \( \Var(X) = \int_{- \infty}^{+ \infty} x^{2} \cdot f(x)\mathrm{d}x - \left( \int_{- \infty}^{+ \infty} x \cdot f(x) \mathrm{d}x \right)^{2} \)
+
+\vfill
+
+- L'écart-type est *également* une mesure de la *dispersion* des valeurs:
+  + Il existe la relation suivante: \( \sigma = \sqrt{\Var} \)
+
+
+* Passons au Python!
+
+** Python: Compétences
+
+- Liste des compétences acquises avec le ~203hotline~:
+  + Compétences du ~202unsold~
+  + Utilisation du framework de test ~PyTest~
+
+\vfill
+
+- Liste des compétences à acquérir avec le ~204ducks~:
+  + Architecture
