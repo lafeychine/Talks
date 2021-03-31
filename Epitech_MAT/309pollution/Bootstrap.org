@@ -33,7 +33,7 @@
 
 \vfill
 
-\begin{ctikz}[, xscale=5, yscale=2.5]
+\begin{ctikz}[xscale=5, yscale=2.5]
     \drawGrid* {-0.1} {-0.1} {1.1} {1.1};
 
     \clip (0, 0) rectangle (1, 1);
@@ -64,7 +64,7 @@
 
 \vfill
 
-- Exemple: [\href{https://en.wikipedia.org/wiki/Bézier_curve#Constructing_Bézier_curves}{Lien vers Wikipédia}]
+- Exemple: _*[[https://en.wikipedia.org/wiki/Bézier_curve#Constructing_Bézier_curves][Lien vers Wikipédia]]*_
 
 
 * Surface de Bézier

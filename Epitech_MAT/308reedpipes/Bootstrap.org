@@ -208,7 +208,7 @@ _Exemple:_ Multiplication de deux matrices \( \mathcal{M}_{3,2} \times \mathcal{
 \begin{columns}
     \begin{column}{0.7\textwidth}<0->
 
-        \begin{ctikz}
+        \begin{ctikz}[ampersand replacement=\&]
             \matrix <1-2> (A) [Matrix] at (0, 0) {
                 a_{1,1} \& a_{1,2} \\
                 a_{2,1} \& a_{2,2} \\
@@ -371,7 +371,7 @@ _Exemple:_ Multiplication de deux matrices \( \mathcal{M}_{3,2} \times \mathcal{
 
 ** Algorithme: Spline d'interpolation
 
-- L'algorithme se trouve ici: [\href{https://fr.wikipedia.org/wiki/Spline#Algorithme_de_calcul}{Lien vers Wikipédia}].
+- L'algorithme se trouve ici: _*[[https://fr.wikipedia.org/wiki/Spline#Algorithme_de_calcul][Lien vers Wikipédia]]*_
   + Analysons-le avec ~NumPy~
 
 \vfill

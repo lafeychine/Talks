@@ -10,8 +10,6 @@
 #+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
 #+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
 
-#+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
-
 
 * Introduction: Définissons l'allocation
 
@@ -723,7 +721,7 @@ void *malloc(size_t size)
 - <only@11-12> Librairies dynamiques: Voir ~ld.so(8)~
   + <only@12> Rendez-vous pour le projet ~ftrace~
 
-\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=3cm}]
     \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
 
     \node<2->[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
@@ -755,7 +753,7 @@ void *malloc(size_t size)
 
 \vfill
 
-\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=3cm}]
     \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
 
     \node[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
@@ -780,7 +778,7 @@ void *malloc(size_t size)
 
 ** Graphiquement: Plusieurs processus
 
-\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=2.3cm}]
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=2.3cm}]
     % Separation
     \node[draw, fill=black!60, text=white, minimum width=\textwidth, minimum height=.5cm, font=\bfseries] (Break) {Magie Hardware / Software};
 
@@ -845,7 +843,7 @@ void *malloc(size_t size)
 
 ** Graphiquement: Espace Utilisateur - Noyau
 
-\begin{ctikz}[, node distance=0cm, every node/.style={thick, minimum height=1cm}]
+\begin{ctikz}[node distance=0cm, every node/.style={thick, minimum height=1cm}]
     % Users processes
     \node<1-> [draw, fill=olive!20, minimum width=0.5\textwidth] (Process) {Processus utilisateurs};
 
@@ -891,7 +889,7 @@ CONFORMING TO
 
 \vfill
 
-\begin{ctikz}[, node distance=0cm, every node/.style={minimum height=3cm}]
+\begin{ctikz}[node distance=0cm, every node/.style={minimum height=3cm}]
     \node[draw, fill=black!10, minimum width=\textwidth, thick] (Background) {};
 
     \node[draw, fill=black!20, right=.4pt of Background.west] (ReservedLeft) {\rotatebox{270}{Espace réservé}};
@@ -952,7 +950,7 @@ CONFORMING TO
 
 - _*[[https://youtu.be/7aONIVSXiJ8][Matt Porter - Introduction to Memory Management in Linux]]*_
 - _*[[https://www.gnu.org/software/libc/manual/html_node/Memory.html][GNU Manual - Malloc]]*_
-- _*[[http://david.decotigny.free.fr/libre/linux-mag-hs-16/lmhs-kernel/main.html][Thomas Petazzoni; David Decotigny - Concepts fondamentaux - Linux]]*_
+- _*[[http://david.decotigny.free.fr/libre/linux-mag-hs-16/lmhs-kernel/main.html][Thomas Petazzoni, David Decotigny - Concepts fondamentaux - Linux]]*_
 
 
 ** Références: Hardware (2/3)
@@ -963,7 +961,7 @@ CONFORMING TO
 \vfill
 
 - _GameBoy Advance:_
-  + _*[[https://github.com/pret/pokeemerald][GitHub: Décompilation de Pokémon Émeraude]]*_
+  + _*[[https://github.com/pret/pokeemerald][GitHub - Décompilation de Pokémon Émeraude]]*_
   + _*[[https://www.cs.rit.edu/~tjh8300/CowBite/CowBiteSpec.htm][GBA HardWare Specifications]]*_
 
 \vfill
@@ -974,9 +972,9 @@ CONFORMING TO
 
 ** Références: Ouverture (3/3)
 
-- _*[[https://youtu.be/np5SDSeTdAY][Raymond Namyst - Systèmes d'exploitation: Une Introduction]]*_
+- _*[[https://youtu.be/np5SDSeTdAY][Raymond Namyst - Systèmes d'exploitation - Une Introduction]]*_
 - _*[[https://youtu.be/b3NxrZOu_CE?t=907][3Blue1Brown - Réflexion sur l'apprentissage]]*_
-- _*[[https://edolstra.github.io/pubs/nixos-icfp2008-final.pdf][Eelco Dolstra - NixOS: Une distribution Linux purement fonctionnelle]]*_
+- _*[[https://edolstra.github.io/pubs/nixos-icfp2008-final.pdf][Eelco Dolstra - NixOS - Une distribution Linux purement fonctionnelle]]*_
 
 \vfill
 

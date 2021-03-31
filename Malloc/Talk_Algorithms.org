@@ -10,8 +10,6 @@
 #+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
 #+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
 
-#+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
-
 
 * Rappel: Allocation dynamique
 

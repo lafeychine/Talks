@@ -11,8 +11,6 @@
 
 #+LATEX_HEADER: \input{ ../Epitech.tex }
 
-# #+BEAMER_HEADER: \beamerdefaultoverlayspecification{<+->}
-
 
 * Introduction: Séries entières
 

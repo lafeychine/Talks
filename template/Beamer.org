@@ -12,6 +12,7 @@
 #+LATEX_HEADER: \setlist[itemize]{label=\textbullet}
 
 
+#+LATEX_HEADER: \usepackage{minted}
 #+LATEX_HEADER: \usepackage{mdframed}
 #+LATEX_HEADER: \surroundwithmdframed[font=\small]{minted}
 
