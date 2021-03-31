@@ -889,7 +889,7 @@ src_C[:exports code]{}
 
 ** Références: Lectures
 
-- _*[[https://dept-info.labri.fr/~gavoille/UE-TAP/cours.pdf][Cyril Gaviolle - Techniques Algorithmiques et Programmation]]*_
+- _*[[https://dept-info.labri.fr/~gavoille/UE-TAP/cours.pdf][Cyril Gavoille - Techniques Algorithmiques et Programmation]]*_
 
 \vfill
 
