@@ -1,0 +1,254 @@
+#+TITLE: 109titration - Derivatives and Preservatives
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Introduction: Rappels de géométrie
+
+** Définition: Droite sécante
+
+- Une *droite* est *sécante* à un objet géométrique lorsqu'elle /coupe/ cet objet.
+  + Pour le ~109titration~, nous allons étudier une droite coupant une *fonction*.
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-2} {-0.5} {6} {2.5};
+
+    \clip (-1.9, -0.4) rectangle (5.9, 2.4);
+
+    \draw [blue, thick] plot[smooth] function {- 0.5 * x ** 2 + 2 * x};
+
+    \drawPoint [above left] (A) {0.5} {0.875};
+    \drawPoint [above left] (B) {2} {2};
+
+    \draw [red, thick] plot[smooth] function {0.75 * x + 0.5};
+\end{ctikz}
+
+
+** Définition: Coefficient directeur
+
+- Le *coefficient directeur* (ou la /pente/) d'une droite est la *variation* de l'ordonnée lorsque l'abscisse augmente d'une unité.
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-2} {-0.5} {6} {2.5};
+
+    \clip (-1.9, -0.4) rectangle (5.9, 2.4);
+
+    \draw [blue, thick] plot[smooth] function {- 0.5 * x ** 2 + 2 * x};
+
+    \draw [red, thick] plot[smooth] function {0.75 * x + 0.5};
+
+    \drawPoint [above left] (A) {0.5} {0.875};
+    \drawPoint [above left] (B) {2} {2};
+
+    \drawPoint* [above left] (A) {0.5} {0.875};
+    \drawPoint* [above left] (B) {2} {2};
+    \node [below] at (0.5, 0)   {\( a \)};
+    \node [below] at (2, 0)     {\( b \)};
+    \node [left]  at (0, 0.875) {\( f(a) \)};
+    \node [left]  at (0, 2)     {\( f(b) \)};
+
+    \draw [thick] (0.5, 0.875) -- (2, 0.875);
+    \draw [thick] (2, 0.875) -- (2, 2);
+    \draw [thick] (0.5, 0.875) -- (2, 0.875) node [below, midway] {\( b - a \)};
+    \draw [thick] (2, 0.875) -- (2, 2) node [right, midway] {\( f(b) - f(a) \)};
+\end{ctikz}
+
+\vfill
+
+- Soit \( A \) et \( B \) deux points de la courbe représentative de \( f \) d'abscisses \( a \) et \( b \).
+  + Le coefficient directeur de la droite \( (AB) \) est: \( \frac{ f(b) - f(a) }{ b - a } \)
+
+
+** Introduction: Tangente
+
+- _Question:_ Que se passe-t'il si le point \( B \) se rapproche de \( A \)?
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-2} {-0.5} {6} {2.5};
+
+    \clip (-1.9, -0.4) rectangle (5.9, 2.4);
+
+    \draw [blue, thick] plot[smooth] function {- 0.5 * x ** 2 + 2 * x};
+
+    \drawPoint [above left] (A) {0.5} {0.875};
+
+    \drawPoint<1-1> [above left] (B) {2} {2};
+    \draw<1-1> [red, thick] plot[smooth] function {0.75 * x + 0.5};
+
+    \drawPoint<2-2> [above left] (B) {1} {1.5};
+    \draw<2-2> [red, thick] plot[smooth] function {1.25 * x + 0.25};
+
+    \drawPoint<3-3> [above left] (B) {0.75} {1.21875};
+    \draw<3-3> [red, thick] plot[smooth] function {1.375 * x + 0.1875};
+
+    \draw<4-> [red, thick] plot[smooth] function {1.5 * x + 0.125};
+\end{ctikz}
+
+
+** Définition: Tangente
+
+- La *tangente* à une courbe en un point \( A \) est la position limite, /lorsqu'elle existe/, de la droite sécante \( (AB) \) lorsque le point \( B \) de la courbe tend vers le point \( A \).
+
+\vfill
+
+- _Remarque:_ La droite /coupe/ qu'en *un seul point* /localement/ la courbe représentative de \( f \).
+
+\vfill
+
+- Lorsque \( B \) se rapproche de \( A \), la pente de la sécante *se rapproche* de la pente de la tangeante.
+
+
+** Formule: Taux de variation
+
+- Actuellement, on note \( b \) l'abscisse du point \( B \)
+  + On va noter \( b = a + h \), dont \( h \) est la distance de \( A \) à \( B \).
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-2} {-0.5} {6} {2.5};
+
+    \clip (-1.9, -0.4) rectangle (5.9, 2.4);
+
+    \draw [blue, thick] plot[smooth] function {- 0.5 * x ** 2 + 2 * x};
+
+    \draw [red, thick] plot[smooth] function {0.75 * x + 0.5};
+
+    \drawPoint* [above left] (A) {0.5} {0.875};
+    \drawPoint* [above left] (B) {2} {2};
+
+    \node [below] at (0.5, 0)   {\( a \)};
+    \node [left]  at (0, 0.875) {\( f(a) \)};
+
+    \node [below] at (2, 0)     {\( a + h \)};
+    \node [left]  at (0, 2)     {\( f(a + h) \)};
+
+    \draw [thick] (0.5, 0.875) -- (2, 0.875);
+    \draw [thick] (2, 0.875) -- (2, 2);
+
+    \draw [thick] (0.5, 0.875) -- (2, 0.875) node [below, midway] {\( h \)};
+    \draw [thick] (2, 0.875) -- (2, 2) node [right, midway] {\( f(a + h) - f(a) \)};
+\end{ctikz}
+
+\vfill
+
+- La pente de la tangente est \( \frac{ f(a + h) - f(a) }{ h } \) lorsque \( h \) se rapproche de 0.
+  + Cela s'écrit: \( \lim\limits_{h \to 0} \frac{ f(a + h) - f(a) }{ h } \)
+
+
+* Dérivation
+
+** Définition: Dérivation et Nombre dérivé
+
+- La fonction \( f \) est *dérivable* en \( a \) s'il existe un nombre réel \( L \), tel que:
+  + \( L = \lim\limits_{h \to 0} \frac{ f(a + h) - f(a) }{ h } \)
+
+\vfill
+
+- On appelle \( L \), le *nombre dérivé* de \( f \) en \( a \).
+  + On le note \( f'(a) \)
+
+\vfill
+
+- La *tangente* à la courbe \( C_{f} \) au point \( A \) est la droite passant par \( A \) dont le coefficient directeur est le nombre dérivé \( f'(a) \)
+
+
+** Exemple: Traitons la fonction \( x^{2} \)
+
+- Calculons le coefficient directeur de la tangente en tout point de \( x^{2} \):
+
+\vfill
+
+*** :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.3
+:END:
+
+\begin{ctikz}
+    \drawGrid* {-2} {-1} {2} {3};
+
+    \clip (-1.9, -0.9) rectangle (1.9, 2.9);
+
+    \draw [blue, thick] plot[smooth] function {x ** 2};
+\end{ctikz}
+
+
+*** :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- On a: \( \frac{ f(a + h) - f(a) }{ h } \)
+  + \( \iff \frac{ (a + h)^{2} - a^{2} }{ h } \)
+  + \( \iff \frac{ a^{2} + 2 \cdot a \cdot h + h^{2} - a^{2} }{ h } \)
+  + \( \iff \frac{ 2 \cdot a \cdot h + h^{2} }{ h } \)
+  + \( \iff \frac{ h \cdot (2 \cdot a + h) }{ h } \)
+  + \( \iff 2 \cdot a + h \)
+
+\vfill
+
+- Or, \( \lim\limits_{h \to 0} 2 \cdot a + h = 2 \cdot a \)
+
+
+* ~109titration~: Quelques rappels de Chimie
+
+* ~109titration~: Étude discrète
+
+** ~109titration~: Discrétisation de la dérivée
+
+- De la fonction \( f \) qui est *continue*, nous n'avons que quelques données déterminées.
+  + C'est une *discrétisation*: On ne mesure que quelques valeurs.
+
+\vfill
+
+- Ainsi, pour calculer le nombre dérivée à une mesure \( i \): \( \frac{ pH(i + 1) - pH(i - 1) }{ V(i + 1) - V(i - 1) } \)
+
+\vfill
+
+- _Remarque ~109titration~:_ Il faut normaliser les mesures.
+
+\vfill
+
+- Pour calculer le nombre dérivée à une mesure \( i \):
+  + \( \left( \frac{ pH(i) - pH(i - 1) }{ V(i) - V(i - 1) } \cdot \frac{ V(i + 1) - V(i) }{ V(i + 1) - V(i - 1) } \right) \) \\
+    \( + \left( \frac{ pH(i + 1) - pH(i) }{ V(i + 1) - V(i) } \cdot \frac{ V(i) - V(i - 1) }{ V(i + 1) - V(i - 1) } \right) \)
+
+
+** Définition: Interpolation linéaire
+
+- L'*interpolation* est l'estimation de la valeur prise par une fonction *continue* entre deux points déterminés.
+
+\vfill
+
+- L'*interpolation linéaire* consiste, entre deux points consécutifs \( A \) et \( B \), d'appliquer une *fonction affine*.
+  + Cette fonction aura pour équation: \( f(x) = \frac{ y_{A} - y_{B} }{ x_{A} - x_{B} } \cdot x + \frac{ x_{A} \cdot y_{B} - x_{B} \cdot y_{A} }{ x_{A} - x_{ B } } \)
+
+\vfill
+
+- _Remarque ~109titration~:_
+  + Lorsque l'interpolation n'est pas possible, il faut utiliser les résultats de la dérivée seconde.
+
+
+* Passons au Python!
+
+** Python: Compétences à acquérir
+
+- Liste des compétences à acquérir avec le ~109titration~:
+  - Maîtrise du framework de test ~PyTest~
+  - Découverte des ~Generics~
+    * Gestion des erreurs avec ~Result[T]~
