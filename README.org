@@ -1,1 +1,16 @@
 This repository contains source codes of various Talks I presented. 
+
+-----
+
+** Building
+
+#+BEGIN_SRC sh
+# Generate all PDF
+make
+
+# Generate a specific PDF
+make Malloc/Talk.pdf
+#+END_SRC
+
+
+_Note:_ At this time, only ~Beamer~ PDF can be generated.
