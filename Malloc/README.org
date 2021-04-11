@@ -1,10 +1,11 @@
-*** Malloc
+*** Malloc: Memory Allocation
 
 -----
 
 _Language:_ French
 
-_Topics:_ Discover what the ~malloc~ family function does. With a lot of general culture about ~C~ and ~POSIX~.
+_Topics:_ Discover what the ~malloc~ family function does. With a lot of general culture about ~C~ and ~POSIX~. Discover the mechanisms behind the memory allocation.
 
-_When:_ 9th February 2021.
-_Link:_ [[https://youtu.be/gGIGFdlKKp0][Rebroadcast]]
+_When:_
+ - _First part:_ 9th February 2021: [[https://youtu.be/gGIGFdlKKp0][Rebroadcast]]
+ - _Second part:_ 10th March 2021: [[https://www.youtube.com/watch?v=_76se8eeYr0][Rebroadcast]]

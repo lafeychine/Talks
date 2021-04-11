@@ -27,7 +27,7 @@ PROJECTS	:=	Epitech_MAT/101pong/Bootstrap		\
 			Epitech_MAT/308reedpipes/Bootstrap	\
 			Epitech_MAT/309pollution/Bootstrap	\
 			Epitech_PSU/UnitPresentation		\
-			Epitech_PSU/Bootstrap			\
+			Epitech_PSU/Bootstrap_STrace		\
 			Malloc/Talk				\
 			Malloc/Talk_Algorithms
 
