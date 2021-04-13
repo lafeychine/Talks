@@ -1,0 +1,76 @@
+#+TITLE: ftrace - Analyzing executables
+#+SUBTITLE: [Bootstrap] Programmation Système UNIX
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../template/Beamer.org
+#+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
+
+
+* Présentation: Projet ~ftrace~
+
+* Bootstrap ~ftrace~
+
+** Appel de fonction: Introduction
+
+- Pour ~strace~, vous avez cherché les instructions ~SYSCALL~ et ~INT 0x80~
+  + On avait trouvé les ~opcode~ *expérimentalement*.
+
+\vfill
+
+- Pour ~ftrace~, cherchons directement les instructions.
+  + Regardons le _*[[https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html][manuel de l'architecture Intel]]*_
+  + Visualisons la _*[[https://pnx.tf/files/x86_opcode_structure_and_instruction_overview.png][table d'instruction x86]]*_
+
+
+** Appel de fonction: Comment faire?
+
+- _Première méthode:_ *Calculer* l'adresse
+  + Regardons le _*[[https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html][manuel de l'architecture Intel]]*_
+  + Il existe une _*[[https://www.felixcloutier.com/x86/call][version web]]*_ plus accessible
+
+\vfill
+
+- _Deuxième méthode:_ *Attendre* une instruction
+  + Beaucoup plus simple à effectuer...
+  + ... cependant, vous n'avez que 3 semaines.
+
+
+** Tableau associatif des symboles
+
+- Pour ~strace~, vous avez utilisé un tableau associatif pour sauvegarder les noms des appels systèmes.
+  + La clé est le *numéro du syscall*
+
+\vfill
+
+- Pour ~ftrace~, vous allez utiliser un tableau associatif
+  + La clé est l'*adresse de la fonction*
+
+\vfill
+
+- Vous avez le droit d'utiliser la ~libELF~:
+  + La partie 5 de la _*[[https://netix.dl.sourceforge.net/project/elftoolchain/Documentation/libelf-by-example/20200330/libelf-by-example.pdf][documentation de ~libELF~]]*_ vous aidera.
+
+
+* Pour la prochaine fois...
+
+** Pour la prochaine fois...
+
+- _Mardi 13 avril:_
+  + Tableau associatif des symboles
+  + Appels internes
+
+\vfill
+
+- _Mardi 20 avril:_
+  + Appels des librairies
+
+\vfill
+
+- _Mardi 27 avril:_
+  + Finalisation
+
+\vfill
+
+- _Attention:_ Les Follow-Up *sont communs*
