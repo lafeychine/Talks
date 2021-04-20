@@ -1,0 +1,182 @@
+#+TITLE: 110borwein - Saving years of calculations...
+#+SUBTITLE: [Bootstrap] Mathématiques - 1^{ère} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* Introduction: Intégration
+
+** Définition: Aire
+
+- L'*aire* est la grandeur /relative/ d'une surface fermée de deux dimensions.
+  + Pour calculer cette surface, on utilise des *formules*.
+
+\vfill
+
+- _Exemple:_ Aire d'un rectangle
+
+\begin{ctikz}
+    \drawGrid*[Grid] {-0.6} {-0.6} {7} {3}
+
+    \draw [black, thick, fill=blue!20] (2, 0) |- (6, 2) |- (2, 0);
+    \path (2, 0) -- (2, 2) node [midway, left] {2};
+    \path (2, 2) -- (6, 2) node [midway, above] {4};
+
+    \draw [black, thick, fill=red!20] (0, 0) |- (1, 1) |- (0, 0);
+
+    \draw [ultra thick, ->] (0, 0) -- (1, 0) node [midway, below] {i};
+    \draw [ultra thick, ->] (0, 0) -- (0, 1) node [midway, left] {j};
+\end{ctikz}
+
+
+** Définition: Intégrale
+
+- Soit \( f \), une fonction *continue* et *positive* sur un intervalle \( [a; b] \).
+  + On appelle *intégrale de \( f \)* sur \( [a; b] \), l'aire de la surface /ainsi/ délimitée.
+  + On note cette intégrale: \( \int_{a}^{b} f(x) \, \mathrm{d}x \)
+
+\vfill
+
+\begin{ctikz}
+    \drawGrid* {-2} {-0.8} {6} {3}
+
+    \clip (-1.9, -0.7) rectangle (5.9, 2.9);
+
+    \draw [blue, thick, domain=-4:6] plot[smooth] function { 0.02 * (x - 2) ** 3 + 0.2 * (x - 2) ** 2 + 0.5 };
+    \node [blue] at (5, 2) {\( C_{f} \)};
+
+    \draw [thick, red] (1, 0.68) -- (1, 0) node [below] {\( a \)};
+    \draw [thick, red] (4, 1.46) -- (4, 0) node [below] {\( b \)};
+
+    \draw [red, thick, domain=1:4, fill=red!20] plot[smooth] function { 0.02 * (x - 2) ** 3 + 0.2 * (x - 2) ** 2 + 0.5 } |- (1, 0);
+\end{ctikz}
+
+
+* ~110borwein~: Intégrale de Borwein
+
+** Introduction: Intégrale de Dirichlet
+
+- L'*intégrale de Dirichlet* est l'intégrale de la fonction *sinus cardinal* sur \( [0, + \infty [ \).
+  + En utilisant la notation de l'intégrale: \( \int_{0}^{+\infty} \frac{\sin x}{x} \, \mathrm{d}x \)
+
+\vfill
+
+- Il est possible de prouver que l'*intégrale de Dirichlet* vaut \( \frac{\pi}{2} \)
+
+\vfill
+
+- Le *sinus cardinal* est développable en *série entière*:
+  + \( \frac{\sin x}{x} = \sum_{n = 0}^{+\infty} \frac{ (-1)^{n} \cdot x^{2n} }{ (2n + 1)! } \)
+
+
+** Définition: Intégrale de Borwein
+
+- Les *intégrales de Borwein* effectuent des produits de *sinus cardinal*.
+  + Ces *intégrales* présentent des régularités finissant par cesser.
+  + Elles sont définies par \( \forall n \in \set{N}, I_{n} = \int_{0}^{+\infty} \prod_{k = 0}^{n} \frac{ \sin( \frac{x}{2k + 1} ) }{ \frac{x}{2k + 1} } \, \mathrm{d}x \).
+
+\vfill
+
+- Pour \( n = 0 \): On obtient l'*Intégrale de Dirichlet*: \( \int_{0}^{+\infty} \frac{\sin x}{x} \, \mathrm{d}x = \frac{\pi}{2} \)
+- Pour \( n = 1 \): \( \int_{0}^{+\infty} \frac{\sin x}{x} \cdot \frac{ \sin \frac{x}{3} }{ \frac{x}{3} } \, \mathrm{d}x = \frac{\pi}{2} \).
+- ..., jusqu'à \( n = 6 \)
+- Pour \( n = 7 \): \( \int_{0}^{+\infty} \frac{\sin x}{x} \cdot \frac{ \sin \frac{x}{3} }{ \frac{x}{3} } \cdot ... \cdot \frac{ \sin \frac{x}{15} }{ \frac{x}{15} } \, \mathrm{d}x = \frac{\pi}{2} - 2.31 \cdot 10^{-11}\).
+
+
+** Objectif: ~110borwein~
+
+- Nous allons *approximer la valeur* de l'intégrale.
+  + Nous allons utiliser trois algorithmes de calcul numérique.
+  + L'objectif étant d'obtenir une valeur, et de la comparer avec \( \frac{\pi}{2} \)
+
+\vfill
+
+- Pour découvrir comment résoudre les intégrales grâce *aux primitives*:
+  + Rendez-vous en ~Tek2~! (~204ducks~)
+
+
+* Méthode 1: Méthode du point médian
+
+** Méthode 1: Méthode du point médian
+
+- La méthode du point médian se repose sur le fait qu'il est facile de calculer l'*aire d'un rectangle*.
+
+\vfill
+
+- En posant les valeurs suivantes d'un intervalle \( [a; b] \):
+  + \( k \) l'indice des \( n \) sous-intervalles.
+  + \( h = \frac{b - a}{n} \) la longueur de chacun d'eux.
+  + \( m_{k} = a + \left( k + \frac{1}{2} \right) \cdot h \) le point milieu.
+
+\vfill
+
+- Il en résulte la formule suivante: \( \int_{a}^{b} f(x) \, \mathrm{d}x \approx \frac{b - a}{n} \sum_{k = 0}^{n - 1} f(m_{k}) \)
+
+
+* Méthode 2: Méthode du trapèze
+
+** Méthode 2: Méthode du trapèze
+
+- La méthode du point médian se repose sur le fait qu'il est facile de calculer l'*aire d'un trapèze*.
+
+\vfill
+
+- En posant les valeurs suivantes d'un intervalle \( [a; b] \):
+  + \( k \) l'indice des \( n \) sous-intervalles.
+  + \( h = \frac{b - a}{n} \) est la longueur de ces sous-intervalles.
+
+\vfill
+
+- Il en résulte la formule suivante: \( \int_{a}^{b} f(x) \, \mathrm{d}x \approx \frac{b - a}{n} \left( \frac{f(a) + f(b)}{2} + \sum_{k = 1}^{n - 1} f(a + kh) \right) \)
+
+
+* Méthode 3: Méthode de Simpson
+
+** Introduction: Polynômes de Lagrange
+
+- Les *polynômes de Lagrange* permettent d'*interpoler* une série de points par un polynôme.
+  + Par \( n + 1 \) points passe un seul polynôme de degré au plus \( n \).
+
+\vfill
+
+- Pour découvrir davantage les *Polynômes de Lagrange*:
+  + Rendez-vous en ~Tek3~! (~308reedpipes~)
+
+
+** Formule: Méthode de Simpson
+
+- La *méthode de Simpson* se base sur les *polynômes de Lagrange*.
+
+\vfill
+
+- En posant les valeurs suivantes d'un intervalle \( [a; b] \):
+  + \( k \) l'indice des \( n \) sous-intervalles.
+  + \( h = \frac{b - a}{n} \) est la longueur de ces sous-intervalles.
+  + \( x_{k} = a + k \cdot h \) est la borne inférieure.
+  + \( m_{k} = a + \left( k + \frac{1}{2} \right) \cdot h \) est le point milieu.
+
+\vfill
+
+- Il en résulte la formule suivante:
+  + \( \int_{a}^{b} f(x) \, \mathrm{d}x \approx \frac{h}{6} \left( f(a) + f(b) + 2 \cdot \sum_{k = 1}^{n - 1} f(x_{k}) + 4 \cdot \sum_{k = 0}^{n - 1} f(m_{k}) \right) \)
+
+* Passons au Python
+
+** Python: Compétences considérées acquises
+
+- Liste des compétences considérées acquises durant cette année:
+  - Maîtrise de la gestion des arguments avec ~argparse~
+  - Maîtrise du typage Python avec ~typing~
+  - Maîtrise du framework de test ~PyTest~
+
+\vfill
+
+- Pour terminer, nous allons parler des *effets de bords*.
