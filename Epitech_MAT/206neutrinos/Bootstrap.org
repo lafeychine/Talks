@@ -1,0 +1,87 @@
+#+TITLE: 206neutrinos - No mean task here...
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* ~206neutrinos~
+
+** Formule: Moyenne arithmétique
+
+- La *moyenne arithmétique*, ou plus communément la *moyenne*:
+  + Elle est noté \( \overline{x} \) en Mathématiques et est noté \( \langle x \rangle \) en Physique:
+  + \( \overline{x_{n}} := \frac{ x_{1} + x_{2} + ... + x_{n} }{ n } = \frac{1}{n} \cdot \sum_{i = 1}^{n} x_{i} \)
+
+\vfill
+
+- Pour calculer la moyenne en ajoutant une valeur supplémentaire:
+  + \( \overline{x_{n + \textcolor{mLightBrown}{1}}} = \frac{ x_{1} + x_{2} + ... + x_{n} + \textcolor{mLightBrown}{x_{n + 1}} }{ n + \textcolor{mLightBrown} 1 } = \frac{1}{n + \textcolor{mLightBrown}{1}} \cdot \sum_{i = 1}^{n + \textcolor{mLightBrown}{1}} x_{i} \)
+  + \( \overline{x_{n + 1}} = \frac{ 1 }{ n + 1 } \cdot \left( n \cdot \left( \frac{1}{n} \cdot \sum_{i = 1}^{n} x_{i} \right) + x_{n + 1} \right) = \frac{1}{n + 1} \cdot ( n \cdot \overline{x_{n}} + x_{n + 1} ) \)
+
+
+** Formule: Écart-Type (1/2)
+
+- L'*écart-type* est noté \( \sigma \), où \( \sigma_{n} := \sqrt{ \frac{1}{n} \cdot \sum_{i = 1}^{n} ( x_{i} - \overline{x_{n}} )^{2} } \)
+
+\vfill
+
+- Cette formule *ne nous permet pas* de calculer l'écart-type *sans connaître* les valeurs:
+\begin{align*}
+    \frac{1}{n} \sum_{i = 1}^{n} ( x_{i} - \overline{x} )^{2}
+        \onslide<3->{ &= \frac{1}{n} \sum_{i = 1}^{n} (x_{i}^{2} + \overline{x}^{2} - 2 \cdot x_{i} \cdot \overline{x}) } \\
+        \only<4-4>{ &= ... + ... - ... \\ }
+        \only<5-5>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + ... - ... \\ }
+        \only<6-6>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \frac{1}{n} \left( \sum_{i = 1}^{n} \overline{x}^{2} \right) - ... \\ }
+        \only<7-7>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \frac{1}{n} \left( \sum_{i = 1}^{n} \overline{x}^{2} \right) - \frac{1}{n} \left( \sum_{i = 1}^{n} 2 \cdot \overline{x} \cdot {x_{i}} \right) \\ }
+        \only<8-8>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \frac{1}{n} \left( \sum_{i = 1}^{n} \overline{x}^{2} \cdot 1 \right) - \frac{1}{n} \left( \sum_{i = 1}^{n} 2 \cdot \overline{x} \cdot {x_{i}} \right) \\ }
+        \only<9-9>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} \cdot \frac{1}{n} \left( \sum_{i = 1}^{n} 1 \right) - \frac{1}{n} \left( \sum_{i = 1}^{n} 2 \cdot \overline{x} \cdot {x_{i}} \right) \\ }
+        \only<10->{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} \cdot \frac{1}{n} \left( \sum_{i = 1}^{n} 1 \right) - 2 \cdot \overline{x} \cdot \frac{1}{n} \left( \sum_{i = 1}^{n} {x_{i}} \right) \\ }
+        \only<11-11>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} \cdot \frac{1}{n} \cdot n - 2 \cdot \overline{x} \cdot \frac{1}{n} \left( \sum_{i = 1}^{n} {x_{i}} \right) }
+        \only<12-12>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} - 2 \cdot \overline{x} \cdot \frac{1}{n} \left( \sum_{i = 1}^{n} {x_{i}} \right) }
+        \only<13-13>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} - 2 \cdot \overline{x} \cdot \overline{x} \\ }
+        \only<14->{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + \overline{x}^{2} - 2 \cdot \overline{x}^{2} \\ }
+        \only<15-15>{ &= \frac{1}{n} \left( \sum_{i = 1}^{n} x_{i}^{2} \right) - \overline{x}^{2} }
+        \only<16->{ &= \frac{1}{n} \sum_{i = 1}^{n} ( x_{i}^{2} - \overline{x}^{2} ) }
+\end{align*}
+
+
+** Formule: Écart-Type (2/2)
+
+- Pour calculer l'écart-type en ajoutant une valeur supplémentaire:
+  + \( \sigma_{n + \textcolor{mLightBrown}{1}} = \sqrt{ \frac{1}{n + \textcolor{mLightBrown}{1}} \cdot \sum_{i = 1}^{n + \textcolor{mLightBrown}{1}} ( x_{i}^{2} - \overline{x_{n + \textcolor{mLightBrown}{1}}}^{2} ) } =  \sqrt{ \frac{1}{n + \textcolor{mLightBrown}{1}} \cdot \left( \sum_{i = 1}^{n + \textcolor{mLightBrown}{1}} x_{i}^{2} \right) - \overline{x_{n + \textcolor{mLightBrown}{1}}}^{2} } \)
+
+\vfill
+
+- Comme \( \sum_{i = 1}^{n} x_{i}^{2} = n \cdot \left( \sigma_{n}^{2} + \overline{x}^{2} \right) \)
+  + Alors: \( \sigma_{n + 1} = \sqrt{ \left( \frac{1}{n + 1} \cdot \left( \left( \sum_{i = 1}^{n} x_{i}^{2} \right) + x_{n + 1}^{2} \right) \right) - \overline{x_{n + 1}}^{2} } \)
+
+
+** Formule: Moyenne quadratique
+
+- La *moyenne quadratique* est noté \( \overline{x} \) en Physique, où \( \overline{x_{n}} := \sqrt{ \frac{1}{n} \cdot \sum_{i = 1}^{n} x_{i}^{2} } \)
+
+\vfill
+
+- Ainsi, on peut voir que la moyenne quadratique \( \overline{x} \) peut se définir grâce à la moyenne arithmétique \( \langle x \rangle \): \( \overline{x} = \sqrt{ \langle x^{2} \rangle } \)
+
+\vfill
+
+- La *moyenne quadratique* est laissé en exercice.
+
+
+** Formule: Moyenne harmonique
+
+- La *moyenne harmonique* est noté \( H \), où \( H_{n} := \frac{ n }{ \frac{1}{x_{1}} + \frac{1}{x_{2}} + ... + \frac{1}{x_{n}} } = \frac{n}{ \sum_{i = 1}^{n} \frac{1}{x_{i}} } \)
+
+\vfill
+
+- Pour calculer la moyenne en ajoutant une valeur supplémentaire:
+  + \( H_{n + 1} = \frac{ n + 1 }{ \frac{n}{H_{n}} + \frac{1}{x_{n + 1}}} \)
