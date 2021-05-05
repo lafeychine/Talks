@@ -1,0 +1,60 @@
+#+TITLE: 207demography - Population and regression
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* ~207demography~: Les formules
+
+** Définition: Méthode des moindres carrés
+
+- La *méthode des moindres carrés* permet de trouver les coefficients d'une *fonction affine* (\( y = ax + b \)) approximant au mieux les valeurs.
+
+\vfill
+
+- Par la méthode des moindres carrés (\( n \) points de coordonnées \( (x, y) \)):
+  + \( a = \cfrac{ n \cdot \left( \sum x \cdot y \right) - \left( \sum x \right) \cdot \left( \sum y \right) }{ n \cdot \left( \sum x^{2} \right) - \left( \sum x \right)^{2} } \) et \( b = \cfrac{ \left( \sum y \right) - a \cdot \left( \sum x \right) }{ n } \)
+
+
+** Métrique: Moyenne quadratique
+
+- La moyenne quadratique (/root-mean-square/) permet de calculer la *qualité* de l'approximation.
+
+\vfill
+
+- Moyenne quadratique (\( \overline{x} := Y = a_{x}X + b_{x} \)): \( \sqrt{ \cfrac{1}{n} \cdot \Bigg( \sum ( y \cdot a + b - x )^{2} \Bigg) } \)
+
+\vfill
+
+- Moyenne quadratique (\( \overline{y} := X = a_{y}Y + b_{y} \)): \( \sqrt{ \cfrac{1}{n} \cdot \Bigg( \sum \left( \cfrac{y - b}{a} - x \right)^{2} \Bigg) } \)
+
+
+** Évaluation: Estimation pour 2050
+
+- Grâce à la méthode des moindres carrés, il est possible d'estimer la population pour l'année 2050.
+
+\vfill
+
+- Évaluation (\( Y = a_{x}X + b_{x} \)): \( 2050 \cdot a + b \)
+
+\vfill
+
+- Évaluation (\( X = a_{y}Y + b_{y} \)): \( \cfrac{ 2050 - b }{ a } \)
+
+
+** Métrique: Coefficient de corrélation linéaire
+
+- Le *coefficient de corrélation linéaire*, mis en valeur absolue, permet de mesurer l'écart des deux approximations de \( X \) et \( Y \).
+
+\vfill
+
+- Calcul du coefficient: \( \cfrac{ \Cov(X, Y) }{ \sigma_{X} \cdot \sigma_{Y} } \), avec:
+  + \( \Cov(X, Y) = n \cdot \left( \sum x \cdot y \right) - \left( \sum x \right) \cdot \left( \sum y \right) \right) \)
