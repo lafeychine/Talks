@@ -1,0 +1,93 @@
+#+TITLE: 208dowels - Quality control, calibration and \( \chi \)
+#+SUBTITLE: [Bootstrap] Mathématiques - 2^{ème} année
+
+#+LANGUAGE: fr
+#+OPTIONS: H:2 toc:nil
+
+#+INCLUDE: ../../template/Beamer.org
+#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
+#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+
+#+LATEX_HEADER: \input{ ../Epitech.tex }
+
+
+* ~208dowels~: Les formules
+
+** Répartition des données en classes
+
+- Afin d'utiliser le test du \( \chi^{2} \), il faut au préalable *répartir* les données en classes.
+
+\vfill
+
+- Ces classes sont définies par \( O_{x} \):
+  + \( x \) représentant le nombre de pièces défectueuses.
+
+\vfill
+
+- Il faut au moins 10 éléments par classes.
+  + Un regroupement est parfois nécessaire.
+    * Le regroupement doit donner les classes *les plus petites*.
+
+
+** Calcul de la probabilité théorique
+
+- La *probabilité théorique* \( p \) de \( n \) exemplaires de \( m \) pièces répartie en \( c \) classes est:
+  + \( p = \frac{1}{n \cdot m} \cdot \sum_{i = 0}^{c} i \cdot O_{i} \)
+
+\vfill
+
+- Il est ainsi possible de définir les paramètres de la *loi Binomiale*:
+  + \( n \) est le nombre d'exemplaires par pièce
+  + \( p \) est la probabilité théorique
+
+
+** Calcul des classes théoriques
+
+- Posons \( X \), la *variable aléatoire* suivant la loi Binomiale de paramètre (\( n, p \)).
+  + _Rappel:_ \( \Prob(X = k) = \binom{n}{k} \cdot p^{k} \cdot (1 - p)^{n - k} \)
+
+\vfill
+
+- Il est ainsi possible de *calculer* la probabilité de la *classe théorique* \( T_{x} \).
+  + \( \Prob(T_{x}) = m \cdot \Prob(X = x) \)
+
+\vfill
+
+- _Note:_ Lorsqu'un regroupement se produit sur les classes \( O_{x} \):
+  + Alors *le même regroupement* se produit sur \( T_{x} \).
+  + Il faut *additionner* les probabilités de chacun des \( T_{x} \).
+
+\vfill
+
+- _Rappel:_ Il faut que la somme des probabilités donne la valeur *100*.
+
+
+** Calcul et analyse du \( \chi^{2} \)
+
+- Le calcul du \( \chi^{2} \) est obtenu par:
+  \( \chi^{2} = \sum_{x = 0}^{c} \frac{ (O_{x} - T_{x})^{2} }{ T_{x} } \)
+
+\vfill
+
+- Le degré \( \nu \) est donné par le nombre \( c \) de classes, auquel on soustrait 2.
+
+
+** Intervalle de valeurs de la probabilité
+
+- Soit \( D \in \mat_{(10, 13)} \), la *matrice de distribution* de \( \chi^{2} \).
+  + _Note:_ Cette matrice est donnée par le sujet.
+  + _Note:_ *Attention aux indices*
+    * \( D[5] \) représente la ligne \( \nu = 5 \) et \( D[5][1] \) vaut \( 0.55 \).
+
+\vfill
+
+- Soit \( D_{\Prob} \), le *vecteur de probabilité* associé à chaque colonne de \( D \).
+  + _Note:_ Ce vecteur est le pourcentage affiché en en-tête de la matrice \( D \).
+
+\vfill
+
+- Soit la liste \( L \) définie par \( [ \; D_{\Prob}[j + 1] \; | \; D[\nu][j] < \chi^{2}, \; \forall j \in [\![ 1; \alert{12} ]\!] \; ] \)
+  + Si \( L \) est vide, alors \( \Prob > 99\% \)
+  + Si \( \chi^{2} > D[\nu][1 + \Card L] \), alors \( 1\% > \Prob \)
+  + Sinon: \( L[\Card L - 1]\% > \Prob > L[\Card L]\% \)
