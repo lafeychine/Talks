@@ -57,4 +57,4 @@
 \vfill
 
 - Calcul du coefficient: \( \cfrac{ \Cov(X, Y) }{ \sigma_{X} \cdot \sigma_{Y} } \), avec:
-  + \( \Cov(X, Y) = n \cdot \left( \sum x \cdot y \right) - \left( \sum x \right) \cdot \left( \sum y \right) \right) \)
+  + \( \Cov(X, Y) = n \cdot \left( \sum x \cdot y \right) - \left( \sum x \right) \cdot \left( \sum y \right) \)
