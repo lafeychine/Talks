@@ -7,8 +7,8 @@
 #+INCLUDE: ../template/Beamer.org
 #+LATEX_CLASS_OPTIONS: [presentation, aspectratio=169, c]
 
-#+LATEX_HEADER: \input{ ../package/drawings/Drawing.tex }
-#+LATEX_HEADER: \input{ ../package/drawings/Graphs.tex }
+#+LATEX_HEADER: \input{../package/drawings/Drawing.tex}
+#+LATEX_HEADER: \input{../package/drawings/Graphs.tex}
 
 
 * Introduction

@@ -6,11 +6,11 @@
 
 #+INCLUDE: ../../template/Beamer.org
 
-#+LATEX_HEADER: \input{ ../../package/Mathematics.tex }
-#+LATEX_HEADER: \input{ ../../package/drawings/Drawing.tex }
-#+LATEX_HEADER: \input{ ../../package/drawings/Geometry.tex }
+#+LATEX_HEADER: \input{../../package/Mathematics.tex}
+#+LATEX_HEADER: \input{../../package/drawings/Drawing.tex}
+#+LATEX_HEADER: \input{../../package/drawings/Geometry.tex}
 
-#+LATEX_HEADER: \input{ ../Epitech.tex }
+#+LATEX_HEADER: \input{../Epitech.tex}
 
 
 * Rappels en Géométrie: Fondamentaux
