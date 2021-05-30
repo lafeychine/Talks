@@ -6,7 +6,7 @@
 
 #+INCLUDE: ../../template/Beamer.org
 
-#+LATEX_HEADER: \input{ ../Epitech.tex }
+#+LATEX_HEADER: \input{../Epitech.tex}
 
 
 * Gestion de projet: Un peu d'Histoire

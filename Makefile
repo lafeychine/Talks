@@ -54,3 +54,4 @@ clean:
 		git clean -dfx
 
 .PHONY:		all clean
+.PRECIOUS:	%.tex
